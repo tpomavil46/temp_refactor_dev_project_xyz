@@ -1,0 +1,153 @@
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        blockquote {
+            background: #f9f9f9;
+            border-left: 10px solid #ccc;
+            margin: 1.5em 10px;
+            padding: 0.5em 10px;
+        }
+
+        blockquote:before {
+            color: #ccc;
+            font-size: 4em;
+            line-height: 0.1em;
+            margin-right: 0.25em;
+            vertical-align: -0.4em;
+        }
+
+        blockquote p {
+            display: inline;
+        }
+    </style>
+
+    
+    <title>Accelerator Brochure for HVAC Monitoring</title>
+  </head>
+  <body>
+    <table>
+      <tr style="background-color: #5bc0de">
+        <td colspan="3"><h1>HVAC Monitoring</h1></td>
+      </tr>
+      <tr style="background-color: #b3d7ff">
+        <td colspan="3"><h2>Attributes</h2></td>
+      </tr>
+      <tr style="border-bottom-width: 3px;">
+        <td><h3>Inefficient Operation</h3></td>
+        <td>
+          <p>A condition that is present whenever the HVAC is running in ostensibly
+unnecessary environmental situations, resulting in inefficient use of power.</p>
+<p>Examples:</p>
+<ul>
+<li>Ambient temperature is within control bounds and does not warrant
+  cooling</li>
+<li>Environmental conditions are such that HVAC system is operating outside
+  of its range of capabilities</li>
+</ul>
+        </td>
+        <td>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <hr />
+        </td>
+      </tr>
+      <tr style="background-color: #b3d7ff">
+        <td colspan="3"><h2>Requirements</h2></td>
+      </tr>
+      <tr style="border-bottom-width: 3px;">
+        <td><h3>Compressor Power</h3></td>
+        <td>
+          <p>Compressor Power as measured at the power supply of the equipment
+itself.</p>
+        </td>
+        <td>
+          <table>
+            
+            <tr>
+              <td>
+                Type:
+              </td>
+              <td>
+                <strong>Signal</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Unit Of Measure Family:
+              </td>
+              <td>
+                <strong>kW</strong>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <hr />
+        </td>
+      </tr>
+      <tr style="border-bottom-width: 3px;">
+        <td><h3>Temperature</h3></td>
+        <td>
+          <p>The ambient <em>external</em> temperature as measured in a neutral location
+away from HVAC inlet/outlet sites.</p>
+<blockquote>
+<p>Note that this value may be derived from equipment sensors with a
+suitable coefficient to account for location bias.</p>
+</blockquote>
+        </td>
+        <td>
+          <table>
+            
+            <tr>
+              <td>
+                Unit Of Measure Family:
+              </td>
+              <td>
+                <strong>F</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Type:
+              </td>
+              <td>
+                <strong>Signal</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Optional:
+              </td>
+              <td>
+                <strong>True</strong>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <hr />
+        </td>
+      </tr>
+    </table>
+    &nbsp;
+  </body>
+</html>
