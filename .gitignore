@@ -1,1 +1,26 @@
+# Byte-compiled and cached files
+__pycache__/
+
+# Virtual environments
+venv/
+seeq_env_3.11/
+
+# Environment files
 .env
+
+# Python package files
+dist/
+build/
+*.egg-info/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Excluded directories
+uploaded_files/
+data/
+output/
