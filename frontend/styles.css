@@ -1,38 +1,125 @@
+/* General Styles */
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f4f4f4;
 }
 
-form, #app {
-    margin-bottom: 20px;
+.logo-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.logo {
+    max-width: 150px;
+    height: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #073259;
+    margin: 20px 0;
+    font-size: 24px;
+}
+
+/* Main Container */
+#main-container {
+    display: flex;
+    flex: 1;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Controls Section */
+#controls-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
 
-form label {
-    margin-right: 10px;
+h2 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: #007cad;
 }
 
-#tree-visualization {
-    border: 1px solid #ccc;
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="file"],
+button {
     padding: 10px;
-    margin-top: 20px;
-    max-height: 400px;
-    overflow-y: auto;
-    background-color: #f9f9f9;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 button {
-    padding: 10px;
-    font-size: 16px;
-    background-color: #007bff;
+    background-color: #00AEEF;
     color: white;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #007cad;
+}
+
+/* Visualization Section */
+#visualization-section {
+    flex: 1;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+#tree-visualization {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #f9f9f9;
+    white-space: pre-wrap;
+    font-family: monospace;
+    border: 1px solid #00AEEF;
+    border-radius: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.placeholder-message {
+    color: #aaa;
+    text-align: center;
+    font-style: italic;
 }

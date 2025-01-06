@@ -4,23 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seeq Asset Tree Manager</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
+    <div class="logo-container">
+        <img src="/static/logo.png" alt="Company Logo" class="logo">
+    </div>
     <h1>Seeq Asset Tree Manager</h1>
-    <div id="app">
-        <form id="upload-form">
-            <label for="csv-file">Upload CSV:</label>
-            <input type="file" id="csv-file" name="csv-file" accept=".csv">
-            <button type="submit">Upload</button>
-        </form>
-        <button id="create-lookup">Create Lookup</button>
-        <button id="push-tree">Push Tree</button>
-        <button id="visualize-tree">Visualize Tree</button> <!-- New Button -->
-        <div id="tree-visualization">
-            <!-- Tree visualization will be dynamically loaded here -->
+    <div id="main-container">
+        <!-- Controls Section -->
+        <div id="controls-section">
+            <!-- Tree Creation Section -->
+            <div class="section">
+                <h2>Create or Search Tree</h2>
+                <div class="group">
+                    <label for="tree-name">Tree Name:</label>
+                    <input type="text" id="tree-name" placeholder="Enter tree name">
+                    <button id="create-empty-tree">Create Empty Tree</button>
+                    <button id="search-tree">Search for Tree</button>
+                </div>
+            </div>
+
+            <!-- CSV Upload Section -->
+            <div class="section">
+                <h2>Upload and Process CSV</h2>
+                <div class="group">
+                    <label for="csv-file">Upload CSV:</label>
+                    <input type="file" id="csv-file" name="csv-file" accept=".csv">
+                    <button id="upload-csv">Upload</button>
+                    <button id="process-csv">Process CSV</button>
+                </div>
+            </div>
+
+            <!-- Tree Modification Section -->
+            <div class="section">
+                <h2>Modify Tree</h2>
+                <div class="group">
+                    <button id="clear-tree">Clear Tree</button>
+                    <button id="create-lookup">Create Lookup String</button>
+                    <button id="push-tree">Push Tree</button>
+                    <button id="visualize-tree">Visualize Tree</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Section -->
+        <div id="visualization-section">
+            <h2>Tree Visualization</h2>
+            <div id="tree-visualization">
+                <p class="placeholder-message">Tree visualization will appear here after processing the CSV or creating a tree.</p>
+            </div>
         </div>
     </div>
-    <script src="app.js"></script>
+    <script src="/static/app.js"></script>
 </body>
 </html>

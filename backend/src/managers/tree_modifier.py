@@ -53,3 +53,14 @@ class TreeModifier(PushManager):
         except Exception as e:
             print(f"Error removing item: {e}")
             raise
+        
+    def visualize_tree(self):
+        """Visualize the tree structure."""
+        if not self.tree:
+            raise ValueError("Tree is not loaded. Call 'load_tree()' first.")
+        try:
+            visualization = self.tree.visualize()
+            print("Tree visualization generated successfully.")
+            return visualization
+        except Exception as e:
+            raise RuntimeError(f"Error visualizing tree: {e}")

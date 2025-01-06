@@ -1,99 +1,8 @@
-document.getElementById("upload-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
+// Handle CSV Upload
+document.getElementById("upload-csv").addEventListener("click", async (event) => {
+    event.preventDefault(); // Prevent the default form submission
     const fileInput = document.getElementById("csv-file");
-    const formData = new FormData();
-    formData.append("file", fileInput.files[0]);
-
-    try {
-        const response = await fetch("http://127.0.0.1:8000/upload_csv/", {
-            method: "POST",
-            body: formData,
-        });
-        const result = await response.json();
-        console.log("File uploaded:", result);
-        alert(`File uploaded: ${result.filename}`);
-    } catch (error) {
-        console.error("Error uploading file:", error);
-    }
-});
-
-document.getElementById("push-tree").addEventListener("click", async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/push_tree/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({ tree_name: "Test Tree" }),
-        });
-        const result = await response.json();
-        alert(result.message);
-    } catch (error) {
-        console.error("Error pushing tree:", error);
-    }
-});
-
-fetch("http://127.0.0.1:8000/process-csv/", {
-    method: "POST",
-    body: formData, // Include the CSV file here
-  })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    .catch((error) => console.error("Error:", error));
-
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/visualize_tree/");
-        const data = await response.json();
-        const treeVisualization = document.getElementById("tree-visualization");
-        treeVisualization.innerHTML = `<pre>${JSON.stringify(data.tree_structure, null, 2)}</pre>`;
-    } catch (error) {
-        console.error("Error fetching tree visualization:", error);
-    }
-});
-
-document.getElementById("create-lookup-form").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const groupColumn = document.getElementById("group-column").value;
-    const keyColumn = document.getElementById("key-column").value;
-    const valueColumn = document.getElementById("value-column").value;
-
-    try {
-        const response = await fetch("http://127.0.0.1:8000/create_lookup/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams({
-                group_column: groupColumn,
-                key_column: keyColumn,
-                value_column: valueColumn,
-            }),
-        });
-        const result = await response.json();
-        alert(result.message);
-    } catch (error) {
-        console.error("Error creating lookup:", error);
-    }
-});
-
-// Visualize Tree button handler
-document.getElementById("visualize-tree").addEventListener("click", async () => {
-    try {
-        const response = await fetch("http://127.0.0.1:8000/visualize_tree/", {
-            method: "GET",
-        });
-        const result = await response.json();
-        console.log("Tree visualization:", result);
-        
-        // Display the tree structure in the "tree-visualization" div
-        const visualizationDiv = document.getElementById("tree-visualization");
-        visualizationDiv.innerText = JSON.stringify(result.tree_structure, null, 2);
-    } catch (error) {
-        console.error("Error visualizing tree:", error);
-    }
-});
-
-document.getElementById("upload-form").addEventListener("submit", async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
-    const fileInput = document.getElementById("csv-file");
-    const formData = new FormData();
+    const formData = new FormData(); // Use FormData to handle multipart form data
     formData.append("file", fileInput.files[0]);
 
     try {
@@ -107,29 +16,170 @@ document.getElementById("upload-form").addEventListener("submit", async (event) 
         }
 
         const result = await response.json();
-        console.log("File uploaded:", result);
+        console.log("File uploaded successfully:", result);
         alert(`File uploaded: ${result.filename}`);
     } catch (error) {
         console.error("Error uploading file:", error);
+        alert("Error uploading file. Check the console for details.");
     }
 });
 
-@app.post("/upload_csv/")
-async def upload_csv(file: UploadFile):
-    """
-    Endpoint to upload a CSV file.
-    """
-    try:
-        file_location = f"./uploaded_files/{file.filename}"
-        os.makedirs("./uploaded_files", exist_ok=True)  # Ensure the directory exists
+// Process CSV and update the visualization
+document.getElementById("process-csv").addEventListener("click", async () => {
+    console.log("Process CSV button clicked."); // Debug log to confirm the button was clicked
+    
+    try {
+        const response = await fetch("http://127.0.0.1:8000/process_csv/", {
+            method: "POST",
+        });
 
-        # Save the uploaded file
-        with open(file_location, "wb") as f:
-            f.write(await file.read())
+        if (!response.ok) {
+            throw new Error(`Processing failed with status: ${response.status}`);
+        }
 
-        # Example: Process the file and return column names
-        data = pd.read_csv(file_location)
-        return {"filename": file.filename, "columns": list(data.columns)}
+        const result = await response.json();
+        console.log("CSV processed response:", result);
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
+        // Update the UI with the result
+        const visualizationDiv = document.getElementById("tree-visualization");
+        if (result.tree_structure) {
+            visualizationDiv.innerHTML = `<pre style="white-space: pre-wrap;">${result.tree_structure}</pre>`;
+        } else {
+            visualizationDiv.innerHTML = `<p class="placeholder-message">Tree visualization is not available. Please ensure the tree is built and processed correctly.</p>`;
+        }
+    } catch (error) {
+        console.error("Error processing CSV:", error);
+        alert("Failed to process the CSV. Check the console for details.");
+    }
+});
+
+// Visualize Tree
+document.getElementById("visualize-tree").addEventListener("click", async () => {
+    console.log("Visualize Tree button clicked."); // Debug log
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/visualize_tree/", {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            throw new Error(`Visualization failed with status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Tree visualization response:", result);
+
+        // Update the tree visualization
+        const visualizationDiv = document.getElementById("tree-visualization");
+        visualizationDiv.innerHTML = `<pre>${JSON.stringify(result.tree_structure, null, 2)}</pre>`;
+    } catch (error) {
+        console.error("Error visualizing tree:", error);
+        alert("Failed to visualize the tree. Check the console for details.");
+    }
+});
+
+// Clear Tree
+document.getElementById("clear-tree").addEventListener("click", () => {
+    console.log("Clear Tree button clicked."); // Debug log
+    const visualizationDiv = document.getElementById("tree-visualization");
+    visualizationDiv.innerHTML = `<p class="placeholder-message">Tree visualization has been cleared. Process a CSV or visualize a tree to populate this view.</p>`;
+});
+
+// Create Lookup
+document.getElementById("create-lookup").addEventListener("click", async () => {
+    console.log("Create Lookup button clicked."); // Debug log
+    
+    try {
+        // Example logic for lookup creation (replace with actual API if needed)
+        alert("Lookup creation not implemented yet.");
+    } catch (error) {
+        console.error("Error creating lookup:", error);
+        alert("Failed to create lookup. Check the console for details.");
+    }
+});
+
+// Push Tree
+document.getElementById("push-tree").addEventListener("click", async () => {
+    console.log("Push Tree button clicked."); // Debug log
+    
+    try {
+        const response = await fetch("http://127.0.0.1:8000/push_tree/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ tree_name: "Asset Tree" }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Push failed with status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+    } catch (error) {
+        console.error("Error pushing tree:", error);
+        alert("Failed to push the tree. Check the console for details.");
+    }
+});
+
+// Handle Create Empty Tree
+document.getElementById("create-empty-tree").addEventListener("click", async () => {
+    console.log("Attaching event listener to 'Create Empty Tree' button."); // Debug log
+    const treeNameInput = document.getElementById("tree-name");
+    const treeName = treeNameInput.value.trim();
+
+    if (!treeName) {
+        alert("Please enter a tree name.");
+        return;
+    }
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/create_empty_tree/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ tree_name: treeName }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to create tree: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Empty tree created response:", result);
+
+        // Update UI with success message and visualization
+        alert(result.message);
+        const visualizationDiv = document.getElementById("tree-visualization");
+        visualizationDiv.innerHTML = `<pre style="white-space: pre-wrap;">${result.tree_structure}</pre>`;
+    } catch (error) {
+        console.error("Error creating empty tree:", error);
+        alert("Failed to create empty tree. Check the console for details.");
+    }
+});
+
+document.getElementById("search-tree").addEventListener("click", async () => {
+    const treeName = document.getElementById("tree-name").value;
+    if (!treeName) {
+        alert("Please provide a tree name.");
+        return;
+    }
+    try {
+        const response = await fetch(`http://127.0.0.1:8000/search_tree/?tree_name=${treeName}`, {
+            method: "GET",
+        });
+
+        const result = await response.json();
+        console.log("Tree search response:", result);
+
+        const visualizationDiv = document.getElementById("tree-visualization");
+        if (result.tree_structure) {
+            visualizationDiv.innerHTML = `<pre style="white-space: pre-wrap;">${result.tree_structure}</pre>`;
+        } else {
+            visualizationDiv.innerHTML = `<p class="placeholder-message">Tree not found. Please check the name and try again.</p>`;
+        }
+    } catch (error) {
+        console.error("Error searching for tree:", error);
+        alert("Failed to search for tree. Check the console for details.");
+    }
+});

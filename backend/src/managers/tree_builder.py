@@ -1,6 +1,8 @@
 # src/managers/tree_builder.py
 
 import pandas as pd
+import io
+import contextlib
 from seeq.spy.assets import Tree
 from .push_manager import PushManager
 from typing import Optional
@@ -71,6 +73,60 @@ class TreeBuilder:
             print(f"Tree '{friendly_name}' created successfully.")
         except Exception as e:
             raise RuntimeError(f"Error creating tree: {e}")
+
+    def visualize_tree(self):
+        """
+        Visualize the tree structure in a comprehensible format.
+        """
+        if not self.tree:
+            raise ValueError("Tree not built yet.")
+        
+        try:
+            # Attempt to summarize the tree
+            structure = self.tree.summarize()
+            if not structure:
+                raise ValueError("Tree.summarize() returned an empty structure.")
+            return structure
+        except Exception as e:
+            print(f"Tree.summarize() failed: {e}")
+            # Use the fallback method
+            return self._convert_tree_to_json()
+
+    def _convert_tree_to_json(self):
+        """
+        Convert the tree into a JSON-like nested dictionary for visualization.
+        """
+        if not self.tree:
+            return {"error": "Tree not built yet."}
+
+        from io import StringIO
+        import contextlib
+
+        # Capture the tree visualization as a string
+        with StringIO() as buf, contextlib.redirect_stdout(buf):
+            self.tree.visualize()
+            visualization = buf.getvalue()
+
+        # Build a JSON-like structure from the tree visualization
+        tree_json = {}
+        current_level = [tree_json]
+        lines = visualization.splitlines()
+        for line in lines:
+            # Calculate the indentation level
+            level = (len(line) - len(line.lstrip("| "))) // 2
+            node_name = line.strip("| ").strip()
+
+            # Navigate to the correct level
+            while len(current_level) > level + 1:
+                current_level.pop()
+
+            # Add node to the current level
+            current_node = current_level[-1]
+            if node_name:
+                current_node[node_name] = {}
+                current_level.append(current_node[node_name])
+
+        return tree_json
 
     def get_push_manager(self):
         """Get a PushManager for the current tree."""
