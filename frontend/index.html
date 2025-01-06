@@ -14,36 +14,23 @@
     <div id="main-container">
         <!-- Controls Section -->
         <div id="controls-section">
-            <!-- Tree Creation Section -->
             <div class="section">
-                <h2>Create or Search Tree</h2>
+                <h2>Tree Controls</h2>
                 <div class="group">
                     <label for="tree-name">Tree Name:</label>
                     <input type="text" id="tree-name" placeholder="Enter tree name">
-                    <button id="create-empty-tree">Create Empty Tree</button>
-                    <button id="search-tree">Search for Tree</button>
-                </div>
-            </div>
-
-            <!-- CSV Upload Section -->
-            <div class="section">
-                <h2>Upload and Process CSV</h2>
-                <div class="group">
+                    <label for="workbook-name">Workbook Name:</label>
+                    <input type="text" id="workbook-name" placeholder="Enter workbook name">
                     <label for="csv-file">Upload CSV:</label>
                     <input type="file" id="csv-file" name="csv-file" accept=".csv">
                     <button id="upload-csv">Upload</button>
                     <button id="process-csv">Process CSV</button>
-                </div>
-            </div>
-
-            <!-- Tree Modification Section -->
-            <div class="section">
-                <h2>Modify Tree</h2>
-                <div class="group">
+                    <button id="create-empty-tree">Create Empty Tree</button>
+                    <button id="search-tree">Search for Tree</button>
                     <button id="clear-tree">Clear Tree</button>
                     <button id="create-lookup">Create Lookup String</button>
-                    <button id="push-tree">Push Tree</button>
                     <button id="visualize-tree">Visualize Tree</button>
+                    <button id="push-tree">Push Tree</button>
                 </div>
             </div>
         </div>
