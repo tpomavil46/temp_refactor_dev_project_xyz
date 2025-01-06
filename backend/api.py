@@ -169,19 +169,28 @@ async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str =
         if not tree_name or not workbook_name:
             raise HTTPException(status_code=400, detail="Tree name and workbook name are required.")
 
-        # Use the global state if an empty tree was created
-        if current_tree_name == tree_name and current_workbook_name == workbook_name and current_tree:
+        # Decide which tree to push
+        if current_tree and current_tree_name == tree_name and current_workbook_name == workbook_name:
+            # Use the current global tree
+            print("Using the currently loaded tree for pushing.")
             tree_to_push = current_tree
         else:
-            # Rebuild the tree if not in the current state
-            builder = TreeBuilder(workbook=workbook_name)
-            tree_to_push = builder.build_empty_tree(friendly_name=tree_name, description="Empty tree created")
+            # Attempt to load the existing tree
+            print("Rebuilding the tree from scratch.")
+            tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
+            tree_to_push = tree_modifier.tree
+            current_tree = tree_to_push  # Update global state
+            current_tree_name = tree_name
+            current_workbook_name = workbook_name
 
-        # Push the tree using the PushManager
+        # Push the tree using PushManager
         push_manager = PushManager(tree=tree_to_push)
         push_manager.push()
 
-        return {"message": f"Tree '{tree_name}' pushed successfully."}
+        return {"message": f"Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'."}
+    except ValueError as e:
+        print(f"Tree loading error: {e}")
+        raise HTTPException(status_code=400, detail=f"Tree loading failed: {e}")
     except Exception as e:
         print(f"Error in push_tree: {e}")  # Log the error for debugging
         raise HTTPException(status_code=500, detail=f"Failed to push tree: {e}")
