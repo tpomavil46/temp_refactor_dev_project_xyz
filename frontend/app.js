@@ -163,8 +163,6 @@ document.getElementById("push-tree").addEventListener("click", async () => {
 
 // Visualize Tree
 document.getElementById("visualize-tree").addEventListener("click", async () => {
-    console.log("Visualize Tree button clicked."); // Debug log
-
     try {
         const response = await fetch("http://127.0.0.1:8000/visualize_tree/", {
             method: "GET",
@@ -175,11 +173,14 @@ document.getElementById("visualize-tree").addEventListener("click", async () => 
         }
 
         const result = await response.json();
-        console.log("Tree visualization response:", result);
+        console.log("Visualize Tree response:", result);
 
-        // Update the tree visualization
         const visualizationDiv = document.getElementById("tree-visualization");
-        visualizationDiv.innerHTML = `<pre>${JSON.stringify(result.tree_structure, null, 2)}</pre>`;
+        if (result.tree_structure) {
+            visualizationDiv.innerHTML = `<pre style="white-space: pre-wrap;">${result.tree_structure}</pre>`;
+        } else {
+            visualizationDiv.innerHTML = `<p class="placeholder-message">No tree loaded to visualize.</p>`;
+        }
     } catch (error) {
         console.error("Error visualizing tree:", error);
         alert("Failed to visualize the tree. Check the console for details.");
@@ -250,13 +251,14 @@ document.getElementById("create-lookup").addEventListener("click", async () => {
 
 // Handle Create Empty Tree
 document.getElementById("create-empty-tree").addEventListener("click", async () => {
-    console.log("Create Empty Tree button clicked."); // Debug log
+    const treeNameInput = document.getElementById("tree-name");
+    const workbookInput = document.getElementById("workbook-name");
 
-    const treeName = document.getElementById("tree-name").value.trim();
-    const workbookName = document.getElementById("workbook-name").value.trim();
+    const treeName = treeNameInput.value.trim();
+    const workbookName = workbookInput.value.trim();
 
     if (!treeName || !workbookName) {
-        alert("Please enter both tree name and workbook name.");
+        alert("Please provide both tree name and workbook name.");
         return;
     }
 
@@ -270,11 +272,11 @@ document.getElementById("create-empty-tree").addEventListener("click", async () 
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to create tree: ${response.status}`);
+            throw new Error(`Failed to create empty tree with status: ${response.status}`);
         }
 
         const result = await response.json();
-        console.log("Empty tree created response:", result);
+        console.log("Empty tree creation response:", result);
 
         // Update UI with success message and visualization
         alert(result.message);
@@ -287,18 +289,24 @@ document.getElementById("create-empty-tree").addEventListener("click", async () 
 });
 
 document.getElementById("search-tree").addEventListener("click", async () => {
-    const treeName = document.getElementById("tree-name").value;
-    if (!treeName) {
-        alert("Please provide a tree name.");
+    const treeName = document.getElementById("tree-name").value.trim();
+    const workbookName = document.getElementById("workbook-name").value.trim();
+    if (!treeName || !workbookName) {
+        alert("Please provide both a tree name and a workbook name.");
         return;
     }
+
     try {
-        const response = await fetch(`http://127.0.0.1:8000/search_tree/?tree_name=${treeName}`, {
+        const response = await fetch(`http://127.0.0.1:8000/search_tree/?tree_name=${treeName}&workbook_name=${workbookName}`, {
             method: "GET",
         });
 
+        if (!response.ok) {
+            throw new Error(`Search failed with status: ${response.status}`);
+        }
+
         const result = await response.json();
-        console.log("Tree search response:", result);
+        console.log("Search Tree response:", result);
 
         const visualizationDiv = document.getElementById("tree-visualization");
         if (result.tree_structure) {

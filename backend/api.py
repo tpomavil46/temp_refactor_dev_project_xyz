@@ -7,6 +7,7 @@ import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from backend.src.managers.tree_builder import TreeBuilder
+from backend.src.managers.tree_modifier import TreeModifier
 from backend.src.managers.push_manager import PushManager
 import io
 from contextlib import redirect_stdout
@@ -103,43 +104,54 @@ async def create_empty_tree(request: Request):
     global current_tree, current_workbook_name, current_tree_name
 
     try:
+        # Parse the JSON body to extract tree and workbook names
         body = await request.json()
         tree_name = body.get("tree_name", "").strip()
         workbook_name = body.get("workbook_name", "").strip()
 
-        if not tree_name:
-            raise HTTPException(status_code=400, detail="Tree name is missing or empty.")
-        if not workbook_name:
-            raise HTTPException(status_code=400, detail="Workbook name is missing or empty.")
+        if not tree_name or not workbook_name:
+            raise HTTPException(status_code=400, detail="Tree name and workbook name are required.")
+
+        # Set the global variables
+        current_tree_name = tree_name
+        current_workbook_name = workbook_name
 
         # Create the empty tree
-        tree_builder = TreeBuilder(workbook=workbook_name)
-        current_tree = tree_builder.build_empty_tree(friendly_name=tree_name, description="Empty tree created")
-        current_workbook_name = workbook_name
-        current_tree_name = tree_name
+        tree_builder = TreeBuilder(workbook=current_workbook_name)
+        current_tree = tree_builder.build_empty_tree(friendly_name=current_tree_name, description="Empty tree created")
+
+        # Push the tree using PushManager
+        push_manager = PushManager(tree=current_tree)
+        push_manager.push()
 
         # Generate visualization
-        visualization = f"{tree_name}\n|-- (empty root node)"
+        visualization = f"{current_tree_name}\n|-- (empty root node)"
 
         return {
-            "message": f"Empty tree '{tree_name}' created successfully.",
-            "tree_structure": visualization
+            "message": f"Empty tree '{current_tree_name}' created and pushed successfully.",
+            "tree_structure": visualization,
         }
     except Exception as e:
-        return {"detail": f"Failed to create empty tree: {e}"}
+        return {"detail": f"Failed to create and push empty tree: {e}"}
         
 @app.get("/search_tree/")
-async def search_tree(tree_name: str = Query(...)):
+async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(...)):
     try:
-        builder = TreeBuilder(workbook="Your Workbook Name")
-        tree = builder.search_tree_by_name(tree_name)  # Assuming this function exists
-        if not tree:
-            return {"message": f"Tree '{tree_name}' not found.", "tree_structure": None}
+        # Initialize TreeModifier and load the tree
+        tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
 
-        tree_structure = tree.visualize()
-        return {"message": "Tree found.", "tree_structure": tree_structure}
+        # Capture the visualization output from CLI
+        visualize_output = io.StringIO()
+        with redirect_stdout(visualize_output):
+            tree_modifier.visualize_tree()
+        visualization = visualize_output.getvalue()
+
+        return {
+            "message": f"Tree '{tree_name}' found and visualized successfully.",
+            "tree_structure": visualization.strip()
+        }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to search tree: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to search and visualize tree: {e}")
     
 @app.post("/push_tree/")
 async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str = Body(..., embed=True)):
@@ -173,3 +185,23 @@ async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str =
     except Exception as e:
         print(f"Error in push_tree: {e}")  # Log the error for debugging
         raise HTTPException(status_code=500, detail=f"Failed to push tree: {e}")
+    
+@app.get("/visualize_tree/")
+async def visualize_tree():
+    try:
+        global current_tree, current_tree_name
+        if current_tree is None:
+            raise HTTPException(status_code=404, detail="No tree loaded to visualize.")
+
+        # Capture the visualization output from CLI
+        visualize_output = io.StringIO()
+        with redirect_stdout(visualize_output):
+            current_tree.visualize()
+        visualization = visualize_output.getvalue()
+
+        return {
+            "message": f"Tree '{current_tree_name}' visualized successfully.",
+            "tree_structure": visualization.strip()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to visualize tree: {e}")
