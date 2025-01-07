@@ -385,60 +385,72 @@ document.getElementById("set-parent-paths").addEventListener("click", async () =
 });
 
 // Generate Lookup
-document.getElementById("generate-lookup").addEventListener("click", async () => {
-    const outputFile = document.getElementById("output-file").value;
+// document.getElementById("generate-lookup").addEventListener("click", async () => {
+//     const outputFile = document.getElementById("output-file").value;
 
-    try {
-        const response = await fetch("http://127.0.0.1:8000/generate_lookup/", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ output_file: outputFile }),
-        });
+//     try {
+//         const response = await fetch("http://127.0.0.1:8000/generate_lookup/", {
+//             method: "POST",
+//             headers: { "Content-Type": "application/json" },
+//             body: JSON.stringify({ output_file: outputFile }),
+//         });
 
-        const result = await response.json();
-        alert(result.message);
-    } catch (error) {
-        console.error("Error generating lookup:", error);
-        alert("Failed to generate lookup.");
-    }
-});
+//         const result = await response.json();
+//         alert(result.message);
+//     } catch (error) {
+//         console.error("Error generating lookup:", error);
+//         alert("Failed to generate lookup.");
+//     }
+// });
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded and parsed.");
 
-    // Add event listener for control selector
+    // Log dropdown element
     const controlSelector = document.getElementById("control-selector");
-    if (controlSelector) {
+    console.log("Dropdown element:", controlSelector);
+
+    // Log control sections
+    const assetTreeControls = document.getElementById("asset-tree-controls");
+    const lookupControls = document.getElementById("lookup-controls");
+
+    console.log("Asset Tree Controls:", assetTreeControls);
+    console.log("Lookup Workflow Controls:", lookupControls);
+
+    if (controlSelector && assetTreeControls && lookupControls) {
+        console.log("Setting up dropdown listener.");
         controlSelector.addEventListener("change", (event) => {
             console.log("Dropdown value changed to:", event.target.value);
 
-            const assetTreeControls = document.getElementById("asset-tree-controls");
-            const lookupControls = document.getElementById("lookup-controls");
+            // Toggle visibility
+            assetTreeControls.style.display =
+                event.target.value === "asset-tree-controls" ? "block" : "none";
+            lookupControls.style.display =
+                event.target.value === "lookup-controls" ? "block" : "none";
 
-            if (assetTreeControls && lookupControls) {
-                assetTreeControls.style.display =
-                    event.target.value === "asset-tree-controls" ? "block" : "none";
-                lookupControls.style.display =
-                    event.target.value === "lookup-controls" ? "block" : "none";
-                console.log(`Switched to: ${event.target.value}`);
-            } else {
-                console.error("Control sections not found in the DOM.");
-            }
+            console.log(`Switched to: ${event.target.value}`);
         });
+
+        // Set initial visibility
+        assetTreeControls.style.display = "block";
+        lookupControls.style.display = "none";
+        console.log("Initial visibility set.");
     } else {
-        console.error("Control selector not found in the DOM.");
+        console.error("Dropdown or control sections are missing in the DOM.");
     }
+});
 
     // Ensure initial visibility state
     const assetTreeControls = document.getElementById("asset-tree-controls");
     const lookupControls = document.getElementById("lookup-controls");
+    console.log("Setting initial visibility states...");
     if (assetTreeControls && lookupControls) {
         assetTreeControls.style.display = "block";
         lookupControls.style.display = "none";
+        console.log("Asset Tree Controls shown, Lookup Workflow hidden.");
     } else {
         console.error("Control sections not found in the DOM.");
-    }
-});
+    };
 
 document.getElementById("apply-user-specific").addEventListener("click", () => {
     const rowsInput = document.getElementById("rows-to-keep-input").value;
@@ -450,3 +462,4 @@ document.getElementById("apply-user-specific").addEventListener("click", () => {
     console.log("Rows to keep:", rowsToKeep);
     // Pass rowsToKeep to the `resolve_duplicates` fetch call.
 });
+

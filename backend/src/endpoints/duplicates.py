@@ -41,23 +41,27 @@ async def get_duplicates(
 @router.post("/resolve_duplicates/")
 async def resolve_duplicates_endpoint(
     file: UploadFile,
-    group_column: str = Form(...),
-    key_column: str = Form(...),
-    value_column: str = Form(...),
-    strategy: str = Form(...),
-    rows_to_keep: List[int] = Body(default=None)
+    group_column: str = Form(...),  # Group column name
+    key_column: str = Form(...),    # Key column name
+    value_column: str = Form(...),  # Value column name
+    strategy: str = Form(...),      # Duplicate resolution strategy
+    rows_to_keep: List[int] = Body(default=None),  # Rows to keep for 'user_specific'
 ):
     try:
+        # Save the uploaded file temporarily
         file_path = f"./uploaded_files/{file.filename}"
         with open(file_path, "wb") as f:
             f.write(await file.read())
 
+        # Load the CSV data
         data = pd.read_csv(file_path)
+
+        # Validate required columns
         for column in [group_column, key_column, value_column]:
             if column not in data.columns:
                 raise ValueError(f"Column '{column}' not found in the uploaded CSV.")
 
-        resolver = None
+        # Select the resolution strategy
         if strategy == "keep_first":
             resolver = DuplicateResolver(KeepFirstStrategy())
         elif strategy == "keep_last":
@@ -69,17 +73,63 @@ async def resolve_duplicates_endpoint(
                 raise ValueError("Rows to keep must be specified for 'user_specific' strategy.")
             resolver = DuplicateResolver(UserSpecificStrategy(rows_to_keep))
         else:
-            raise ValueError(f"Invalid strategy: {strategy}")
+            raise ValueError(f"Invalid strategy provided: {strategy}")
 
+        # Group and resolve duplicates
         grouped_data = data.groupby(group_column)
-        resolved_frames = []
-        for _, group in grouped_data:
-            resolved_frames.append(resolver.resolve_group(group, key_column=key_column))
+        resolved_data_frames = []
+        for group_name, group in grouped_data:
+            resolved_group = resolver.resolve_group(group, group_name=group_name, key_column=key_column)
+            resolved_data_frames.append(resolved_group)
 
-        resolved_data = pd.concat(resolved_frames)
-        resolved_file_path = f"./output/resolved_{file.filename}"
+        # Combine the resolved data
+        resolved_data = pd.concat(resolved_data_frames)
+
+        # Save the resolved data to resolved_data.csv
+        resolved_file_path = "./output/resolved_data.csv"
         resolved_data.to_csv(resolved_file_path, index=False)
 
-        return {"message": "Duplicates resolved successfully.", "resolved_file": resolved_file_path}
+        # Return success response with the next step instructions
+        return {
+            "message": f"Duplicates resolved successfully. File saved as {resolved_file_path}.",
+            "next_step": "Specify Parent Paths for groups to continue."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/generate_lookup/")
+async def generate_lookup(output_file: str = Form(...)):
+    try:
+        # Read resolved data from resolved_data.csv
+        resolved_file_path = "./output/resolved_data.csv"
+        if not os.path.exists(resolved_file_path):
+            raise ValueError("Resolved data file not found. Resolve duplicates first.")
+
+        data = pd.read_csv(resolved_file_path)
+
+        # Group data and generate lookup strings
+        grouped_data = data.groupby("Group")
+        lookup_output = []
+        for group, group_data in grouped_data:
+            table = [[row["Key"], row["Value"]] for _, row in group_data.iterrows()]
+            formula_parts = [f"['{k}', '{v}']" for k, v in table]
+            formula = f"[{', '.join(formula_parts)}]"
+            parent_path = group_data["Parent Path"].iloc[0] if "Parent Path" in group_data.columns else ""
+
+            lookup_output.append({
+                "Name": f"{group}_LookupString",
+                "Formula": formula,
+                "Formula Parameters": "{}",
+                "Parent Path": parent_path,
+            })
+
+        # Save to lookup_output.csv
+        output_path = f"./output/{output_file}"
+        pd.DataFrame(lookup_output).to_csv(output_path, index=False)
+
+        return {
+            "message": f"Lookup file '{output_file}' created successfully.",
+            "output_file": output_path,
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
