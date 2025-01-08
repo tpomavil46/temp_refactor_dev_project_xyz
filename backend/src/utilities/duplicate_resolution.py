@@ -38,6 +38,10 @@ class DuplicateResolver:
 
         print(f"\nResolving duplicates for group: {group_name}")
         print(duplicates[[key_column]])
+        
+        print(f"Group Name: {group_name}")
+        print(f"Duplicates detected: {len(duplicates)}")
+        # print(f"Resolved group size: {len(resolved_group)}")
 
         resolved_group = self.strategy.resolve(group, key_column)
         return resolved_group

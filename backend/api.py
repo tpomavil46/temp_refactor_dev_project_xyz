@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request, File, APIRouter,Form
+from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request,File
 from backend.router import router
 from backend.src.endpoints.duplicates import router as duplicates_router
 from starlette.requests import Request
@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import os
 import sys
 import pandas as pd
+# from seeq.spy.assets import Tree
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
@@ -15,17 +16,8 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "src")))
 from backend.src.managers.tree_builder import TreeBuilder
 from backend.src.managers.tree_modifier import TreeModifier
 from backend.src.managers.push_manager import PushManager
-from backend.src.utilities.duplicate_resolution import (
-    DuplicateResolver,
-    KeepFirstStrategy,
-    KeepLastStrategy,
-    RemoveAllStrategy,
-)
 import io
 from contextlib import redirect_stdout
-import json
-from seeq.spy.assets import Tree
-from typing import List
 from backend.router import router
 
 app = FastAPI()
@@ -46,6 +38,27 @@ app.mount("/static", StaticFiles(directory="frontend"), name="static")
 @app.get("/")
 async def serve_frontend():
     return FileResponse(os.path.join("frontend", "index.html"))
+
+UPLOAD_DIR = "./uploaded_files"  # Directory to store uploaded files
+os.makedirs(UPLOAD_DIR, exist_ok=True)  # Ensure the directory exists
+
+@app.post("/upload_raw_csv/")
+async def upload_raw_csv(file: UploadFile = File(...)):
+    """
+    Endpoint to upload and validate a raw CSV file.
+    """
+    try:
+        # Save the file to the `uploaded_files/` directory
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        # Validate the file (ensure it's a readable CSV)
+        pd.read_csv(file_path)  # This will raise an error if not a valid CSV
+        return {"message": f"File '{file.filename}' uploaded successfully to {UPLOAD_DIR}."}
+    except Exception as e:
+        print(f"Error uploading raw CSV: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to upload raw CSV: {str(e)}")
 
 @app.post("/upload_csv/")
 async def upload_csv(file: UploadFile):
@@ -232,139 +245,3 @@ async def visualize_tree():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to visualize tree: {e}")
-    
-# Lookup string generation section ---------------------------------------------------
-
-UPLOAD_DIR = "./uploaded_files"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-@app.post("/upload_raw_csv/")
-async def upload_raw_csv(file: UploadFile = File(...)):
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
-    with open(file_path, "wb") as buffer:
-        buffer.write(await file.read())
-
-    # Basic validation of the uploaded CSV
-    try:
-        pd.read_csv(file_path)  # Ensure it's readable
-        return {"message": f"File '{file.filename}' uploaded successfully."}
-    except Exception as e:
-        os.remove(file_path)  # Clean up invalid files
-        return {"message": f"Error processing file: {e}"}
-
-resolve_duplicates = APIRouter()
-
-@resolve_duplicates.post("/resolve_duplicates/")
-async def resolve_duplicates_endpoint(
-    file: UploadFile,
-    group_column: str = Form(...),  # Group column name
-    key_column: str = Form(...),    # Key column name
-    value_column: str = Form(...),  # Value column name
-    strategy: str = Form(...),      # Duplicate resolution strategy
-    rows_to_keep: List[int] = Body(default=None),  # Rows to keep for 'user_specific'
-):
-    try:
-        # Log incoming data for debugging
-        print(f"Received strategy: {strategy}")
-        print(f"Received rows_to_keep: {rows_to_keep}")
-
-        # Save the uploaded file temporarily
-        file_path = f"./uploaded_files/{file.filename}"
-        with open(file_path, "wb") as f:
-            f.write(await file.read())
-
-        # Load the CSV data
-        data = pd.read_csv(file_path)
-
-        # Validate required columns
-        for column in [group_column, key_column]:
-            if column not in data.columns:
-                raise ValueError(f"Column '{column}' not found in the uploaded CSV.")
-
-        # Select the resolution strategy
-        if strategy == "keep_first":
-            resolver = DuplicateResolver(KeepFirstStrategy())
-        elif strategy == "keep_last":
-            resolver = DuplicateResolver(KeepLastStrategy())
-        elif strategy == "remove_all":
-            resolver = DuplicateResolver(RemoveAllStrategy())
-        elif strategy == "user_specific":
-            if not rows_to_keep:
-                raise ValueError("Rows to keep must be specified for 'user_specific' strategy.")
-            resolver = DuplicateResolver(UserSpecificStrategy(rows_to_keep))
-        else:
-            raise ValueError(f"Invalid strategy provided: {strategy}")
-
-        # Group and resolve duplicates
-        grouped_data = data.groupby(group_column)
-        resolved_data_frames = []
-        for group_name, group in grouped_data:
-            resolved_group = resolver.resolve_group(group, group_name=group_name, key_column=key_column)
-            resolved_data_frames.append(resolved_group)
-
-        # Combine the resolved data
-        resolved_data = pd.concat(resolved_data_frames)
-
-        # Save the resolved data
-        resolved_file_path = f"./output/resolved_{file.filename}"
-        resolved_data.to_csv(resolved_file_path, index=False)
-
-        return {
-            "message": "Duplicates resolved successfully.",
-            "resolved_file": resolved_file_path,
-        }
-    except Exception as e:
-        print(f"Error in resolve_duplicates_endpoint: {e}")  # Log the error
-        raise HTTPException(status_code=500, detail=str(e))
-
-class ParentPathsRequest(BaseModel):
-    parent_paths: dict  # { "Group1": "Path1", "Group2": "Path2" }
-
-@app.post("/set_parent_paths/")
-async def set_parent_paths(request: ParentPathsRequest):
-    resolved_path = os.path.join(UPLOAD_DIR, "resolved_data.csv")
-    if not os.path.exists(resolved_path):
-        return {"message": "Resolved data file not found. Resolve duplicates first."}
-
-    data = pd.read_csv(resolved_path)
-    parent_paths = request.parent_paths
-
-    # Add a "Parent Path" column based on group names
-    data["Parent Path"] = data["Group"].map(parent_paths)
-    data.to_csv(resolved_path, index=False)
-    return {"message": "Parent paths assigned successfully."}
-
-class GenerateLookupRequest(BaseModel):
-    output_file: str
-
-@app.post("/generate_lookup/")
-async def generate_lookup(request: GenerateLookupRequest):
-    resolved_path = os.path.join(UPLOAD_DIR, "resolved_data.csv")
-    if not os.path.exists(resolved_path):
-        return {"message": "Resolved data file not found. Ensure duplicates are resolved and parent paths are set."}
-
-    data = pd.read_csv(resolved_path)
-
-    # Group data and generate lookup string
-    grouped_data = data.groupby("Group")
-    lookup_output = []
-    for group, group_data in grouped_data:
-        table = [[str(row["Key"]), str(row["Value"])] for _, row in group_data.iterrows()]
-        formula_parts = [f"['{k}', '{v}']" for k, v in table]
-        formula = f"[{', '.join(formula_parts)}]"
-        parent_path = group_data["Parent Path"].iloc[0]
-
-        lookup_output.append({
-            "Name": f"{group}_LookupString",
-            "Formula": formula,
-            "Formula Parameters": "{}",
-            "Parent Path": parent_path,
-        })
-
-    output_path = os.path.join(UPLOAD_DIR, request.output_file)
-    with open(output_path, "w", newline="") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=["Name", "Formula", "Formula Parameters", "Parent Path"])
-        writer.writeheader()
-        writer.writerows(lookup_output)
-
-    return {"message": f"Lookup file '{request.output_file}' created successfully.", "output_file": request.output_file}

@@ -1,3 +1,5 @@
+// Load this script in the HTML file to enable the frontend functionality.
+
 console.log("app.js loaded successfully");
 
 // Track the current tree state
@@ -308,7 +310,6 @@ function populateDuplicatesTable(duplicatesData) {
     document.getElementById("duplicates-modal").style.display = "block";
 }
 
-// Fetch duplicates and display in modal
 document.getElementById("resolve-duplicates").addEventListener("click", async () => {
     const groupColumn = document.getElementById("group-column").value.trim();
     const keyColumn = document.getElementById("key-column").value.trim();
@@ -319,8 +320,14 @@ document.getElementById("resolve-duplicates").addEventListener("click", async ()
         return;
     }
 
+    const rawCsvFile = document.getElementById("raw-csv").files[0];
+    if (!rawCsvFile) {
+        alert("Please upload a raw CSV file before resolving duplicates.");
+        return;
+    }
+
     const formData = new FormData();
-    formData.append("file", document.getElementById("raw-csv").files[0]);
+    formData.append("file", rawCsvFile);
     formData.append("group_column", groupColumn);
     formData.append("key_column", keyColumn);
     formData.append("value_column", valueColumn);
@@ -344,64 +351,46 @@ document.getElementById("resolve-duplicates").addEventListener("click", async ()
     }
 });
 
-// Submit selected rows
 document.getElementById("submit-selected-rows").addEventListener("click", async () => {
-    const selectedRows = Array.from(document.querySelectorAll("#duplicates-table-body input[type='checkbox']:checked")).map(
-        (checkbox) => parseInt(checkbox.value)
-    );
+    const selectedRows = Array.from(
+        document.querySelectorAll("#duplicates-table-body input[type='checkbox']:checked")
+    ).map((checkbox) => parseInt(checkbox.value));
 
     if (selectedRows.length === 0) {
-        alert("Please select at least one row to keep.");
-        return;
+        alert("No rows selected. Keeping all rows.");
     }
 
-    alert("Row selection saved successfully."); // Placeholder for further logic
-});
+    const groupColumn = document.getElementById("group-column").value.trim();
+    const keyColumn = document.getElementById("key-column").value.trim();
+    const valueColumn = document.getElementById("value-column").value.trim();
 
-// Set Parent Paths
-document.getElementById("set-parent-paths").addEventListener("click", async () => {
-    const parentPaths = document.getElementById("parent-paths").value
-        .split("\n")
-        .reduce((acc, line) => {
-            const [group, path] = line.split(":").map((s) => s.trim());
-            if (group && path) acc[group] = path;
-            return acc;
-        }, {});
+    const formData = new FormData();
+    formData.append("file", document.getElementById("raw-csv").files[0]);
+    formData.append("group_column", groupColumn);
+    formData.append("key_column", keyColumn);
+    formData.append("value_column", valueColumn);
+    formData.append("rows_to_remove", JSON.stringify(selectedRows));
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/set_parent_paths/", {
+        const response = await fetch("http://127.0.0.1:8000/duplicates/resolve_duplicates/", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(parentPaths),
+            body: formData,
         });
 
         const result = await response.json();
-        alert(result.message);
-        toggleVisibility("create-lookup-section", true);
+        if (response.ok) {
+            alert(result.message);
+
+            // Trigger display of parent path inputs
+            await displayParentPathInputs(); // Ensure the parent paths section is populated
+        } else {
+            alert(result.detail || "Error resolving duplicates.");
+        }
     } catch (error) {
-        console.error("Error setting parent paths:", error);
-        alert("Failed to set parent paths.");
+        console.error("Error resolving duplicates:", error);
+        alert("Failed to resolve duplicates. Check the console for details.");
     }
 });
-
-// Generate Lookup
-// document.getElementById("generate-lookup").addEventListener("click", async () => {
-//     const outputFile = document.getElementById("output-file").value;
-
-//     try {
-//         const response = await fetch("http://127.0.0.1:8000/generate_lookup/", {
-//             method: "POST",
-//             headers: { "Content-Type": "application/json" },
-//             body: JSON.stringify({ output_file: outputFile }),
-//         });
-
-//         const result = await response.json();
-//         alert(result.message);
-//     } catch (error) {
-//         console.error("Error generating lookup:", error);
-//         alert("Failed to generate lookup.");
-//     }
-// });
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM fully loaded and parsed.");
@@ -438,6 +427,9 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("Dropdown or control sections are missing in the DOM.");
     }
+
+    // Attach listener to "Set Parent Paths" button (in case not dynamically attached)
+    attachSetParentPathsListener();
 });
 
     // Ensure initial visibility state
@@ -463,3 +455,167 @@ document.getElementById("apply-user-specific").addEventListener("click", () => {
     // Pass rowsToKeep to the `resolve_duplicates` fetch call.
 });
 
+async function fetchLookupNames() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/fetch_lookup_names/");
+        if (!response.ok) {
+            throw new Error("Failed to fetch lookup string names.");
+        }
+        const data = await response.json();
+        return data.names; // Assume backend returns { names: [...] }
+    } catch (error) {
+        console.error(error);
+        alert("Failed to fetch lookup string names.");
+        return [];
+    }
+}
+
+// Display inputs for setting parent paths
+async function displayParentPathInputs() {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/duplicates/names/");
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch lookup string names. Status: ${response.status}`);
+        }
+
+        const { lookup_names } = await response.json();
+        if (lookup_names.length === 0) {
+            alert("No lookup strings available. Ensure duplicates are resolved first.");
+            return;
+        }
+
+        const parentPathSection = document.getElementById("parent-path-section");
+        parentPathSection.style.display = "block"; // Ensure section is visible
+        const parentPathsDiv = document.getElementById("parent-paths-section");
+        parentPathsDiv.innerHTML = ""; // Clear existing fields
+
+        lookup_names.forEach((name) => {
+            const label = document.createElement("label");
+            label.textContent = `Parent Path for ${name}:`;
+            const input = document.createElement("input");
+            input.type = "text";
+            input.id = `parent-path-${name}`;
+            input.placeholder = `Enter Parent Path for ${name}`;
+            parentPathsDiv.appendChild(label);
+            parentPathsDiv.appendChild(input);
+        });
+
+        // Ensure the "Set Parent Paths" button is visible
+        document.getElementById("set-parent-paths").style.display = "inline-block";
+    } catch (error) {
+        console.error("Error displaying Parent Path inputs:", error);
+        alert("Failed to fetch lookup string names. Check the console for details.");
+    }
+}
+
+document.getElementById("set-parent-paths").addEventListener("click", async () => {
+    const button = document.getElementById("set-parent-paths");
+
+    try {
+        // Disable the button to prevent duplicate submissions
+        button.disabled = true;
+
+        const parentPaths = {};
+        const parentPathsDiv = document.getElementById("parent-paths-section");
+        const inputs = parentPathsDiv.querySelectorAll("input");
+
+        inputs.forEach((input) => {
+            const name = input.id.replace("parent-path-", "");
+            parentPaths[name] = input.value.trim();
+        });
+
+        const groupColumn = document.getElementById("group-column").value.trim();
+        const keyColumn = document.getElementById("key-column").value.trim();
+        const valueColumn = document.getElementById("value-column").value.trim();
+
+        // Ensure required fields are not empty
+        if (!groupColumn || !keyColumn || !valueColumn || Object.keys(parentPaths).length === 0) {
+            alert("All fields and parent paths are required.");
+            return;
+        }
+
+        const payload = {
+            parent_paths: parentPaths,
+            group_column: groupColumn,
+            key_column: keyColumn,
+            value_column: valueColumn,
+        };
+
+        console.log("Payload being sent:", JSON.stringify(payload));
+
+        const response = await fetch("http://127.0.0.1:8000/duplicates/set_parent_paths/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message);
+        } else {
+            alert(result.detail || "Failed to set Parent Paths.");
+        }
+    } catch (error) {
+        console.error("Error setting Parent Paths:", error);
+        alert("An error occurred while setting Parent Paths.");
+    } finally {
+        // Re-enable the button after the request is complete
+        button.disabled = false;
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const setParentPathsButton = document.getElementById("set-parent-paths");
+    if (setParentPathsButton) {
+        console.log("Set Parent Paths button exists in the DOM!");
+    } else {
+        console.error("Set Parent Paths button is NOT in the DOM!");
+    }
+});
+
+function attachSetParentPathsListener() {
+    const setParentPathsButton = document.getElementById("set-parent-paths");
+    if (setParentPathsButton) {
+        console.log("Attaching click event to Set Parent Paths button.");
+        setParentPathsButton.addEventListener("click", async () => {
+            console.log("Set Parent Paths button clicked!");
+
+            try {
+                const parentPaths = {};
+                const parentPathsDiv = document.getElementById("parent-paths-section");
+                const inputs = parentPathsDiv.querySelectorAll("input");
+
+                inputs.forEach((input) => {
+                    const name = input.id.replace("parent-path-", "");
+                    parentPaths[name] = input.value.trim();
+                });
+
+                const response = await fetch("http://127.0.0.1:8000/duplicates/set_parent_paths/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ parent_paths: parentPaths }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    document.getElementById("create-lookup-section").style.display = "block";
+                } else {
+                    alert(result.detail || "Failed to set Parent Paths.");
+                }
+            } catch (error) {
+                console.error("Error setting Parent Paths:", error);
+                alert("An error occurred while setting Parent Paths.");
+            }
+        });
+    } else {
+        console.error("Set Parent Paths button not found in the DOM!");
+    }
+}
+
+// Call this function after making the button visible
+document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM fully loaded.");
+    attachSetParentPathsListener(); // Initial attachment
+});
