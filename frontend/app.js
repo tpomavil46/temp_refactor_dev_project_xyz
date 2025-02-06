@@ -227,6 +227,44 @@ document.getElementById("search-tree").addEventListener("click", async () => {
     }
 });
 
+document.getElementById("insert-item").addEventListener("click", async () => {
+    const treeName = document.getElementById("tree-name").value.trim();
+    const workbookName = document.getElementById("workbook-name").value.trim();
+    const fileInput = document.getElementById("csv-file");
+
+    if (!treeName || !workbookName) {
+        alert("Please provide both tree name and workbook name.");
+        return;
+    }
+
+    if (!fileInput.files.length) {
+        alert("Please upload a CSV file.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("tree_name", treeName);
+    formData.append("workbook_name", workbookName);
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/modify_tree/", {
+            method: "POST",
+            body: formData,
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+            alert(result.message);
+        } else {
+            alert(result.detail || "Failed to modify the tree.");
+        }
+    } catch (error) {
+        console.error("Error modifying the tree:", error);
+        alert("An error occurred while modifying the tree.");
+    }
+});
+
 // Lookup Workflow ------------------------------------------------------------
 // Utility function for toggling visibility
 function toggleVisibility(elementId, show) {

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request,File
+from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request,File, Form
 from backend.router import router
 from backend.src.endpoints.duplicates import router as duplicates_router
 from starlette.requests import Request
@@ -245,3 +245,51 @@ async def visualize_tree():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to visualize tree: {e}")
+    
+@router.post("/modify_tree/")
+async def modify_tree(
+    file: UploadFile,
+    tree_name: str = Form(...),
+    workbook_name: str = Form(...),
+):
+    """
+    Endpoint to modify an existing tree using a CSV file.
+    Handles inserting items such as lookup strings or other tree modifications.
+    """
+    try:
+        # Save the uploaded file
+        file_path = f"./uploaded_files/{file.filename}"
+        os.makedirs("./uploaded_files", exist_ok=True)
+        with open(file_path, "wb") as buffer:
+            buffer.write(await file.read())
+
+        # Load the CSV data
+        data = pd.read_csv(file_path)
+
+        # Detect lookup strings or other modification types based on CSV structure
+        if "Parent Path" in data.columns and "Name" in data.columns:
+            print("Detected item insertion CSV. Proceeding with item insertion.")
+            # Load the existing tree
+            tree = Tree.load(workbook=workbook_name, tree=tree_name)
+
+            for _, row in data.iterrows():
+                parent_path = row["Parent Path"]
+                name = row["Name"]
+                formula = row.get("Formula", "")
+                formula_params = row.get("Formula Parameters", "{}")
+
+                item_definition = {
+                    "Name": name,
+                    "Formula": formula,
+                    "Formula Parameters": eval(formula_params),  # Convert string to dictionary
+                }
+
+                # Insert into the tree
+                tree.insert(children=[item_definition], parent=parent_path)
+
+            tree.push()  # Push updates back to Seeq
+            return {"message": f"Items from '{file.filename}' inserted successfully."}
+        else:
+            raise ValueError("Unsupported CSV format. Ensure it contains the required columns.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
