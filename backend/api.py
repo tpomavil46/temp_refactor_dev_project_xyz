@@ -191,56 +191,84 @@ async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(..
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Failed to search and visualize tree: {e}")
     
+# @app.post("/push_tree/")
+# async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str = Body(..., embed=True)):
+#     global current_tree, current_workbook_name, current_tree_name
+
+#     try:
+#         # Debugging logs
+#         print(f"Received tree_name: {tree_name}")
+#         print(f"Received workbook_name: {workbook_name}")
+#         print(f"Current tree: {current_tree}")
+#         print(f"Current workbook_name: {current_workbook_name}")
+#         print(f"Current tree_name: {current_tree_name}")
+
+#         # Validate input
+#         if not tree_name or not workbook_name:
+#             raise HTTPException(status_code=400, detail="⚠️ Tree name and workbook name are required.")
+
+#         # Decide which tree to push
+#         if current_tree and current_tree_name == tree_name and current_workbook_name == workbook_name:
+#             # Use the current global tree
+#             print("🌲 Using the currently loaded tree for pushing.")
+#             tree_to_push = current_tree
+#         else:
+#             # Attempt to load the existing tree
+#             print("🌱 Rebuilding the tree from scratch.")
+#             tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
+#             tree_to_push = tree_modifier.tree
+#             current_tree = tree_to_push  # Update global state
+#             current_tree_name = tree_name
+#             current_workbook_name = workbook_name
+
+#         # Push the tree using PushManager
+#         push_manager = PushManager(tree=tree_to_push)
+#         push_manager.push()
+
+#         return {"message": f"🌲 Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'."}
+#     except ValueError as e:
+#         print(f"Tree loading error: {e}")
+#         raise HTTPException(status_code=400, detail=f"❌ Tree loading failed: {e}")
+#     except Exception as e:
+#         print(f"Error in push_tree: {e}")  # Log the error for debugging
+#         raise HTTPException(status_code=500, detail=f"❌ Failed to push tree: {e}")
+
 @app.post("/push_tree/")
-async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str = Body(..., embed=True)):
-    global current_tree, current_workbook_name, current_tree_name
+async def push_tree(tree_name: str, workbook_name: str):
+    global current_tree, current_tree_name
 
     try:
-        # Debugging logs
-        print(f"Received tree_name: {tree_name}")
-        print(f"Received workbook_name: {workbook_name}")
-        print(f"Current tree: {current_tree}")
-        print(f"Current workbook_name: {current_workbook_name}")
-        print(f"Current tree_name: {current_tree_name}")
+        # Initialize tree modifier
+        tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
 
-        # Validate input
-        if not tree_name or not workbook_name:
-            raise HTTPException(status_code=400, detail="⚠️ Tree name and workbook name are required.")
+        # Push the updated tree
+        tree_modifier.push_tree()
 
-        # Decide which tree to push
-        if current_tree and current_tree_name == tree_name and current_workbook_name == workbook_name:
-            # Use the current global tree
-            print("🌲 Using the currently loaded tree for pushing.")
-            tree_to_push = current_tree
-        else:
-            # Attempt to load the existing tree
-            print("🌱 Rebuilding the tree from scratch.")
-            tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
-            tree_to_push = tree_modifier.tree
-            current_tree = tree_to_push  # Update global state
-            current_tree_name = tree_name
-            current_workbook_name = workbook_name
+        # ✅ UPDATE GLOBAL TREE so it can be visualized
+        current_tree = tree_modifier
+        current_tree_name = tree_name
 
-        # Push the tree using PushManager
-        push_manager = PushManager(tree=tree_to_push)
-        push_manager.push()
-
-        return {"message": f"🌲 Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'."}
-    except ValueError as e:
-        print(f"Tree loading error: {e}")
-        raise HTTPException(status_code=400, detail=f"❌ Tree loading failed: {e}")
+        return {"message": f"✅ Tree '{tree_name}' successfully pushed!"}
+    
     except Exception as e:
-        print(f"Error in push_tree: {e}")  # Log the error for debugging
         raise HTTPException(status_code=500, detail=f"❌ Failed to push tree: {e}")
     
 @app.get("/visualize_tree/")
-async def visualize_tree():
+async def visualize_tree(tree_name: str = Query(...), workbook_name: str = Query(...)):
     try:
         global current_tree, current_tree_name
+
+        # 🔥 **Check if `current_tree` is missing, reload it**
+        if current_tree is None or current_tree_name != tree_name:
+            print("⚠️ No tree in memory. Attempting to reload from Seeq...")
+            tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
+            current_tree = tree_modifier.tree
+            current_tree_name = tree_name  # Track current tree name
+
         if current_tree is None:
             raise HTTPException(status_code=404, detail="⚠️ No tree loaded to visualize.")
 
-        # Capture the visualization output from CLI
+        # Capture visualization output
         visualize_output = io.StringIO()
         with redirect_stdout(visualize_output):
             current_tree.visualize()

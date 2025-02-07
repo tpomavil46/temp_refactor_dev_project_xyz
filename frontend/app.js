@@ -341,7 +341,8 @@ async function updateTreeVisualization(treeName, workbookName) {
         console.log("✅ Visualization response:", result);
 
         if (!result.tree_structure) {
-            console.warn("⚠️ No tree structure returned. Something might be wrong.");
+            console.warn("⚠️ No tree structure returned. Check API response.");
+            return;
         }
 
         // Update UI
@@ -801,7 +802,7 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
 
     try {
         console.log(`📡 Sending lookup push request for Tree: ${treeName}, Workbook: ${workbookName}`);
-        
+
         const response = await fetch("http://127.0.0.1:8000/duplicates/push_lookup/", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -813,7 +814,12 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
         }
 
         const result = await response.json();
+        console.log("✅ Lookup Push Response:", result);
         alert(result.message);
+
+        // ✅ Call visualization update after successful push
+        updateTreeVisualization(treeName, workbookName);
+
     } catch (error) {
         console.error("Error pushing lookup data:", error);
         alert("Failed to push lookup data. Check the console for details.");
@@ -854,21 +860,21 @@ function attachApplyUserSpecificListener() {
 /** Attach All Event Listeners */
 function attachEventListeners() {
     const listeners = [
-        attachCreateTreeListener(),
-        attachCsvUploadListener(),
-        attachProcessCsvListener(),
-        attachPushTreeListener(),
-        attachVisualizeTreeListener(),
-        attachClearTreeListener(),
-        attachGenerateLookupListener(), 
-        attachSearchTreeListener(),
-        attachInsertItemListener(),
-        attachUploadRawCsvListener(),
-        attachResolveDuplicatesListener(),
-        attachSubmitSelectedRowsListener(),
-        attachSetParentPathsListener(),
-        attachApplyUserSpecificListener(),
-        setupControlToggle()
+        attachCreateTreeListener,
+        attachCsvUploadListener,
+        attachProcessCsvListener,
+        attachPushTreeListener,
+        attachVisualizeTreeListener,
+        attachClearTreeListener,
+        attachGenerateLookupListener, 
+        attachSearchTreeListener,
+        attachInsertItemListener,
+        attachUploadRawCsvListener,
+        attachResolveDuplicatesListener,
+        attachSubmitSelectedRowsListener,
+        attachSetParentPathsListener,
+        attachApplyUserSpecificListener,
+        setupControlToggle
     ];
 
     listeners.forEach((listener) => {

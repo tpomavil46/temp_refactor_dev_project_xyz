@@ -251,9 +251,7 @@ async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)
             parent_path = row["Parent Path"].strip()
             name = row["Name"].strip()
             
-            # ✅ Ensure formula is wrapped in triple quotes
             formatted_formula = f'"{row["Formula"]}"'  
-            
             formula_parameters = row.get("Formula Parameters", "{}")
 
             try:
@@ -264,7 +262,7 @@ async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)
 
             item_definition = {
                 "Name": name,
-                "Formula": formatted_formula,  # <-- ✅ Fix applied here
+                "Formula": formatted_formula,
                 "Formula Parameters": formula_parameters,
             }
 
@@ -276,6 +274,14 @@ async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)
         print("🚀 Pushing tree to Seeq...")
         tree_modifier.tree.push()
         print("✅ Lookup table successfully pushed!")
+
+        # 🔥 **FIX: Reload `current_tree` after push**
+        global current_tree, current_tree_name
+        tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)  # Reload tree from Seeq
+        current_tree = tree_modifier.tree  # Assign updated tree
+        current_tree_name = tree_name  # Track tree name
+        
+        print("✅ Tree successfully reloaded into memory after push.")
 
         return {"message": "Lookup table successfully pushed to Seeq."}
 
