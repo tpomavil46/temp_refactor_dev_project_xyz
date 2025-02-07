@@ -41,22 +41,23 @@ class LookupTableBuilder:
         rows = []
 
         for group_name, table in lookup_data.items():
-            # Manually construct the formula string to avoid excess escaping
-            formatted_formula = '"' + "[" + ", ".join([f"['{key}', '{value}']" for key, value in table]) + "]" + '"'
-            # Debugging output to verify construction
-            print(f"DEBUG: Writing formula for group '{group_name}': {formatted_formula}")
+            # Correct JSON dump, without additional escaping
+            formatted_formula = json.dumps(table, ensure_ascii=False)
+            
+            # Print the formula *before* writing it
+            print(f"🚨 DEBUG: About to save formula for '{group_name}': {formatted_formula}")
 
             rows.append({
                 "Name": group_name.replace(" ", "_") + "_LookupString",
-                "Formula": formatted_formula,
+                "Formula": f'"{formatted_formula}"',
                 "Formula Parameters": "{}",
                 "Parent Path": parent_paths.get(group_name, "Root Asset"),
             })
 
-        # Write to CSV
+        # Write CSV
         with open(output_file, mode="w", newline="", encoding="utf-8") as file:
-            writer = csv.DictWriter(file, fieldnames=fields)
+            writer = csv.DictWriter(file, fieldnames=fields, quoting=csv.QUOTE_MINIMAL)
             writer.writeheader()
             writer.writerows(rows)
 
-        print(f"Lookup CSV file '{output_file}' created successfully.")
+        print(f"✅ Lookup CSV file '{output_file}' created successfully.")

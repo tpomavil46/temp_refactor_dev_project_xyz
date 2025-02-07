@@ -54,6 +54,12 @@
                 <h2>Lookup Workflow</h2>
                 <div class="group">
                     <!-- Step 1: Upload Raw CSV -->
+                     <!-- Tree & Workbook Name Inputs (Needed for Lookup Push) -->
+                    <label for="tree-name">Tree Name:</label>
+                    <input type="text" id="tree-name" placeholder="Enter tree name">
+
+                    <label for="workbook-name">Workbook Name:</label>
+                    <input type="text" id="workbook-name" placeholder="Enter workbook name">
                     <label for="raw-csv">Upload Raw CSV:</label>
                     <input type="file" id="raw-csv" name="raw-csv" accept=".csv">
                     <button id="upload-raw-csv">Upload</button>
@@ -99,13 +105,11 @@
                         <button id="set-parent-paths">Set Parent Paths</button>
                     </div>
 
-                    <!-- Step 4: Create Lookup -->
-                    <!-- <div id="create-lookup-section" style="display: none;">
-                        <h3>Create Lookup Table</h3>
-                        <label for="lookup-output-file">Output File Name:</label>
-                        <input type="text" id="lookup-output-file" placeholder="Enter output file name (e.g., lookup_output.csv)">
-                        <button id="generate-lookup-btn">Generate Lookup</button>
-                    </div> -->
+                    <!-- Step 4: Push Lookup -->
+                    <div id="push-lookup-section" style="display: none;">
+                        <h3>Push Lookup Table</h3>
+                        <button id="push-lookup-btn">Push Lookup to Seeq</button>
+                    </div>
                 </div>
             </div>
         </div>

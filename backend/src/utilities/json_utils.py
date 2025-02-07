@@ -19,4 +19,4 @@ def parse_json_string(json_string: str):
     try:
         return json.loads(json_string)
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON string: {e}")
+        raise ValueError(f"❌ Invalid JSON string: {e}")

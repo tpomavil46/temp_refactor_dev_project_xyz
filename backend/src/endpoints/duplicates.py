@@ -14,6 +14,7 @@ from backend.src.utilities.duplicate_resolution import (
 )
 from backend.src.utilities.csv_parser import CSVHandler
 from backend.src.utilities.lookup_builder import LookupTableBuilder
+from backend.src.managers.tree_modifier import TreeModifier
 
 UPLOAD_DIR = "./output" # Directory to store uploaded files
 
@@ -35,10 +36,10 @@ async def upload_raw_csv(file: UploadFile = File(...)):
 
         # Validate the file (ensure it's a readable CSV)
         pd.read_csv(file_path)  # This will raise an error if not a valid CSV
-        return {"message": f"File '{file.filename}' uploaded successfully."}
+        return {"message": f"✅ File '{file.filename}' uploaded successfully."}
     except Exception as e:
-        print(f"Error uploading raw CSV: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to upload raw CSV: {str(e)}")
+        print(f"❌ Error uploading raw CSV: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to upload raw CSV: {str(e)}")
 
 # Endpoint to identify duplicates
 @router.post("/get_duplicates/")
@@ -56,7 +57,7 @@ async def get_duplicates(
         data = pd.read_csv(file_path)
         for column in [group_column, key_column, value_column]:
             if column not in data.columns:
-                raise ValueError(f"Column '{column}' not found in the uploaded CSV.")
+                raise ValueError(f"❌ Column '{column}' not found in the uploaded CSV.")
 
         duplicates = data[data.duplicated(subset=[group_column, key_column], keep=False)]
         duplicates_json = duplicates.to_dict(orient="records")
@@ -87,7 +88,7 @@ async def resolve_duplicates_endpoint(
         # Validate required columns
         for column in [group_column, key_column, value_column]:
             if column not in data.columns:
-                raise ValueError(f"Column '{column}' not found in the uploaded CSV.")
+                raise ValueError(f"❌ Column '{column}' not found in the uploaded CSV.")
 
         # Parse rows_to_remove if provided
         rows_to_remove = json.loads(rows_to_remove) if rows_to_remove else []
@@ -103,7 +104,7 @@ async def resolve_duplicates_endpoint(
         resolved_data.to_csv(resolved_file_path, index=False)
 
         return {
-            "message": "Duplicates resolved successfully. Resolved data saved.",
+            "message": "✅ Duplicates resolved successfully. Resolved data saved.",
             "resolved_file": resolved_file_path,
         }
     except Exception as e:
@@ -130,32 +131,32 @@ async def get_lookup_string_names():
     lookup_names = [f"{group.replace(' ', '_')}_LookupString" for group in data["Equipment_Desc"].unique()]
     return {"lookup_names": lookup_names}
 
-# # function to generate lookup strings
-# @router.post("/generate_lookup/")
-# async def generate_lookup(
-#     group_column: str = Form(...),
-#     key_column: str = Form(...),
-#     value_column: str = Form(...),
-#     output_file: str = Form(...)
-# ):
-#     resolved_path = os.path.join(UPLOAD_DIR, "resolved_data.csv")
-#     if not os.path.exists(resolved_path):
-#         return {"message": "Resolved data file not found. Ensure duplicates are resolved first."}
+# function to generate lookup strings
+@router.post("/generate_lookup/")
+async def generate_lookup(
+    group_column: str = Form(...),
+    key_column: str = Form(...),
+    value_column: str = Form(...),
+    output_file: str = Form(...)
+):
+    resolved_path = os.path.join(UPLOAD_DIR, "resolved_data.csv")
+    if not os.path.exists(resolved_path):
+        return {"message": "❌ Resolved data file not found. Ensure duplicates are resolved first."}
 
-#     # Load resolved data
-#     csv_handler = CSVHandler(resolved_path)
-#     resolved_data = csv_handler.load_csv()
+    # Load resolved data
+    csv_handler = CSVHandler(resolved_path)
+    resolved_data = csv_handler.load_csv()
 
-#     # Generate lookup table
-#     lookup_builder = LookupTableBuilder(group_column, key_column, value_column)
-#     lookup_data = lookup_builder.build(resolved_data)
+    # Generate lookup table
+    lookup_builder = LookupTableBuilder(group_column, key_column, value_column)
+    lookup_data = lookup_builder.build(resolved_data)
 
-#     # Save initial lookup output
-#     parent_paths = {group: "Set this path (i.e. Reactor Plant >> Reactor 1)" for group in lookup_data.keys()}  # Placeholder
-#     output_path = os.path.join(UPLOAD_DIR, output_file)
-#     lookup_builder.save_lookup_to_csv(lookup_data, parent_paths, output_path)
+    # Save initial lookup output
+    parent_paths = {f"{group.replace(' ', '_')}_LookupString": "Set this path (i.e. Reactor Plant >> Reactor 1)" for group in lookup_data.keys()}  # Ensure _LookupString is appended
+    output_path = os.path.join(UPLOAD_DIR, output_file)
+    lookup_builder.save_lookup_to_csv(lookup_data, parent_paths, output_path)
 
-#     return {"message": f"Lookup file '{output_file}' created successfully.", "output_file": output_file}
+    return {"message": f"✅ Lookup file '{output_file}' created successfully.", "output_file": output_file}
 
 class ParentPathsRequest(BaseModel):
     parent_paths: Dict[str, str]  # Example: {"GroupName_LookupString": "ParentPath"}
@@ -171,7 +172,7 @@ async def set_parent_paths(request: ParentPathsRequest):
     try:
         resolved_path = os.path.join(UPLOAD_DIR, "resolved_data.csv")
         if not os.path.exists(resolved_path):
-            raise HTTPException(status_code=404, detail="Resolved data file not found.")
+            raise HTTPException(status_code=404, detail="❌ Resolved data file not found.")
 
         # Load the resolved data
         data = pd.read_csv(resolved_path)
@@ -185,16 +186,16 @@ async def set_parent_paths(request: ParentPathsRequest):
             if column not in data.columns:
                 raise HTTPException(
                     status_code=422,
-                    detail=f"Column '{column}' not found in resolved data."
+                    detail=f"❌ Column '{column}' not found in resolved data."
                 )
 
         # Assign parent paths from the request
         parent_paths = request.parent_paths
         if not parent_paths:
-            raise HTTPException(status_code=400, detail="Parent paths are missing.")
+            raise HTTPException(status_code=400, detail="❌ Parent paths are missing.")
 
-        print("Parent Paths received:", parent_paths)
-        print("Received request payload:", request.dict())
+        print("✔️ Parent Paths received:", parent_paths)
+        print("✔️ Received request payload:", request.dict())
 
         # Generate lookup strings and assign parent paths
         lookup_builder = LookupTableBuilder(group_column, key_column, value_column)
@@ -206,8 +207,8 @@ async def set_parent_paths(request: ParentPathsRequest):
             normalized_name = f"{name.replace(' ', '_')}_LookupString"
             parent_path = parent_paths.get(normalized_name, "Root Asset")
             lookup_data.append({
-                "Name": name,
-                "Formula": f'{formula}',
+                "Name": normalized_name,
+                "Formula": str(formula).replace('"', "'"),
                 "Formula Parameters": "{}",
                 "Parent Path": parent_path,
             })
@@ -217,7 +218,67 @@ async def set_parent_paths(request: ParentPathsRequest):
         lookup_df = pd.DataFrame(lookup_data)
         lookup_df.to_csv(output_file, index=False)
 
-        return {"message": f"Lookup file created successfully and saved to {output_file}."}
+        return {"message": f"✅ Lookup file created successfully and saved to {output_file}."}
     except Exception as e:
-        print("Error during processing:", str(e))
+        print("❌ Error during processing:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/push_lookup/")
+async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)):
+    """
+    Pushes lookup_output.csv to the specified tree in Seeq.
+    """
+    try:
+        print(f"📌 Received request to push lookup. Tree: {tree_name}, Workbook: {workbook_name}")
+
+        lookup_file = os.path.join(UPLOAD_DIR, "lookup_output.csv")
+        if not os.path.exists(lookup_file):
+            print("❌ lookup_output.csv NOT FOUND!")
+            raise HTTPException(status_code=404, detail="❌ lookup_output.csv not found. Ensure it has been generated.")
+
+        print(f"✅ Found lookup_output.csv at: {lookup_file}")
+
+        # Load the lookup CSV
+        data = pd.read_csv(lookup_file)
+        print(f"📊 Loaded CSV with {len(data)} rows")
+
+        # Load the tree
+        tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
+        print("🌳 TreeModifier initialized.")
+
+        # Insert lookup items
+        for _, row in data.iterrows():
+            parent_path = row["Parent Path"].strip()
+            name = row["Name"].strip()
+            
+            # ✅ Ensure formula is wrapped in triple quotes
+            formatted_formula = f'"{row["Formula"]}"'  
+            
+            formula_parameters = row.get("Formula Parameters", "{}")
+
+            try:
+                formula_parameters = json.loads(formula_parameters) if formula_parameters.strip() else {}
+            except json.JSONDecodeError:
+                print(f"❌ Invalid JSON in Formula Parameters: {formula_parameters}")
+                raise HTTPException(status_code=400, detail="❌ Invalid JSON in Formula Parameters")
+
+            item_definition = {
+                "Name": name,
+                "Formula": formatted_formula,  # <-- ✅ Fix applied here
+                "Formula Parameters": formula_parameters,
+            }
+
+            print(f"➕ Inserting '{name}' under '{parent_path}' with formula: {formatted_formula}")
+
+            tree_modifier.tree.insert(children=[item_definition], parent=parent_path)
+    
+        # Push the tree to Seeq
+        print("🚀 Pushing tree to Seeq...")
+        tree_modifier.tree.push()
+        print("✅ Lookup table successfully pushed!")
+
+        return {"message": "Lookup table successfully pushed to Seeq."}
+
+    except Exception as e:
+        print(f"❌ ERROR pushing lookup table: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"❌ Error pushing lookup table: {str(e)}")

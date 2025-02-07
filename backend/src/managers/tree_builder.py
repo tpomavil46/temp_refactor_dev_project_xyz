@@ -23,7 +23,7 @@ class TreeBuilder:
         if not self.csv_file:
             raise ValueError("CSV file not provided.")
         self.metadata = pd.read_csv(self.csv_file)
-        print(f"CSV parsed successfully: {self.csv_file}")
+        print(f"✅ CSV parsed successfully: {self.csv_file}")
 
     def build_empty_tree(self, friendly_name: str, description: str):
         """
@@ -45,7 +45,7 @@ class TreeBuilder:
             friendly_name=friendly_name,
             description=description,
         )
-        print(f"Empty tree '{friendly_name}' created successfully.")
+        print(f"🌳 Empty tree '{friendly_name}' created successfully.")
         return self.tree
     
     def build_tree_from_csv(self, friendly_name: str, description: str):
@@ -70,7 +70,7 @@ class TreeBuilder:
                 friendly_name=friendly_name,
                 description=description,
             )
-            print(f"Tree '{friendly_name}' created successfully.")
+            print(f"🌳 Tree '{friendly_name}' created successfully.")
         except Exception as e:
             raise RuntimeError(f"Error creating tree: {e}")
 
@@ -85,10 +85,10 @@ class TreeBuilder:
             # Attempt to summarize the tree
             structure = self.tree.summarize()
             if not structure:
-                raise ValueError("Tree.summarize() returned an empty structure.")
+                raise ValueError("𐂷 Tree.summarize() returned an empty structure.")
             return structure
         except Exception as e:
-            print(f"Tree.summarize() failed: {e}")
+            print(f"❌ Tree.summarize() failed: {e}")
             # Use the fallback method
             return self._convert_tree_to_json()
 
@@ -131,5 +131,5 @@ class TreeBuilder:
     def get_push_manager(self):
         """Get a PushManager for the current tree."""
         if not self.tree:
-            raise ValueError("Tree is not built. Call 'build_empty_tree()' first.")
+            raise ValueError("❌ Tree is not built. Call 'build_empty_tree()' first.")
         return PushManager(self.tree)

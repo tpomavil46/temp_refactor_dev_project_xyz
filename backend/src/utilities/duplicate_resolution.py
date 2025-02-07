@@ -33,14 +33,14 @@ class DuplicateResolver:
         """Resolve duplicates within a single group."""
         duplicates = group[group.duplicated(subset=key_column, keep=False)]
         if duplicates.empty:
-            print(f"No duplicates found in group '{group_name}'.")
+            print(f"✅ No duplicates found in group '{group_name}'.")
             return group
 
-        print(f"\nResolving duplicates for group: {group_name}")
+        print(f"\n✅ Resolving duplicates for group: {group_name}")
         print(duplicates[[key_column]])
         
-        print(f"Group Name: {group_name}")
-        print(f"Duplicates detected: {len(duplicates)}")
+        print(f"→ Group Name: {group_name}")
+        print(f"⚠️ Duplicates detected: {len(duplicates)}")
         # print(f"Resolved group size: {len(resolved_group)}")
 
         resolved_group = self.strategy.resolve(group, key_column)

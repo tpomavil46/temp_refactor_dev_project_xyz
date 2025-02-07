@@ -39,7 +39,7 @@ def browse_file():
     root.withdraw()
     file_path = filedialog.askopenfilename(filetypes=[("CSV Files", "*.csv")])
     if not file_path:
-        raise ValueError("No file selected.")
+        raise ValueError("❌ No file selected.")
     return file_path
 
 def create_lookup_tables(resolved_csv_path):
@@ -53,9 +53,9 @@ def create_lookup_tables(resolved_csv_path):
     csv_handler = CSVHandler(resolved_csv_path)
     data = csv_handler.load_csv()
 
-    group_column = input("Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
-    key_column = input("Enter the column name for keys (e.g., PLC_Tag_Value): ").strip()
-    value_column = input("Enter the column name for values (e.g., Reason Desc): ").strip()
+    group_column = input("✔️ Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
+    key_column = input("✔️ Enter the column name for keys (e.g., PLC_Tag_Value): ").strip()
+    value_column = input("✔️ Enter the column name for values (e.g., Reason Desc): ").strip()
 
     builder = LookupTableBuilder(group_column, key_column, value_column)
     lookup_tables = builder.build(data)
@@ -63,12 +63,12 @@ def create_lookup_tables(resolved_csv_path):
     print("\nSpecify Parent Path for each group:")
     parent_paths = {}
     for group_name in lookup_tables.keys():
-        parent_path = input(f"Enter the Parent Path for group '{group_name}': ").strip()
+        parent_path = input(f"✔️ Enter the Parent Path for group '{group_name}': ").strip()
         parent_paths[group_name] = parent_path
 
     output_file = "lookup_strings_output.csv"
     LookupTableBuilder.save_lookup_to_csv(lookup_tables, parent_paths, output_file)
-    print(f"Lookup tables saved to '{output_file}'.")
+    print(f"✅ Lookup tables saved to '{output_file}'.")
 
 # Function to resolve duplicates in CSV
 def resolve_duplicates(csv_path):
@@ -76,10 +76,10 @@ def resolve_duplicates(csv_path):
     print("Starting duplicate resolution...")
     csv_handler = CSVHandler(csv_path)
     data = csv_handler.load_csv()
-    print("CSV loaded successfully.")
+    print("✅ CSV loaded successfully.")
 
-    group_column = input("Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
-    key_column = input("Enter the column name for identifying duplicates (e.g., PLC_Tag_Value): ").strip()
+    group_column = input("✔️ Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
+    key_column = input("✔️ Enter the column name for identifying duplicates (e.g., PLC_Tag_Value): ").strip()
 
     print("Choose a strategy for resolving duplicates:")
     print("1. Keep first occurrence")
@@ -95,11 +95,11 @@ def resolve_duplicates(csv_path):
     elif choice == "3":
         strategy = RemoveAllStrategy()
     elif choice == "4":
-        rows = input("Enter row numbers to keep (comma-separated, e.g., '0,2'): ")
+        rows = input("✔️ Enter row numbers to keep (comma-separated, e.g., '0,2'): ")
         rows_to_keep = [int(i.strip()) for i in rows.split(",")]
         strategy = UserSpecificStrategy(rows_to_keep)
     else:
-        print("Invalid choice. Defaulting to 'Keep First'.")
+        print("👀 Invalid choice. Defaulting to 'Keep First'.")
         strategy = KeepFirstStrategy()
 
     resolver = DuplicateResolver(strategy)
@@ -111,7 +111,7 @@ def resolve_duplicates(csv_path):
 
     resolved_data = pd.concat(resolved_groups, ignore_index=True)
     resolved_data.to_csv("resolved_data.csv", index=False)
-    print("Resolved data saved to 'resolved_data.csv'.")
+    print("✅ Resolved data saved to 'resolved_data.csv'.")
     return resolved_data
 
 # Function to add items to the tree from lookup_strings_output.csv
@@ -127,7 +127,7 @@ def add_items_from_lookup_csv(tree, csv_path="lookup_strings_output.csv"):
         Path to the lookup_strings_output.csv file. Defaults to "lookup_strings_output.csv".
     """
     if not os.path.exists(csv_path):
-        print(f"File '{csv_path}' not found. Please create the file using option 6.")
+        print(f"→ File '{csv_path}' not found. Please create the file using option 6.")
         return
 
     data = pd.read_csv(csv_path)
@@ -138,7 +138,7 @@ def add_items_from_lookup_csv(tree, csv_path="lookup_strings_output.csv"):
         formula_parameters = row.get("Formula Parameters", "{}")
 
         if not parent_path or not name:
-            print(f"Skipping invalid row: {row}")
+            print(f"⏩ Skipping invalid row: {row}")
             continue
 
         item_definition = {
@@ -152,7 +152,7 @@ def add_items_from_lookup_csv(tree, csv_path="lookup_strings_output.csv"):
             tree.insert(children=[item_definition], parent=parent_path)
             print(f"Added item '{name}' under parent '{parent_path}'.")
         except Exception as e:
-            print(f"Error adding item '{name}': {e}")
+            print(f"❌ Error adding item '{name}': {e}")
 
 def create_lookup_tables(resolved_csv_path):
     """
@@ -162,9 +162,9 @@ def create_lookup_tables(resolved_csv_path):
     csv_handler = CSVHandler(resolved_csv_path)
     data = csv_handler.load_csv()
 
-    group_column = input("Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
-    key_column = input("Enter the column name for keys (e.g., PLC_Tag_Value): ").strip()
-    value_column = input("Enter the column name for values (e.g., Reason Desc): ").strip()
+    group_column = input("✔️ Enter the column name for grouping (e.g., Equipment_Desc): ").strip()
+    key_column = input("✔️ Enter the column name for keys (e.g., PLC_Tag_Value): ").strip()
+    value_column = input("✔️ Enter the column name for values (e.g., Reason Desc): ").strip()
 
     builder = LookupTableBuilder(group_column, key_column, value_column)
     lookup_tables = builder.build(data)
@@ -172,41 +172,41 @@ def create_lookup_tables(resolved_csv_path):
     print("\nSpecify Parent Path for each group:")
     parent_paths = {}
     for group_name in lookup_tables.keys():
-        parent_path = input(f"Enter the Parent Path for group '{group_name}': ").strip()
+        parent_path = input(f"✔️ Enter the Parent Path for group '{group_name}': ").strip()
         parent_paths[group_name] = parent_path
 
     output_file = "lookup_strings_output.csv"
     builder.save_lookup_to_csv(lookup_tables, parent_paths, output_file)
-    print(f"Lookup tables saved to '{output_file}'.")
+    print(f"✅ Lookup tables saved to '{output_file}'.")
 
 # Function to add an existing item to the tree
 def add_existing_item_to_tree(tree):
-    item_name = input("Enter the name of the existing item to search for: ").strip()
+    item_name = input("✔️ Enter the name of the existing item to search for: ").strip()
     search_results = search({'Name': item_name, 'Type': 'Signal'})
     if search_results.empty:
-        print(f"No matches found for '{item_name}'.")
+        print(f"❓ No matches found for '{item_name}'.")
         return
     item_id = search_results.iloc[0]['ID']
-    parent = input("Enter the parent name in the tree where this item should be added: ").strip()
+    parent = input("✔️ Enter the parent name in the tree where this item should be added: ").strip()
     item_definition = {"Name": item_name, "Type": "Signal", "ID": item_id}
     try:
         tree.insert(children=[item_definition], parent=parent)
-        print(f"Added '{item_name}' under '{parent}'.")
+        print(f"✅ Added '{item_name}' under '{parent}'.")
     except Exception as e:
-        print(f"Error adding item: {e}")
+        print(f"❌ Error adding item: {e}")
 
 # Function to add a new item to the tree
 def add_new_item_to_tree(tree):
-    parent = input("Enter the parent name: ").strip()
-    name = input("Enter the name of the new element: ").strip()
-    element_type = input("Enter the type of the element (Signal/Condition/Asset): ").strip()
-    formula = input("Enter the formula (or leave blank): ").strip() or None
+    parent = input("✔️ Enter the parent name: ").strip()
+    name = input("✔️ Enter the name of the new element: ").strip()
+    element_type = input("✔️ Enter the type of the element (Signal/Condition/Asset): ").strip()
+    formula = input("✔️ Enter the formula (or leave blank): ").strip() or None
     item_definition = {"Name": name, "Type": element_type, "Formula": formula}
     try:
         tree.insert(children=[item_definition], parent=parent)
-        print(f"Added '{name}' under '{parent}'.")
+        print(f"✅ Added '{name}' under '{parent}'.")
     except Exception as e:
-        print(f"Error adding item: {e}")
+        print(f"❌ Error adding item: {e}")
         
 def add_items_from_csv(tree_modifier):
     """
@@ -215,9 +215,9 @@ def add_items_from_csv(tree_modifier):
     csv_file = browse_file()  # Let the user select the CSV file
     try:
         tree_modifier.add_items_from_csv(csv_file)
-        print("Items added successfully from CSV.")
+        print("✅ Items added successfully from CSV.")
     except Exception as e:
-        print(f"Error adding items from CSV: {e}")
+        print(f"❌ Error adding items from CSV: {e}")
 
 # Main interactive menu
 def show_menu():
@@ -232,18 +232,18 @@ def show_menu():
     print("8. Exit")
 
 if __name__ == "__main__":
-    print("Welcome to the Seeq Asset Tree Manager!")
-    workbook = input("Enter the name of the workbook to use or create: ").strip()
+    print("🤗 Welcome to the Seeq Asset Tree Manager!")
+    workbook = input("📓 Enter the name of the workbook to use or create: ").strip()
 
     try:
-        use_existing_tree = input("Do you want to modify an existing tree? (Y/N): ").strip().upper()
+        use_existing_tree = input("❔ Do you want to modify an existing tree? (Y/N): ").strip().upper()
         csv_file = None
         builder = None
         if use_existing_tree == "Y":
-            tree_name = input("Enter the name of the existing tree: ").strip()
+            tree_name = input("✔️ Enter the name of the existing tree: ").strip()
             modifier = TreeModifier(workbook=workbook, tree_name=tree_name)
         else:
-            use_csv = input("Would you like to provide a CSV file to build the tree? (Y/N): ").strip().upper()
+            use_csv = input("❔ Would you like to provide a CSV file to build the tree? (Y/N): ").strip().upper()
             if use_csv == "Y":
                 csv_file = browse_file()
 
@@ -251,12 +251,12 @@ if __name__ == "__main__":
 
             if csv_file:
                 builder.parse_csv()
-                friendly_name = input("Enter a friendly name for the tree: ").strip()
-                description = input("Enter a description for the tree: ").strip()
+                friendly_name = input("→ Enter a friendly name for the tree: ").strip()
+                description = input("→ Enter a description for the tree: ").strip()
                 builder.build_tree_from_csv(friendly_name=friendly_name, description=description)
             else:
-                friendly_name = input("Enter a friendly name for the tree: ").strip()
-                description = input("Enter a description for the tree: ").strip()
+                friendly_name = input("→ Enter a friendly name for the tree: ").strip()
+                description = input("→ Enter a description for the tree: ").strip()
                 builder.build_empty_tree(friendly_name=friendly_name, description=description)
 
         tree_manager = modifier if use_existing_tree == "Y" else builder.get_push_manager()
@@ -274,9 +274,9 @@ if __name__ == "__main__":
             elif choice == "4":
                 try:
                     tree_manager.push()
-                    print("Tree pushed successfully.")
+                    print("✅ Tree pushed successfully.")
                 except Exception as e:
-                    print(f"Error pushing tree: {e}")
+                    print(f"❌ Error pushing tree: {e}")
             elif choice == "5":
                 csv_file = browse_file()
                 resolve_duplicates(csv_file)
@@ -287,9 +287,9 @@ if __name__ == "__main__":
                 lookup_csv_path = "lookup_strings_output.csv"  # Default path for the lookup file
                 add_items_from_lookup_csv(builder.tree if builder else modifier.tree, lookup_csv_path)
             elif choice == "8":
-                print("Exiting the application.")
+                print("👋 Exiting the application.")
                 break
             else:
-                print("Invalid choice. Please select 1, 2, 3, 4, 5, 6, 7, or 8.")
+                print("❌ Invalid choice. Please select 1, 2, 3, 4, 5, 6, 7, or 8.")
     except Exception as e:
         print(f"Error: {e}")

@@ -55,10 +55,10 @@ async def upload_raw_csv(file: UploadFile = File(...)):
 
         # Validate the file (ensure it's a readable CSV)
         pd.read_csv(file_path)  # This will raise an error if not a valid CSV
-        return {"message": f"File '{file.filename}' uploaded successfully to {UPLOAD_DIR}."}
+        return {"message": f"✅ File '{file.filename}' uploaded successfully to {UPLOAD_DIR}."}
     except Exception as e:
         print(f"Error uploading raw CSV: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Failed to upload raw CSV: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to upload raw CSV: {str(e)}")
 
 @app.post("/upload_csv/")
 async def upload_csv(file: UploadFile):
@@ -87,7 +87,7 @@ async def process_csv(
     try:
         uploaded_files = os.listdir("./uploaded_files")
         if not uploaded_files:
-            raise FileNotFoundError("No CSV file found in the uploaded_files directory.")
+            raise FileNotFoundError("❌ No CSV file found in the uploaded_files directory.")
 
         latest_file = max(uploaded_files, key=lambda f: os.path.getctime(f"./uploaded_files/{f}"))
         file_path = f"./uploaded_files/{latest_file}"
@@ -95,7 +95,7 @@ async def process_csv(
         # Parse the CSV file
         data = pd.read_csv(file_path)
         if "Level 1" not in data.columns:
-            raise ValueError("CSV file must contain a 'Level 1' column.")
+            raise ValueError("⚠️ CSV file must contain a 'Level 1' column.")
 
         # Update tree name and workbook name from the request body
         current_tree_name = tree_name or data["Level 1"].dropna().unique()[0]
@@ -104,7 +104,7 @@ async def process_csv(
         # Initialize the TreeBuilder
         builder = TreeBuilder(workbook=current_workbook_name, csv_file=file_path)
         builder.parse_csv()
-        builder.build_tree_from_csv(friendly_name=current_tree_name, description="Tree built from CSV")
+        builder.build_tree_from_csv(friendly_name=current_tree_name, description="🌳 Tree built from CSV")
 
         # Store the tree in the global variable
         current_tree = builder.tree
@@ -120,12 +120,12 @@ async def process_csv(
         visualization = visualize_output.getvalue()
 
         return {
-            "message": f"CSV processed and tree '{current_tree_name}' pushed successfully.",
+            "message": f"✅ CSV processed and tree '{current_tree_name}' pushed successfully.",
             "columns": list(builder.metadata.columns),
             "tree_structure": visualization.strip()
         }
     except Exception as e:
-        return {"message": f"Failed to process and push CSV: {e}"}
+        return {"message": f"❌ Failed to process and push CSV: {e}"}
 
 class TreeRequest(BaseModel):
     tree_name: str
@@ -135,36 +135,43 @@ async def create_empty_tree(request: Request):
     global current_tree, current_workbook_name, current_tree_name
 
     try:
-        # Parse the JSON body to extract tree and workbook names
+        print("✅ Received request to create an empty tree.")  # Debugging
+
+        # Parse the JSON body
         body = await request.json()
+        print(f"Parsed body: {body}")  # Debugging
+
         tree_name = body.get("tree_name", "").strip()
         workbook_name = body.get("workbook_name", "").strip()
 
         if not tree_name or not workbook_name:
-            raise HTTPException(status_code=400, detail="Tree name and workbook name are required.")
+            print("❌ Missing tree or workbook name!")  # Debugging
+            raise HTTPException(status_code=400, detail="⚠️ Tree name and workbook name are required.")
 
-        # Set the global variables
-        current_tree_name = tree_name
-        current_workbook_name = workbook_name
+        print(f"🌳 Creating tree: {tree_name} in workbook: {workbook_name}")  # Debugging
 
         # Create the empty tree
-        tree_builder = TreeBuilder(workbook=current_workbook_name)
-        current_tree = tree_builder.build_empty_tree(friendly_name=current_tree_name, description="Empty tree created")
+        tree_builder = TreeBuilder(workbook=workbook_name)
+        current_tree = tree_builder.build_empty_tree(friendly_name=tree_name, description="Empty tree created")
+
+        print("✅ Tree successfully built.")  # Debugging
 
         # Push the tree using PushManager
         push_manager = PushManager(tree=current_tree)
         push_manager.push()
 
-        # Generate visualization
-        visualization = f"{current_tree_name}\n|-- (empty root node)"
+        print("✅ Tree successfully pushed to Seeq.")  # Debugging
 
+        visualization = f"{tree_name}\n|-- (empty root node)"
         return {
-            "message": f"Empty tree '{current_tree_name}' created and pushed successfully.",
+            "message": f"✅ Empty tree '{tree_name}' created and pushed successfully.",
             "tree_structure": visualization,
         }
+
     except Exception as e:
-        return {"detail": f"Failed to create and push empty tree: {e}"}
-        
+        print(f"❌ Failed to create tree: {e}")  # Debugging
+        return {"detail": f"❌ Failed to create and push empty tree: {e}"}
+            
 @app.get("/search_tree/")
 async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(...)):
     try:
@@ -178,11 +185,11 @@ async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(..
         visualization = visualize_output.getvalue()
 
         return {
-            "message": f"Tree '{tree_name}' found and visualized successfully.",
+            "message": f"✅ Tree '{tree_name}' found and visualized successfully.",
             "tree_structure": visualization.strip()
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to search and visualize tree: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to search and visualize tree: {e}")
     
 @app.post("/push_tree/")
 async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str = Body(..., embed=True)):
@@ -198,16 +205,16 @@ async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str =
 
         # Validate input
         if not tree_name or not workbook_name:
-            raise HTTPException(status_code=400, detail="Tree name and workbook name are required.")
+            raise HTTPException(status_code=400, detail="⚠️ Tree name and workbook name are required.")
 
         # Decide which tree to push
         if current_tree and current_tree_name == tree_name and current_workbook_name == workbook_name:
             # Use the current global tree
-            print("Using the currently loaded tree for pushing.")
+            print("🌲 Using the currently loaded tree for pushing.")
             tree_to_push = current_tree
         else:
             # Attempt to load the existing tree
-            print("Rebuilding the tree from scratch.")
+            print("🌱 Rebuilding the tree from scratch.")
             tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
             tree_to_push = tree_modifier.tree
             current_tree = tree_to_push  # Update global state
@@ -218,20 +225,20 @@ async def push_tree(tree_name: str = Body(..., embed=True), workbook_name: str =
         push_manager = PushManager(tree=tree_to_push)
         push_manager.push()
 
-        return {"message": f"Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'."}
+        return {"message": f"🌲 Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'."}
     except ValueError as e:
         print(f"Tree loading error: {e}")
-        raise HTTPException(status_code=400, detail=f"Tree loading failed: {e}")
+        raise HTTPException(status_code=400, detail=f"❌ Tree loading failed: {e}")
     except Exception as e:
         print(f"Error in push_tree: {e}")  # Log the error for debugging
-        raise HTTPException(status_code=500, detail=f"Failed to push tree: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to push tree: {e}")
     
 @app.get("/visualize_tree/")
 async def visualize_tree():
     try:
         global current_tree, current_tree_name
         if current_tree is None:
-            raise HTTPException(status_code=404, detail="No tree loaded to visualize.")
+            raise HTTPException(status_code=404, detail="⚠️ No tree loaded to visualize.")
 
         # Capture the visualization output from CLI
         visualize_output = io.StringIO()
@@ -244,7 +251,7 @@ async def visualize_tree():
             "tree_structure": visualization.strip()
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to visualize tree: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to visualize tree: {e}")
     
 @router.post("/modify_tree/")
 async def modify_tree(
@@ -268,7 +275,7 @@ async def modify_tree(
 
         # Detect lookup strings or other modification types based on CSV structure
         if "Parent Path" in data.columns and "Name" in data.columns:
-            print("Detected item insertion CSV. Proceeding with item insertion.")
+            print("✅ Detected item insertion CSV. Proceeding with item insertion.")
             # Load the existing tree
             tree = Tree.load(workbook=workbook_name, tree=tree_name)
 
@@ -290,6 +297,7 @@ async def modify_tree(
             tree.push()  # Push updates back to Seeq
             return {"message": f"Items from '{file.filename}' inserted successfully."}
         else:
-            raise ValueError("Unsupported CSV format. Ensure it contains the required columns.")
+            raise ValueError("⚠️ Unsupported CSV format. Ensure it contains the required columns.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    

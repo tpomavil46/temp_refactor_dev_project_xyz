@@ -15,9 +15,9 @@ class CSVHandler:
     def load_csv(self):
         """Load the CSV file."""
         if not os.path.exists(self.csv_path):
-            raise FileNotFoundError(f"File '{self.csv_path}' not found.")
+            raise FileNotFoundError(f"❌ File '{self.csv_path}' not found.")
 
         self.data = pd.read_csv(self.csv_path)
-        print("CSV loaded successfully.\n")
-        print("Columns in the file:", list(self.data.columns))
+        print("✅ CSV loaded successfully.\n")
+        print("📊 Columns in the file:", list(self.data.columns))
         return self.data

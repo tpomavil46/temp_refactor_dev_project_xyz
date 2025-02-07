@@ -20,4 +20,4 @@ def retry_operation(operation, retries=3, *args, **kwargs):
         except Exception as e:
             attempt += 1
             print(f"Attempt {attempt} failed: {e}")
-    raise RuntimeError(f"Operation failed after {retries} attempts.")
+    raise RuntimeError(f"🔄 Operation failed after {retries} attempts.")

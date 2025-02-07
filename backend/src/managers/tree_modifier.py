@@ -21,27 +21,27 @@ class TreeModifier(PushManager):
         """Load an existing tree."""
         try:
             self.tree = Tree(self.tree_name, workbook=self.workbook)
-            print(f"Tree '{self.tree_name}' loaded successfully.")
+            print(f"🌳 Tree '{self.tree_name}' loaded successfully.")
         except Exception as e:
-            raise ValueError(f"Error loading tree '{self.tree_name}': {e}")
+            raise ValueError(f"❌ Error loading tree '{self.tree_name}': {e}")
 
     def add_item(self, parent_name: str, item_definition: dict):
         """Add an item under a specified parent."""
         if 'Name' not in item_definition or 'Type' not in item_definition:
-            raise ValueError("The item_definition must contain at least 'Name' and 'Type'.")
+            raise ValueError("⚠️ The item_definition must contain at least 'Name' and 'Type'.")
         item_definition['Name'] = item_definition['Name'].split('.')[-1]  # Strip hierarchical paths
         try:
             self.tree.insert(children=[item_definition], parent=parent_name)
-            print(f"Added item '{item_definition['Name']}' under parent '{parent_name}'.")
+            print(f"✅ Added item '{item_definition['Name']}' under parent '{parent_name}'.")
         except Exception as e:
-            print(f"Error inserting item: {e}")
+            print(f"❌ Error inserting item: {e}")
             raise
 
     def move_item(self, source: str, destination: str):
         """Move an item to a new parent in the tree."""
         try:
             self.tree.move(source=source, destination=destination)
-            print(f"Moved item from '{source}' to '{destination}'.")
+            print(f"🚚 Moved item from '{source}' to '{destination}'.")
         except Exception as e:
             raise ValueError(f"Error moving item: {e}")
 
@@ -49,9 +49,9 @@ class TreeModifier(PushManager):
         """Remove an item from the tree."""
         try:
             self.tree.remove(item_name)
-            print(f"Removed item '{item_name}'.")
+            print(f"✅ Removed item '{item_name}'.")
         except Exception as e:
-            print(f"Error removing item: {e}")
+            print(f"✅ Error removing item: {e}")
             raise
         
     def visualize_tree(self):
@@ -60,7 +60,7 @@ class TreeModifier(PushManager):
             raise ValueError("Tree is not loaded. Call 'load_tree()' first.")
         try:
             visualization = self.tree.visualize()
-            print("Tree visualization generated successfully.")
+            print("🌳 Tree visualization generated successfully.")
             return visualization
         except Exception as e:
-            raise RuntimeError(f"Error visualizing tree: {e}")
+            raise RuntimeError(f"❌ Error visualizing tree: {e}")
