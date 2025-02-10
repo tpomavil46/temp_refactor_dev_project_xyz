@@ -30,3 +30,5 @@ spy.options.friendly_exceptions = False
 
 # Use spy.login with credentials from .env
 spy.login(url=host, username=username, password=password)
+from . import _version
+__version__ = _version.get_versions()['version']
