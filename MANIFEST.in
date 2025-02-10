@@ -1,2 +1,4 @@
 include README.md LICENSE requirements.txt
 recursive-include src/itv_asset_tree/frontend *
+recursive-include src/itv_asset_tree/managers *
+recursive-include src/itv_asset_tree/utilities *
