@@ -1,7 +1,7 @@
 # tests/test_combined_operations.py
 
-from src.managers.tree_builder import TreeBuilder
-from src.managers.tree_modifier import TreeModifier
+from itv_asset_tree.managers.tree_builder import TreeBuilder
+from itv_asset_tree.managers.tree_modifier import TreeModifier
 import warnings
 
 def test_build_and_modify_tree():

@@ -1,6 +1,6 @@
 # tests/test_tree_modifier.py
 
-from src.managers.tree_modifier import TreeModifier
+from itv_asset_tree.managers.tree_modifier import TreeModifier
 import warnings
 
 def test_move_item():

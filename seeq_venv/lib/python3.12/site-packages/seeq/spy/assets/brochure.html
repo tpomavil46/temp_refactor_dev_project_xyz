@@ -1,0 +1,97 @@
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        td {
+            vertical-align: top;
+            padding: 5px;
+        }
+
+        blockquote {
+            background: #f9f9f9;
+            border-left: 10px solid #ccc;
+            margin: 1.5em 10px;
+            padding: 0.5em 10px;
+        }
+
+        blockquote:before {
+            color: #ccc;
+            font-size: 4em;
+            line-height: 0.1em;
+            margin-right: 0.25em;
+            vertical-align: -0.4em;
+        }
+
+        blockquote p {
+            display: inline;
+        }
+    </style>
+
+    <%
+    brochure_names_list = [b['Name'] for b in brochure['Templates']]
+    brochure_names_str = ', '.join(brochure_names_list)
+    %>
+    <title>Accelerator Brochure for ${brochure_names_str}</title>
+  </head>
+  <body>
+    % for template in brochure['Templates']:
+    <table>
+      <tr style="background-color: #5bc0de">
+        <td colspan="3"><h1>${template['Name']}</h1></td>
+      </tr>
+      % if template['Description']:
+      <tr style="background-color: #f5fdff">
+        <td colspan="3">${template['Description']}</td>
+      </tr>
+      % endif
+      % for method_type in ['Attributes', 'Requirements']:
+      <tr style="background-color: #b3d7ff">
+        <td colspan="3"><h2>${method_type}</h2></td>
+      </tr>
+      % for method_dict in template[method_type]:
+      <tr style="border-bottom-width: 3px;">
+        <td><h3>${method_dict['Name']}</h3></td>
+        <td>
+          ${method_dict['Description']}
+        </td>
+        <td>
+          % if method_type == 'Requirements':
+          <table>
+            <%
+            properties = set(method_dict.keys())
+            properties.remove('Name')
+            properties.remove('Description')
+            %>
+            % for requirement in properties:
+            <tr>
+              <td>
+                ${requirement}:
+              </td>
+              <td>
+                <strong>${method_dict[requirement]}</strong>
+              </td>
+            </tr>
+            % endfor
+          </table>
+          % endif
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3">
+          <hr />
+        </td>
+      </tr>
+      % endfor
+      % endfor
+    </table>
+    &nbsp;
+    % endfor
+  </body>
+</html>
