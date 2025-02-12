@@ -10,7 +10,6 @@ Deprecated==1.2.18
 fastapi==0.115.8
 h11==0.14.0
 idna==3.10
--e git+ssh://git@github.com/tpomavil46/Seeq-Asset-Trees.git@733558a65c0ec59d30f1bfd6df99d43fa2bbaba2#egg=itv_asset_tree
 numpy==2.2.2
 pandas==2.2.3
 pycparser==2.22

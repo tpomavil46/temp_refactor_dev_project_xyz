@@ -21,7 +21,13 @@ setup(
     packages=find_packages(where="src", include=["itv_asset_tree", "itv_asset_tree.*"]), # Finds all packages inside src/
     package_dir={"": "src"},  # Maps root to src/
     include_package_data=True,  # Ensures non-Python files are included
-    install_requires=read_requirements(),  # Read dependencies dynamically
+    install_requires = [
+        "fastapi",
+        "uvicorn",
+        "pandas",
+        "seeq-spy",
+        "python-dotenv"
+    ],  # Read dependencies dynamically
     python_requires=">=3.11",
     classifiers=[
         "Programming Language :: Python :: 3.11",
