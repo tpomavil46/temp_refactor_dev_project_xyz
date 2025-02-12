@@ -2,10 +2,11 @@ from fastapi import APIRouter, UploadFile, HTTPException, Form, Body, File
 from pydantic import BaseModel
 import pandas as pd
 from typing import List, Dict
-# import traceback
 import json
 import os
 import sys
+import io
+from contextlib import redirect_stdout
 
 # Get absolute path of `src`
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -231,11 +232,12 @@ async def set_parent_paths(request: ParentPathsRequest):
     except Exception as e:
         print("❌ Error during processing:", str(e))
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+
 @router.post("/push_lookup/")
 async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)):
     """
-    Pushes lookup_output.csv to the specified tree in Seeq.
+    Pushes lookup_output.csv to the specified tree in Seeq and returns the visualization.
     """
     try:
         print(f"📌 Received request to push lookup. Tree: {tree_name}, Workbook: {workbook_name}")
@@ -284,7 +286,7 @@ async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)
         tree_modifier.tree.push()
         print("✅ Lookup table successfully pushed!")
 
-        # 🔥 **FIX: Reload `current_tree` after push**
+        # 🔥 Reload `current_tree` after push
         global current_tree, current_tree_name
         tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)  # Reload tree from Seeq
         current_tree = tree_modifier.tree  # Assign updated tree
@@ -292,7 +294,16 @@ async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)
         
         print("✅ Tree successfully reloaded into memory after push.")
 
-        return {"message": "Lookup table successfully pushed to Seeq."}
+        # ✅ Capture tree visualization output (same as `process_csv()`)
+        visualize_output = io.StringIO()
+        with redirect_stdout(visualize_output):
+            current_tree.visualize()
+        visualization = visualize_output.getvalue()
+
+        return {
+            "message": "Lookup table successfully pushed to Seeq.",
+            "tree_structure": visualization.strip(),  # ✅ Return visualization to the UI
+        }
 
     except Exception as e:
         print(f"❌ ERROR pushing lookup table: {str(e)}")

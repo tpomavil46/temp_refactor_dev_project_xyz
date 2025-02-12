@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 from seeq import spy
 from seeq.spy.assets import Tree
 
-# from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request, File, Form
-from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request, Form
+from fastapi import FastAPI, UploadFile, HTTPException, Query, Body, Request, File, Form
 from fastapi import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -20,7 +19,7 @@ from itv_asset_tree.endpoints.duplicates import router as duplicates_router
 from itv_asset_tree.managers.tree_builder import TreeBuilder
 from itv_asset_tree.managers.tree_modifier import TreeModifier
 from itv_asset_tree.managers.push_manager import PushManager
-from itv_asset_tree.managers.tree_manager import TreeManager  
+from itv_asset_tree.managers.tree_manager import TreeManager
 
 # Load environment variables
 load_dotenv()
@@ -210,20 +209,46 @@ async def visualize_tree(tree_name: str, workbook_name: str):
     """Fetch the latest in-memory tree instead of an old cached version."""
     global current_tree
 
-    # If we have the updated tree in memory, return it immediately
+    print(f"🔍 [DEBUG] Received visualization request for Tree: {tree_name}, Workbook: {workbook_name}")
+
+    # Check if current_tree is already available
     if current_tree and current_tree.name == tree_name:
-        return {"tree_structure": current_tree.visualize()}  # Assuming `visualize()` returns a string representation
+        print("✅ [DEBUG] Returning in-memory tree visualization.")
+        visualization_output = io.StringIO()
+        with redirect_stdout(visualization_output):
+            current_tree.visualize()
+        visualization = visualization_output.getvalue()
+        return {"tree_structure": visualization.strip()}
 
     # Fallback: Fetch from Seeq if not in memory
-    tree_manager = TreeManager()
-    fetched_tree = tree_manager.search_tree(tree_name, workbook_name)
+    try:
+        print(f"🔄 [DEBUG] Fetching tree from Seeq: {tree_name}")
 
-    if not fetched_tree:
-        return {"error": "Tree not found!"}
+        tree_modifier = TreeModifier(workbook=workbook_name, tree_name=tree_name)
+        fetched_tree = tree_modifier.tree  # Load tree properly
 
-    # Update in-memory tree reference
-    current_tree = fetched_tree  
-    return {"tree_structure": fetched_tree.visualize()}
+        if not fetched_tree:
+            print(f"❌ [DEBUG] Tree '{tree_name}' not found!")
+            return {"error": "Tree not found!"}
+
+        print(f"✅ [DEBUG] Successfully fetched tree: {tree_name}")
+
+        # Update global reference
+        current_tree = fetched_tree  
+
+        # Capture visualization output from stdout
+        visualization_output = io.StringIO()
+        with redirect_stdout(visualization_output):
+            fetched_tree.visualize()
+        visualization = visualization_output.getvalue()
+
+        print(f"📊 [DEBUG] Tree Visualization Output:\n{visualization}")
+
+        return {"tree_structure": visualization.strip()}
+
+    except Exception as e:
+        print(f"❌ [ERROR] Failed to visualize tree: {e}")
+        return {"error": f"❌ Failed to visualize tree: {e}"}
     
 @router.post("/modify_tree/", tags=["Asset Tree"])
 async def modify_tree(

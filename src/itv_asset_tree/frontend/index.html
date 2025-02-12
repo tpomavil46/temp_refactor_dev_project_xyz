@@ -32,20 +32,18 @@
                     <input type="text" id="tree-name" placeholder="Enter tree name">
                     <label for="workbook-name">Workbook Name:</label>
                     <input type="text" id="workbook-name" placeholder="Enter workbook name">
-                    <!-- <label for="csv-file">Upload CSV:</label> -->
-                    <!-- <input type="file" id="csv-file" name="csv-file" accept=".csv"> -->
+                    
                     <div>
                         <label for="csv-file">Upload CSV File:</label>
                         <input type="file" id="csv-file" accept=".csv">
                         <button id="upload-csv">Upload</button>
                     </div>
+                    
                     <button id="process-csv">Process CSV</button>
                     <button id="create-empty-tree">Create Empty Tree</button>
                     <button id="search-tree">Search for Tree</button>
                     <button id="clear-tree">Clear Tree</button>
-                    <button id="insert-item">Insert Item(s)</button>
-                    <!-- <button id="visualize-tree">Visualize Tree</button>
-                    <button id="push-tree">Push Tree</button> -->
+                    <button id="openModifyDialog">Modify Tree</button>
                 </div>
             </div>
 
@@ -130,6 +128,50 @@
         <p>Enter comma-separated row indices (e.g., 1,3,5):</p>
         <input type="text" id="rows-to-keep-input" placeholder="E.g., 1,3,5">
         <button id="apply-user-specific">Apply</button>
+    </div>
+
+    <!-- Modify Tree Modal -->
+    <div id="modifyDialog" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Modify Tree</h2>
+
+            <label for="operation">Operation:</label>
+            <select id="operation">
+                <option value="insert">Insert</option>
+                <option value="move">Move</option>
+                <option value="remove">Remove</option>
+            </select>
+
+            <div id="insertFields">
+                <label for="parentPath">Parent Path:</label>
+                <input type="text" id="parentPath">
+                
+                <label for="name">Name:</label>
+                <input type="text" id="name">
+
+                <label for="formula">Formula:</label>
+                <input type="text" id="formula">
+
+                <label for="formulaParams">Formula Parameters:</label>
+                <input type="text" id="formulaParams">
+            </div>
+
+            <div id="moveFields" style="display: none;">
+                <label for="sourcePath">Source Path:</label>
+                <input type="text" id="sourcePath">
+
+                <label for="destinationPath">Destination Path:</label>
+                <input type="text" id="destinationPath">
+            </div>
+
+            <div id="removeFields" style="display: none;">
+                <label for="removeName">Name:</label>
+                <input type="text" id="removeName">
+            </div>
+
+            <button id="submitModification">Submit</button>
+        </div>
     </div>
 
     <script src="/static/app.js"></script>

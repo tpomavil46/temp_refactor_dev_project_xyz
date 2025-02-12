@@ -564,6 +564,92 @@ function attachInsertItemListener() {
     });
 }
 
+/** ATTACH MODIFY TREE LISTENER */
+function attachModifyTreeListener() {
+    const modifyDialog = document.getElementById("modifyDialog");
+    const modifyButton = document.getElementById("openModifyDialog");
+    const closeButton = document.querySelector(".modal .close");
+    const operationSelect = document.getElementById("operation");
+    const insertFields = document.getElementById("insertFields");
+    const moveFields = document.getElementById("moveFields");
+    const removeFields = document.getElementById("removeFields");
+    const submitButton = document.getElementById("submitModification");
+
+    if (!modifyDialog || !modifyButton) {
+        console.error("❌ Modify Dialog or Button not found in DOM!");
+        return;
+    }
+
+    console.log("✅ Modify Tree button listener attached.");
+
+    // Show modal when "Modify Tree" button is clicked
+    modifyButton.addEventListener("click", () => {
+        modifyDialog.style.display = "block";
+    });
+
+    // Close modal when "X" is clicked
+    closeButton.addEventListener("click", () => {
+        modifyDialog.style.display = "none";
+    });
+
+    // Hide modal when clicking outside of it
+    window.addEventListener("click", (event) => {
+        if (event.target === modifyDialog) {
+            modifyDialog.style.display = "none";
+        }
+    });
+
+    // Toggle input fields based on selected operation
+    operationSelect.addEventListener("change", (event) => {
+        const selectedOperation = event.target.value;
+        insertFields.style.display = selectedOperation === "insert" ? "block" : "none";
+        moveFields.style.display = selectedOperation === "move" ? "block" : "none";
+        removeFields.style.display = selectedOperation === "remove" ? "block" : "none";
+    });
+
+    // Handle form submission
+    submitButton.addEventListener("click", async () => {
+        const operation = operationSelect.value;
+        const treeName = document.getElementById("tree-name").value;
+        const workbookName = document.getElementById("workbook-name").value;
+        let requestData = { tree_name: treeName, workbook_name: workbookName };
+
+        if (operation === "insert") {
+            requestData.parent_path = document.getElementById("parentPath").value;
+            requestData.name = document.getElementById("name").value;
+            requestData.formula = document.getElementById("formula").value;
+            requestData.formula_params = document.getElementById("formulaParams").value;
+        } else if (operation === "move") {
+            requestData.source_path = document.getElementById("sourcePath").value;
+            requestData.destination_path = document.getElementById("destinationPath").value;
+        } else if (operation === "remove") {
+            requestData.name = document.getElementById("removeName").value;
+        }
+
+        let endpoint = "/modify_tree/";
+        if (operation === "move") endpoint = "/move_tree/";
+        if (operation === "remove") endpoint = "/remove_tree/";
+
+        try {
+            const response = await fetch(endpoint, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(requestData),
+            });
+
+            const data = await response.json();
+            alert(data.message || "Operation completed successfully.");
+            modifyDialog.style.display = "none"; 
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to modify tree.");
+        }
+    });
+}
+
+// Attach the listener on load
+document.addEventListener("DOMContentLoaded", attachModifyTreeListener);
+
 /** UPLOAD RAW CSV */
 function attachUploadRawCsvListener() {
     const uploadRawCsvButton = document.getElementById("upload-raw-csv");
@@ -935,6 +1021,7 @@ function attachEventListeners() {
         attachGenerateLookupListener, 
         attachSearchTreeListener,
         attachInsertItemListener,
+        attachModifyTreeListener,
         attachUploadRawCsvListener,
         attachResolveDuplicatesListener,
         attachSubmitSelectedRowsListener,
