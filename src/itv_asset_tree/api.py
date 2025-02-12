@@ -12,7 +12,8 @@ from fastapi import APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-# from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional, Dict
 
 # from itv_asset_tree.router import router
 from itv_asset_tree.endpoints.duplicates import router as duplicates_router
@@ -291,7 +292,80 @@ async def modify_tree(
             raise ValueError("⚠️ Unsupported CSV format. Ensure required columns exist.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+class ItemDefinition(BaseModel):
+    Name: str
+    Type: str
+    Formula: Optional[str] = None
+    FormulaParams: Optional[Dict] = Field(default_factory=dict)
+
+class InsertItemRequest(BaseModel):
+    tree_name: str  # Dynamically received from the request
+    workbook_name: str  # Dynamically received from the request
+    parent_name: str
+    item_definition: ItemDefinition
+
+class ModifyRequest(BaseModel):
+    tree_name: str
+    workbook_name: str
+
+class InsertRequest(ModifyRequest):
+    parent_path: str
+    name: str
+    formula: str = None
+    formula_params: str = None
+
+class MoveRequest(ModifyRequest):
+    source_path: str
+    destination_path: str
+
+class RemoveRequest(BaseModel):
+    tree_name: str
+    workbook_name: str
+    item_path: str  # Ensure full path is provided
+
+@app.post("/insert_item/")
+async def insert_item(request: InsertItemRequest):
+    try:
+        tree_modifier = TreeModifier(request.workbook_name, request.tree_name)  # ✅ No hardcoding
+        parent = request.parent_name
+        item_data = request.item_definition.dict()
+
+        # ✅ Ensure required fields are present
+        if not item_data["Name"] or not item_data["Type"]:
+            raise HTTPException(status_code=400, detail="Missing Name or Type.")
+
+        tree_modifier.insert_item(parent, item_data)
+        return {"message": f"✅ Item '{item_data['Name']}' added under '{parent}'."}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"❌ Insert failed: {str(e)}")
+
+@app.post("/move_item/")
+def move_item(request: MoveRequest):
+    """Move an item to a new location in the tree."""
+    print(f"🔍 Received move request: {request.dict()}")  # Debugging line
+
+    try:
+        modifier = TreeModifier(request.workbook_name, request.tree_name)
+        modifier.move_item(request.source_path, request.destination_path)
+        return {"message": f"✅ Moved item from '{request.source_path}' to '{request.destination_path}'."}
+    except Exception as e:
+        print(f"❌ Move failed: {e}")  # Debug
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.post("/remove_item/")
+async def remove_item(request: RemoveRequest):
+    """Remove an item from the tree."""
+    try:
+        print(f"🔍 [DEBUG] Received remove request payload: {request.dict()}")  # ✅ Debugging
+        modifier = TreeModifier(request.workbook_name, request.tree_name)
+        modifier.remove_item(request.item_path)
+        return {"message": f"✅ Removed item '{request.item_path}' from the tree."}
+    except Exception as e:
+        print(f"❌ Remove failed: {e}")  # Debug
+        raise HTTPException(status_code=400, detail=str(e))
+  
 # Correctly include the router in FastAPI  
 app.include_router(router)
 

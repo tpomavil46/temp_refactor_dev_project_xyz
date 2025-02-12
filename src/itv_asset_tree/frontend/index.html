@@ -145,16 +145,28 @@
 
             <div id="insertFields">
                 <label for="parentPath">Parent Path:</label>
-                <input type="text" id="parentPath">
+                <input type="text" id="parentPath" placeholder="Enter Parent Path">
                 
-                <label for="name">Name:</label>
-                <input type="text" id="name">
+                <label for="name">Item Name:</label>
+                <input type="text" id="name" placeholder="Enter Item Name">
 
-                <label for="formula">Formula:</label>
-                <input type="text" id="formula">
+                <label for="item-type">Item Type:</label>
+                <select id="item-type">
+                    <option value="">-- Select Type --</option>
+                    <option value="Signal">Signal</option>
+                    <option value="Condition">Condition</option>
+                    <option value="Scalar">Scalar</option>
+                    <option value="Metric">Metric</option>
+                    <option value="Asset">Asset</option>
+                    <option value="Formula">Formula</option>
+                </select>
 
-                <label for="formulaParams">Formula Parameters:</label>
-                <input type="text" id="formulaParams">
+                <label for="formula">Formula (Optional):</label>
+                <input type="text" id="formula" placeholder="Enter Formula (if applicable)">
+
+                <label for="formulaParams">Formula Parameters (Optional):</label>
+                <input type="text" id="formulaParams" placeholder="Enter Formula Parameters (if applicable)">
+
             </div>
 
             <div id="moveFields" style="display: none;">
@@ -166,8 +178,8 @@
             </div>
 
             <div id="removeFields" style="display: none;">
-                <label for="removeName">Name:</label>
-                <input type="text" id="removeName">
+                <label for="removePath">Item Path to Remove:</label>
+                <input type="text" id="removePath" placeholder="Enter full item path">
             </div>
 
             <button id="submitModification">Submit</button>

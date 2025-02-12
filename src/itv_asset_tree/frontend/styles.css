@@ -222,3 +222,28 @@ button:hover {
 .close:hover {
     color: #333;
 }
+
+/* Tooltip Styles */
+.tooltip {
+    cursor: pointer;
+    color: #007bff; /* Blue color */
+    font-weight: bold;
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip:hover::after {
+    content: attr(title);
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 12px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+}

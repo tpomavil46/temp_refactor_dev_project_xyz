@@ -1,17 +1,3 @@
-// Declare `isListenersAttached` globally before using it
-let isListenersAttached = false;  // Track event listener attachment
-
-// Ensure the script runs only after DOM is fully loaded
-document.addEventListener("DOMContentLoaded", function () {
-    if (!isListenersAttached) {  // Prevent duplicate listeners
-    console.log("🚀 DOM fully loaded, attaching event listeners...");
-    attachEventListeners();
-    setupDropdownVisibility();
-    setupInitialVisibility();
-    isListenersAttached = true;  // Mark as attached
-    }
-});
-
 // Track the current tree state
 let currentTree = null;
 
@@ -391,22 +377,6 @@ function attachVisualizeTreeListener() {
     });
 }
 
-// /** VISUALIZE TREE */
-// function attachVisualizeTreeListener() {
-//     document.getElementById("visualize-tree").addEventListener("click", async () => {
-//         try {
-//             const response = await fetch("http://127.0.0.1:8000/visualize_tree/");
-//             if (!response.ok) throw new Error(`❌ Failed with status: ${response.status}`);
-//             const result = await response.json();
-//             document.getElementById("tree-visualization").innerHTML = 
-//                 `<pre style="white-space: pre-wrap;">${result.tree_structure || "No tree available"}</pre>`;
-//         } catch (error) {
-//             console.error("Error visualizing tree:", error);
-//             alert("⚠️ Failed to visualize the tree.");
-//         }
-//     });
-// }
-
 /** VISUALIZE TREE */
 function attachVisualizeTreeListener() {
     const visualizeTreeButton = document.getElementById("visualize-tree");
@@ -564,6 +534,114 @@ function attachInsertItemListener() {
     });
 }
 
+async function insertItem() {
+    const treeName = document.getElementById("tree-name").value.trim();
+    const workbookName = document.getElementById("workbook-name").value.trim();
+    const parentPath = document.getElementById("parentPath").value.trim();
+    const itemName = document.getElementById("name").value.trim();
+    const itemType = document.getElementById("item-type").value.trim();
+    const formula = document.getElementById("formula").value.trim();
+    const formulaParams = document.getElementById("formulaParams").value.trim();
+
+    if (!treeName || !workbookName || !parentPath || !itemName || !itemType) {
+        alert("⚠️ Please provide Tree Name, Workbook Name, Parent Path, Name, and Type.");
+        return;
+    }
+
+    // ✅ Ensure proper formatting for formula parameters
+    let parsedFormulaParams = {};
+    if (formulaParams) {
+        try {
+            parsedFormulaParams = JSON.parse(formulaParams);
+        } catch (error) {
+            alert("⚠️ Invalid JSON format in Formula Parameters.");
+            console.error("❌ Invalid JSON in FormulaParams:", error);
+            return;
+        }
+    }
+
+    // ✅ Prepare the item definition properly
+    const itemDefinition = {
+        Name: itemName,
+        Type: itemType,
+        Formula: formula || null,
+        FormulaParams: parsedFormulaParams // Ensure valid JSON object
+    };
+
+    const requestData = {
+        tree_name: treeName,
+        workbook_name: workbookName,
+        parent_name: parentPath,
+        item_definition: itemDefinition
+    };
+
+    try {
+        console.log(`📡 Sending insert request: ${JSON.stringify(requestData)}`);
+
+        const response = await fetch("http://127.0.0.1:8000/insert_item/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`❌ Insert failed: ${errorData.detail || response.statusText}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        console.log("✅ Insert successful:", result);
+
+        // Refresh tree visualization after insertion
+        await updateTreeVisualization(treeName, workbookName);
+
+    } catch (error) {
+        console.error("❌ Error inserting item:", error);
+        alert("⚠️ Failed to insert item. Check the console for details.");
+    }
+}
+
+async function removeItem() {
+    const itemPath = document.getElementById("removePath").value.trim();
+
+    if (!itemPath) {
+        alert("⚠️ Please provide the full path of the item to remove.");
+        return;
+    }
+
+    const requestData = {
+        tree_name: document.getElementById("tree-name").value.trim(),
+        workbook_name: document.getElementById("workbook-name").value.trim(),
+        item_path: itemPath
+    };
+
+    try {
+        console.log(`📡 Sending remove request: ${JSON.stringify(requestData)}`);
+
+        const response = await fetch("http://127.0.0.1:8000/remove_item/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`❌ Remove failed: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        alert(result.message);
+        console.log("✅ Remove successful:", result);
+
+        // Refresh tree visualization
+        await updateTreeVisualization(requestData.tree_name, requestData.workbook_name);
+
+    } catch (error) {
+        console.error("❌ Error removing item:", error);
+        alert("⚠️ Failed to remove item. Check the console for details.");
+    }
+}
+
 /** ATTACH MODIFY TREE LISTENER */
 function attachModifyTreeListener() {
     const modifyDialog = document.getElementById("modifyDialog");
@@ -579,8 +657,6 @@ function attachModifyTreeListener() {
         console.error("❌ Modify Dialog or Button not found in DOM!");
         return;
     }
-
-    console.log("✅ Modify Tree button listener attached.");
 
     // Show modal when "Modify Tree" button is clicked
     modifyButton.addEventListener("click", () => {
@@ -609,46 +685,76 @@ function attachModifyTreeListener() {
 
     // Handle form submission
     submitButton.addEventListener("click", async () => {
-        const operation = operationSelect.value;
-        const treeName = document.getElementById("tree-name").value;
-        const workbookName = document.getElementById("workbook-name").value;
-        let requestData = { tree_name: treeName, workbook_name: workbookName };
-
-        if (operation === "insert") {
-            requestData.parent_path = document.getElementById("parentPath").value;
-            requestData.name = document.getElementById("name").value;
-            requestData.formula = document.getElementById("formula").value;
-            requestData.formula_params = document.getElementById("formulaParams").value;
-        } else if (operation === "move") {
-            requestData.source_path = document.getElementById("sourcePath").value;
-            requestData.destination_path = document.getElementById("destinationPath").value;
-        } else if (operation === "remove") {
-            requestData.name = document.getElementById("removeName").value;
+        const operation = operationSelect.value.trim();
+    
+        if (!operation) {
+            alert("⚠️ Please select an operation.");
+            return;
         }
-
-        let endpoint = "/modify_tree/";
-        if (operation === "move") endpoint = "/move_tree/";
-        if (operation === "remove") endpoint = "/remove_tree/";
-
+    
+        // Call `insertItem()` if inserting
+        if (operation === "insert") {
+            await insertItem(); 
+            return;
+        }
+    
+        const treeName = document.getElementById("tree-name").value.trim();
+        const workbookName = document.getElementById("workbook-name").value.trim();
+    
+        if (!treeName || !workbookName) {
+            alert("⚠️ Please provide both tree name and workbook name.");
+            return;
+        }
+    
+        let requestData = { tree_name: treeName, workbook_name: workbookName };
+    
+        // Handle Move
+        if (operation === "move") {
+            requestData.source_path = document.getElementById("sourcePath").value.trim();
+            requestData.destination_path = document.getElementById("destinationPath").value.trim();
+        } 
+        // Handle Remove
+        else if (operation === "remove") {
+            const removePathInput = document.getElementById("removePath");
+        
+            if (!removePathInput) {
+                console.error("❌ ERROR: Element with ID 'removePath' not found in the DOM.");
+                alert("⚠️ Please enter a valid path to remove.");
+                return;
+            }
+        
+            const itemPath = removePathInput.value.trim();
+            requestData.item_path = itemPath;  // ✅ Fix: Ensure correct key
+        }
+    
+        // Determine API endpoint
+        let endpoint = "";
+        if (operation === "move") endpoint = "/move_item/";
+        else if (operation === "remove") endpoint = "/remove_item/";
+    
+        console.log("📤 Sending request:", JSON.stringify(requestData));
+    
         try {
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(requestData),
             });
-
+    
             const data = await response.json();
+            console.log("📥 Received response:", data);
             alert(data.message || "Operation completed successfully.");
-            modifyDialog.style.display = "none"; 
+            modifyDialog.style.display = "none";
+    
+            // Refresh tree visualization after modification
+            console.log("📡 Refreshing tree visualization...");
+            await updateTreeVisualization(treeName, workbookName);
         } catch (error) {
-            console.error("Error:", error);
-            alert("Failed to modify tree.");
+            console.error("❌ Error:", error);
+            alert("⚠️ Failed to modify tree.");
         }
     });
 }
-
-// Attach the listener on load
-document.addEventListener("DOMContentLoaded", attachModifyTreeListener);
 
 /** UPLOAD RAW CSV */
 function attachUploadRawCsvListener() {
@@ -1011,34 +1117,6 @@ function attachApplyUserSpecificListener() {
     });
 }
 
-/** Attach All Event Listeners */
-function attachEventListeners() {
-    const listeners = [
-        attachCreateTreeListener,
-        attachCsvUploadListener,
-        attachProcessCsvListener,
-        attachClearTreeListener,
-        attachGenerateLookupListener, 
-        attachSearchTreeListener,
-        attachInsertItemListener,
-        attachModifyTreeListener,
-        attachUploadRawCsvListener,
-        attachResolveDuplicatesListener,
-        attachSubmitSelectedRowsListener,
-        attachSetParentPathsListener,
-        attachApplyUserSpecificListener,
-        setupControlToggle
-    ];
-
-    listeners.forEach((listener) => {
-        if (typeof listener === "function") {
-            listener(); // Only call it if the function exists
-        } else {
-            console.warn(`⚠️ Skipping undefined listener: ${listener.name || "Unknown function"}`);
-        }
-    });
-}
-
 /** SETUP CONTROL TOGGLE FOR WORKFLOWS */
 function setupControlToggle() {
     const controlSelector = document.getElementById("control-selector");
@@ -1101,3 +1179,44 @@ function setupInitialVisibility() {
         console.error("❌ Control sections not found in the DOM.");
     }
 }
+
+// Declare `isListenersAttached` globally before using it
+let isListenersAttached = false;  // Track event listener attachment
+
+/** Attach All Event Listeners */
+function attachEventListeners() {
+    const listeners = [
+        attachCreateTreeListener,
+        attachCsvUploadListener,
+        attachProcessCsvListener,
+        attachClearTreeListener,
+        attachGenerateLookupListener, 
+        attachSearchTreeListener,
+        attachInsertItemListener,
+        attachModifyTreeListener,
+        attachUploadRawCsvListener,
+        attachResolveDuplicatesListener,
+        attachSubmitSelectedRowsListener,
+        attachSetParentPathsListener,
+        attachApplyUserSpecificListener,
+        setupControlToggle,
+        setupDropdownVisibility,
+        setupInitialVisibility
+    ];
+
+    listeners.forEach((listener) => {
+        if (typeof listener === "function") {
+            listener(); // Only call it if the function exists
+        } else {
+            console.warn(`⚠️ Skipping undefined listener: ${listener.name || "Unknown function"}`);
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    if (!isListenersAttached) {
+        console.log("🚀 DOM fully loaded, attaching event listeners...");
+        attachEventListeners();
+        isListenersAttached = true;
+    }
+});
