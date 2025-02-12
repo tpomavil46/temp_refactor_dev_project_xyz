@@ -15,6 +15,8 @@ dist/
 build/
 *.egg-info/
 *.eggs/
+*.pyo
+*.pyc
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
@@ -22,6 +24,3 @@ build/
 # OS-specific files
 .DS_Store
 Thumbs.db
-
-# Excluded directories
-
