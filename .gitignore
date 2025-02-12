@@ -3,15 +3,17 @@ __pycache__/
 
 # Virtual environments
 venv/
-seeq_env_3.11/
+*venv/
 
 # Environment files
 .env
+*.env
 
 # Python package files
 dist/
 build/
 *.egg-info/
+*.eggs/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
@@ -21,6 +23,4 @@ build/
 Thumbs.db
 
 # Excluded directories
-uploaded_files/
-data/
-output/
+
