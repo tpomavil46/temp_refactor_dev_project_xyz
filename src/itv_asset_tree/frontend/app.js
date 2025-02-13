@@ -28,6 +28,7 @@ async function sendPostRequest(url, data) {
     } finally {
         // Hide the spinner after request finishes
         if (spinner) spinner.style.display = "none";
+    }
 }
 
 /** Toggle visibility of an element */
