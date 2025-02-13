@@ -1,6 +1,6 @@
 # conftest.py
 import pytest
-from seeq as spy
+from seeq import spy
 import os
 from dotenv import load_dotenv
 
