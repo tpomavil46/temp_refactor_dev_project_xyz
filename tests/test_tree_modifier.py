@@ -1,61 +1,40 @@
-# tests/test_tree_modifier.py
-
-from itv_asset_tree.managers.tree_modifier import TreeModifier
+from src.itv_asset_tree.managers.tree_modifier import TreeModifier
 import warnings
+import pytest
 
-def test_move_item():
+@pytest.mark.usefixtures("seeq_login")
+def test_insert_and_move_items():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", DeprecationWarning)
-        modifier = TreeModifier(workbook="Add-on Exploration >> Data Lab Analysis", tree_name="Detroit")
-        try:
-            modifier.move_item(
-                source="Detroit >> Reactor 1 >> Downtime",
-                destination="Detroit >> Reactor 3"
-            )
-            print("Item moved successfully.")
-        except ValueError as e:
-            print(f"Error moving item: {e}")
 
-        try:
-            modifier.push()
-            print("Tree pushed successfully.")
-        except Exception as e:
-            print(f"Error pushing tree: {e}")
-        
-# tests/test_tree_modifier.py
-def test_add_and_move_items():
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
         modifier = TreeModifier(workbook="Test Workbook", tree_name="Test Tree")
-        
-        # Add the root asset
-        modifier.add_item(
-            parent_name=None,  # Root assets don't have a parent
+
+        # 1️⃣ Insert Root Asset
+        modifier.insert_item(
+            parent_name=None,
             item_definition={"Name": "Root Asset", "Type": "Asset"}
         )
-        print("Tree after adding 'Root Asset':")
-        print(modifier.tree.visualize())
 
-        # Add a destination to the tree
-        modifier.add_item(
+        # 2️⃣ Insert Parent Node
+        modifier.insert_item(
             parent_name="Root Asset",
             item_definition={"Name": "New Parent", "Type": "Asset"}
         )
-        print("Tree after adding 'New Parent':")
-        print(modifier.tree.visualize())
 
-        # Add the source item
-        modifier.add_item(
+        # 3️⃣ Insert Test Signal with Required Parameters
+        modifier.insert_item(
             parent_name="Root Asset",
-            item_definition={"Name": "Test Signal", "Type": "Signal", "Formula": "cos($time)"}
+            item_definition={
+                "Name": "Test Scalar",
+                "Type": "Scalar",
+                "Formula": "100",  # Formula with a constant
+                "Formula Parameters": {}  # Empty parameters
+            }
         )
-        print("Tree after adding 'Test Signal':")
-        print(modifier.tree.visualize())
 
-        # Move the source item to the new destination
-        modifier.move_item(
-            source="Root Asset >> Test Signal",
-            destination="Root Asset >> New Parent"
-        )
-        print("Tree after moving 'Test Signal':")
-        print(modifier.tree.visualize())
+        # 4️⃣ Push the Tree to Seeq
+        try:
+            modifier.tree.push()
+            print("\n✅ Tree pushed successfully.")
+        except Exception as e:
+            print(f"\n❌ Error pushing tree: {e}")
