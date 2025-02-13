@@ -26,7 +26,8 @@ setup(
         "uvicorn",
         "pandas",
         "seeq-spy",
-        "python-dotenv"
+        "python-dotenv",
+        "pytest"
     ],  # Read dependencies dynamically
     python_requires=">=3.11",
     classifiers=[
