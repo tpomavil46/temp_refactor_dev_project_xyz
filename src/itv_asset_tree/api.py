@@ -324,23 +324,6 @@ class RemoveRequest(BaseModel):
     workbook_name: str
     item_path: str  # Ensure full path is provided
 
-# @app.post("/insert_item/")
-# async def insert_item(request: InsertItemRequest):
-#     try:
-#         tree_modifier = TreeModifier(request.workbook_name, request.tree_name)  # ✅ No hardcoding
-#         parent = request.parent_name
-#         item_data = request.item_definition.dict()
-
-#         # ✅ Ensure required fields are present
-#         if not item_data["Name"] or not item_data["Type"]:
-#             raise HTTPException(status_code=400, detail="Missing Name or Type.")
-
-#         tree_modifier.insert_item(parent, item_data)
-#         return {"message": f"✅ Item '{item_data['Name']}' added under '{parent}'."}
-
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"❌ Insert failed: {str(e)}")
-
 @app.post("/insert_item/")
 async def insert_item(request: InsertItemRequest):
     try:

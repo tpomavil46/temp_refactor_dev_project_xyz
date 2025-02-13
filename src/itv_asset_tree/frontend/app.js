@@ -255,7 +255,7 @@ function attachProcessCsvListener() {
     document.getElementById("process-csv").addEventListener("click", async () => {
         const treeName = document.getElementById("tree-name").value.trim();
         const workbookName = document.getElementById("workbook-name").value.trim();
-
+        
         if (!treeName || !workbookName) {
             alert("⚠️ Please provide both tree name and workbook name.");
             return;
@@ -355,6 +355,7 @@ async function updateTreeVisualization(treeName, workbookName) {
 /** VISUALIZE TREE */
 function attachVisualizeTreeListener() {
     const visualizeTreeButton = document.getElementById("visualize-tree");
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     if (!visualizeTreeButton) {
         console.warn("⚠️ Visualize Tree button not found in the DOM. Skipping listener attachment.");
@@ -367,6 +368,7 @@ function attachVisualizeTreeListener() {
         console.log("🚀 Visualize Tree button clicked!");
 
         try {
+            loadingSpinner.style.display = "block";
             const response = await fetch("http://127.0.0.1:8000/visualize_tree/");
             if (!response.ok) throw new Error(`❌ Failed with status: ${response.status}`);
 
@@ -383,6 +385,9 @@ function attachVisualizeTreeListener() {
         } catch (error) {
             console.error("❌ Error visualizing tree:", error);
             alert("⚠️ Failed to visualize the tree. Check console for details.");
+        } finally {
+            // Hide spinner when request is complete
+            loadingSpinner.style.display = "none";
         }
     });
 }
@@ -390,6 +395,7 @@ function attachVisualizeTreeListener() {
 /** VISUALIZE TREE */
 function attachVisualizeTreeListener() {
     const visualizeTreeButton = document.getElementById("visualize-tree");
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     // ✅ Exit early if button does NOT exist (prevents error)
     if (!visualizeTreeButton) return;
@@ -400,6 +406,7 @@ function attachVisualizeTreeListener() {
         console.log("🚀 Visualize Tree button clicked!");
 
         try {
+            loadingSpinner.style.display = "block";
             const response = await fetch("http://127.0.0.1:8000/visualize_tree/");
             if (!response.ok) throw new Error(`❌ Failed with status: ${response.status}`);
 
@@ -416,6 +423,9 @@ function attachVisualizeTreeListener() {
         } catch (error) {
             console.error("❌ Error visualizing tree:", error);
             alert("⚠️ Failed to visualize the tree. Check console for details.");
+        } finally {
+            // Hide spinner when request is complete
+            loadingSpinner.style.display = "none";
         }
     });
 }
@@ -443,6 +453,7 @@ function attachGenerateLookupListener() {
 
         const outputFileNameInput = document.getElementById("lookup-output-file");
         const outputFileName = outputFileNameInput ? outputFileNameInput.value.trim() : "";
+        const loadingSpinner = document.getElementById("loading-spinner");
 
         if (!outputFileName) {
             alert("⚠️ Please provide a valid output file name.");
@@ -450,6 +461,7 @@ function attachGenerateLookupListener() {
         }
 
         try {
+            loadingSpinner.style.display = "block";
             console.log("📡 Sending request to generate lookup table...");
             const response = await fetch("http://127.0.0.1:8000/duplicates/generate_lookup/", {
                 method: "POST",
@@ -470,6 +482,9 @@ function attachGenerateLookupListener() {
         } catch (error) {
             console.error("❌ Error generating lookup table:", error);
             alert("⚠️ Failed to generate the lookup table. Check the console for details.");
+        } finally {
+            // Hide spinner when request is complete
+            loadingSpinner.style.display = "none";
         }
     });
 }
@@ -479,6 +494,7 @@ function attachSearchTreeListener() {
     document.getElementById("search-tree").addEventListener("click", async () => {
         const treeName = document.getElementById("tree-name").value.trim();
         const workbookName = document.getElementById("workbook-name").value.trim();
+        const loadingSpinner = document.getElementById("loading-spinner");
 
         if (!treeName || !workbookName) {
             alert("⚠️ Please provide both a tree name and a workbook name.");
@@ -486,6 +502,7 @@ function attachSearchTreeListener() {
         }
 
         try {
+            loadingSpinner.style.display = "block";
             const response = await fetch(`http://127.0.0.1:8000/search_tree/?tree_name=${treeName}&workbook_name=${workbookName}`);
             if (!response.ok) throw new Error(`❌ Search failed with status: ${response.status}`);
             const result = await response.json();
@@ -494,6 +511,9 @@ function attachSearchTreeListener() {
         } catch (error) {
             console.error("Error searching for tree:", error);
             alert("⚠️ Failed to search for tree.");
+        } finally {
+            // Hide spinner when request is complete
+            loadingSpinner.style.display = "none";
         }
     });
 }
@@ -501,6 +521,7 @@ function attachSearchTreeListener() {
 /** INSERT ITEM */
 function attachInsertItemListener() {
     const insertItemButton = document.getElementById("insert-item");
+    const loadingSpinner = document.getElementById("loading-spinner");
     if (!insertItemButton) return;
 
     insertItemButton.addEventListener("click", async () => {
@@ -526,6 +547,7 @@ function attachInsertItemListener() {
         formData.append("workbook_name", workbookName);
 
         try {
+            loadingSpinner.style.display = "block";
             const response = await fetch("http://127.0.0.1:8000/modify_tree/", {
                 method: "POST",
                 body: formData,
@@ -540,6 +562,9 @@ function attachInsertItemListener() {
         } catch (error) {
             console.error("❌ Error modifying the tree:", error);
             alert("⚠️ An error occurred while modifying the tree.");
+        } finally {
+            // Hide spinner when request is complete
+            loadingSpinner.style.display = "none";
         }
     });
 }
@@ -656,7 +681,7 @@ async function removeItem() {
         console.error("❌ Error removing item:", error);
         alert("⚠️ Failed to remove item. Check the console for details.");
     } finally {
-        loadingSpinner.style.display = "none";  // ✅ Hide spinner when done
+        loadingSpinner.style.display = "none";  // Hide spinner when done
     }
 }
 
@@ -670,6 +695,7 @@ function attachModifyTreeListener() {
     const moveFields = document.getElementById("moveFields");
     const removeFields = document.getElementById("removeFields");
     const submitButton = document.getElementById("submitModification");
+    const spinner = document.getElementById("modal-loading-spinner");
 
     if (!modifyDialog || !modifyButton) {
         console.error("❌ Modify Dialog or Button not found in DOM!");
@@ -753,6 +779,7 @@ function attachModifyTreeListener() {
         console.log("📤 Sending request:", JSON.stringify(requestData));
     
         try {
+            spinner.style.display = "block";
             const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -770,6 +797,9 @@ function attachModifyTreeListener() {
         } catch (error) {
             console.error("❌ Error:", error);
             alert("⚠️ Failed to modify tree.");
+        } finally {
+            // Hide spinner after request completes
+            spinner.style.display = "none";
         }
     });
 }
@@ -1072,6 +1102,7 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
 
     const treeName = treeNameInput ? treeNameInput.value.trim() : "";
     const workbookName = workbookNameInput ? workbookNameInput.value.trim() : "";
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     if (!treeName || !workbookName) {
         alert("⚠️ Warning: You have not entered a Tree Name or Workbook Name. The lookup may not push correctly.");
@@ -1079,6 +1110,7 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
     }
 
     try {
+        loadingSpinner.style.display = "block";
         console.log(`📡 Sending lookup push request for Tree: ${treeName}, Workbook: ${workbookName}`);
 
         const response = await fetch("http://127.0.0.1:8000/duplicates/push_lookup/", {
@@ -1101,6 +1133,9 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
     } catch (error) {
         console.error("Error pushing lookup data:", error);
         alert("Failed to push lookup data. Check the console for details.");
+    } finally {
+        // Hide spinner when request is complete
+        loadingSpinner.style.display = "none";
     }
 });
 

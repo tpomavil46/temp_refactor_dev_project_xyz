@@ -13,6 +13,9 @@
     </div>
     <h1>Seeq Asset Tree Manager</h1>
     <div id="main-container">
+        <!-- Loading Spinner Here -->
+        <div id="loading-spinner" class="spinner" style="display: none;"></div>
+
         <!-- Controls Section -->
         <div id="controls-section">
             <!-- Controls Toggle -->
@@ -182,12 +185,12 @@
                 <input type="text" id="removePath" placeholder="Enter full item path">
             </div>
 
+            <!-- Loading Spinner (Place outside any hidden section) -->
+            <div id="modal-loading-spinner" class="spinner" style="display: none;"></div>
+
             <button id="submitModification">Submit</button>
         </div>
     </div>
-
-    <!-- Loading Spinner Here -->
-    <div id="loading-spinner" class="spinner" style="display: none;"></div>
 
     <script src="/static/app.js"></script>
 </body>
