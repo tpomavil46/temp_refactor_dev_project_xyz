@@ -1,0 +1,33 @@
+﻿Level 1,Level 2,Name,Friendly Name
+San Francisco,Reactor 1,Agitation,Agitation R1
+,,Batch ID,Batch ID R1
+,,Operation,Operation R1
+,,Phase,Phase R1
+,,Product,Product R1
+,,Reactor Temperature,Reactor Temperature R1
+,,Solution Concentration,Solution Concentration R1
+,,Volume,Volume R1
+,Reactor 2,Agitation,Agitation R2
+,,Batch ID,Batch ID R2
+,,Operation,Operation R2
+,,Phase,Phase R2
+,,Product,Product R2
+,,Reactor Temperature,Reactor Temperature R2
+,,Solution Concentration,Solution Concentration R2
+,,Volume,Volume R2
+,Reactor 3,Agitation,Agitation R1
+,,Batch ID,Batch ID R3
+,,Operation,Operation R3
+,,Phase,Phase R3
+,,Product,Product R3
+,,Reactor Temperature,Reactor Temperature R3
+,,Solution Concentration,Solution Concentration R3
+,,Volume,Volume R3
+,Reactor 4,Agitation,Agitation R4
+,,Batch ID,Batch ID R4
+,,Operation,Operation R4
+,,Phase,Phase R4
+,,Product,Product R4
+,,Reactor Temperature,Reactor Temperature R4
+,,Solution Concentration,Solution Concentration R4
+,,Volume,Volume R4

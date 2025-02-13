@@ -1,0 +1,1237 @@
+﻿Equipment_Desc,PLC_Tag_Value,Reason_Desc
+Slitter,1,Running
+Case Packer,1,Running
+Palletizer,1,Running
+Accumulator,1,Running
+Sleever,1,Running
+Log Wrapper,1,Running
+Case Erector,1,Running
+Tray Former,1,Running
+Slitter,3,Stopped
+Case Packer,3,Stopped
+Palletizer,3,Stopped
+Accumulator,0,Stopped
+Sleever,3,Stopped
+Log Wrapper,0,Stopped
+Case Erector,0,Stopped
+Tray Former,0,Stopped
+Slitter,2,Standby
+Case Packer,2,Standby
+Accumulator,3,Standby
+Sleever,2,Standby
+Log Wrapper,3,Standby
+Case Erector,3,Standby
+Tray Former,3,Standby
+Palletizer,2,Standby
+Slitter,1804,MISC_FAULT
+Case Packer,1804,MISC_FAULT
+Sleever,1804,MISC_FAULT
+Palletizer,1804,MISC_FAULT
+Accumulator,4,Warning
+Log Wrapper,4,Warning
+Case Erector,4,Warning
+Tray Former,4,Warning
+Accumulator,2,Down
+Log Wrapper,2,Down
+Case Erector,2,Down
+Tray Former,2,Down
+Accumulator,5,Air Supply Pressure Low
+Accumulator,208,Auto Rinse Cycle In Progress
+Accumulator,215,Auto Scrubber Cycle In Progress
+Accumulator,220,Bypass Mode Active
+Accumulator,46,Chain Tension Fault
+Accumulator,173,Chain Tension Warning
+Accumulator,216,Copy Complete
+Accumulator,68,Down Pack At Infeed
+Accumulator,35,Downline Communications Fault
+Accumulator,202,Downline Equipment Stopped
+Accumulator,209,Dynac Model 6200
+Accumulator,196,Dynac Model 6400
+Accumulator,221,Dynac Model 6500
+Accumulator,198,Dynac Model 6600
+Accumulator,139,External Conveyor 2 Disconnect Open
+Accumulator,134,External Conveyor 2 Vfd Fault
+Accumulator,140,External Conveyor 3 Disconnect Open
+Accumulator,135,External Conveyor 3 Vfd Fault
+Accumulator,141,External Conveyor 4 Disconnect Open
+Accumulator,136,External Conveyor 4 Vfd Fault
+Accumulator,137,External Infeed Disconnect Open
+Accumulator,132,External Infeed Vfd Fault
+Accumulator,138,External Outfeed Disconnect Open
+Accumulator,133,External Outfeed Vfd Fault
+Accumulator,38,Fallen Pack 1
+Accumulator,167,Fallen Pack 1 PE Misalignment
+Accumulator,39,Fallen Pack 2
+Accumulator,168,Fallen Pack 2 PE Misalignment
+Accumulator,40,Fallen Pack 3
+Accumulator,169,Fallen Pack 3 PE Misalignment
+Accumulator,41,Fallen Pack 4
+Accumulator,170,Fallen Pack 4 PE Misalignment
+Accumulator,42,Fallen Pack 5
+Accumulator,171,Fallen Pack 5 PE Misalignment
+Accumulator,43,Fallen Pack 6
+Accumulator,172,Fallen Pack 6 PE Misalignment
+Accumulator,164,Fallen Pack PE Alignment
+Accumulator,4,FallenPack
+Accumulator,180,High Pressure Wash Disconnect Open
+Accumulator,222,High Pressure Wash In Cycle
+Accumulator,182,High Pressure Wash Overload
+Accumulator,181,High Pressure Wash Pressure Fault
+Accumulator,73,Infeed Chain Tension Fault
+Accumulator,174,Infeed Chain Tension Warning
+Accumulator,76,Infeed Conveyor Disconnect Open
+Accumulator,29,Infeed E-Stop Cable Pulled
+Accumulator,75,Infeed Missing Chain Top
+Accumulator,69,Infeed Overload
+Accumulator,70,Infeed VFD Fault
+Accumulator,74,Interface Conveyor Disconnect Open
+Accumulator,71,Interface VFD Fault
+Accumulator,77,Jam at infeed Eye
+Accumulator,36,Line Communications Fault
+Accumulator,8,Lock-Out Tag-Out Disc0102 Open
+Accumulator,9,Lock-Out Tag-Out Disc0103 Open
+Accumulator,166,Low Lube Level
+Accumulator,47,Lube Level Fault
+Accumulator,44,Lube Pressure Fault
+Accumulator,165,Lube Pressure Warning
+Accumulator,204,Machine Empty
+Accumulator,205,Machine Full
+Accumulator,200,Machine Idle With Product
+Accumulator,212,Machine Running In Manual
+Accumulator,199,Machine Stopped In Manual
+Accumulator,7,Main Disconnect Disc0101 Open
+Accumulator,26,Main E-Stop Is Pressed
+Accumulator,207,Manual Infeed Rinse
+Accumulator,206,Manual Outfeed Rinse
+Accumulator,214,Manual Rinse Cycle In Progress
+Accumulator,219,Manual Scrubber In Progress
+Accumulator,32,Operator Cycle Stop
+Accumulator,101,Outfeed Chain Tension Fault
+Accumulator,175,Outfeed Chain Tension Warning
+Accumulator,108,Outfeed Conveyor Disconnect Open
+Accumulator,30,Outfeed E-Stop Cable Pulled
+Accumulator,100,Outfeed Jam
+Accumulator,105,Outfeed Missing Chain Top
+Accumulator,103,Outfeed Overload
+Accumulator,102,Outfeed VFD Fault
+Accumulator,179,Overvoltage Trip
+Accumulator,213,Package Change Successful
+Accumulator,203,Press Reset
+Accumulator,201,Purge In Progress
+Accumulator,27,Remote E-Stop 1 Is Pressed
+Accumulator,28,Remote E-Stop 2 Is Pressed
+Accumulator,37,Remote IO SB1 Fault
+Accumulator,48,Remote IO SB2 Fault
+Accumulator,49,Remote IO SB3 Fault
+Accumulator,217,Restore Complete
+Accumulator,183,Roll Jam at infeed sensor PSU30214
+Accumulator,211,Run Infeed Manual
+Accumulator,210,Run Outfeed Manual
+Accumulator,15,Safety Door 1 Open
+Accumulator,10,Safety Door 1 Or 2 Open
+Accumulator,24,Safety Door 10 Open
+Accumulator,25,Safety Door 11 Open
+Accumulator,16,Safety Door 2 Open
+Accumulator,17,Safety Door 3 Ope
+Accumulator,11,Safety Door 3 Or 4 Open
+Accumulator,18,Safety Door 4 Open
+Accumulator,19,Safety Door 5 Open
+Accumulator,12,Safety Door 5 Or 6 Open
+Accumulator,20,Safety Door 6 Open
+Accumulator,21,Safety Door 7 Open
+Accumulator,13,Safety Door 7 Or 8 Open
+Accumulator,22,Safety Door 8 Open
+Accumulator,23,Safety Door 9 Open
+Accumulator,14,Safety Door 9 Or 10 Open
+Accumulator,218,Save Complete
+Accumulator,178,Scrubber Motor Overload
+Accumulator,33,Slitter Exit Conveyor Doors Open
+Accumulator,176,Spider Low Battery Warning
+Accumulator,104,Spider Lower Limit Over Travel
+Accumulator,177,Spider Monitor Communication Warning
+Accumulator,72,Spider Upper Limit Overtravel
+Accumulator,6,SpiderJam
+Accumulator,31,Stopped By Line Control
+Accumulator,45,Surge Protector Fault
+Accumulator,34,Upline Communications Fault
+Accumulator,197,Upline Equipment Stopped
+Accumulator,50,VFD0201 Communication Fault
+Accumulator,51,VFD0401 Communication Fault
+Accumulator,52,VFD0601 Communication Fault
+Accumulator,53,VFD0801 Communication Fault
+Accumulator,54,VFD1001 Communication Fault
+Accumulator,55,VFD1201 Communication Fault
+Accumulator,56,VFD1401 Communication Fault
+Accumulator,57,VFD1601 Communication Fault
+Case Erector,4,Air Loss Fault
+Case Erector,5,Mag Adv Vfd Flt
+Case Erector,6,Mag Adv Timeout
+Case Erector,7,Setup Servo Flt
+Case Erector,8,Major Flap Up Jam
+Case Erector,9,Major Flap Dwn Jam
+Case Erector,10,Minor Flap Up Jam
+Case Erector,11,Minor Flap Dwn Jam
+Case Erector,12,Case Index Ext Jam
+Case Erector,13,Case Index Ret Jam
+Case Erector,14,Top Deck In
+Case Erector,15,Top Deck Missing
+Case Erector,16,Bottom Deck In
+Case Erector,17,Bottom Deck Missing
+Case Erector,18,Setup Mispicked
+Case Erector,19,Tray Load Funnel Ext Jam
+Case Erector,20,Tray Load Funnel Ret Jam
+Case Erector,21,Minor Flaps Folding Jam
+Case Erector,22,Major Flaps Folding Jam
+Case Erector,23,L Shape Case Lid
+Case Erector,24,Taping Belts Not Running
+Case Erector,25,Tape Not Dispensing
+Case Erector,26,Tape Dispensing Too Long
+Case Erector,27,Jam In Taping Belts
+Case Erector,28,Tray Incline Conv Not Running
+Case Erector,29,Tray Jam At Surge Clamp
+Case Erector,30,Tray Inserter Servo Flt
+Case Erector,31,Enet Mag Adv Offline
+Case Erector,32,Sercos Ring Fault
+Case Erector,33,CLX Output Card Electronic Fuse Blown
+Case Erector,34,Tray Inserter Torque Overload
+Log Wrapper,4,Alpine Conveyor Drive
+Log Wrapper,5,Barcode Scanner
+Log Wrapper,6,Blower Drive
+Log Wrapper,7,Blower Filter
+Log Wrapper,8,Conveyor Blocked
+Log Wrapper,9,Discharge Axis
+Log Wrapper,10,Distributor Conveying Guard Door
+Log Wrapper,11,Distributor Discharge Blocked
+Log Wrapper,12,Distributor Group Sync
+Log Wrapper,13,Distributor Lane Blocked
+Log Wrapper,14,Distributor Pneumatic Safety Valve
+Log Wrapper,15,Distributor Safety Interlock
+Log Wrapper,16,Distributor Safety Reset Button
+Log Wrapper,17,Estop Circuit not Ready
+Log Wrapper,18,Eyes at Lane Switch
+Log Wrapper,19,Eyes at Loader Switch
+Log Wrapper,20,Eyes not at Lanes
+Log Wrapper,21,Eyes not at Loader
+Log Wrapper,22,Film Break
+Log Wrapper,23,Film Dancer not Down
+Log Wrapper,24,Film Drawer Closed
+Log Wrapper,25,Film Roller Drive
+Log Wrapper,26,Film Roll Low
+Log Wrapper,27,Handpack Conveyor Drive
+Log Wrapper,28,Heater 1 Bottom Element
+Log Wrapper,29,Heater 1 Mid Element
+Log Wrapper,30,Heater 1 not at Temp
+Log Wrapper,31,Heater 1 Off
+Log Wrapper,32,Heater 1 Top Element
+Log Wrapper,33,Heater 2 Bottom Element
+Log Wrapper,34,Heater 2 Mid Element
+Log Wrapper,35,Heater 2 not at Temp
+Log Wrapper,36,Heater 2 Not Retracted
+Log Wrapper,37,Heater 2 Off
+Log Wrapper,38,Heater 2 Pivot Line Down
+Log Wrapper,39,Heater 2 Top Element
+Log Wrapper,40,Heater Bank1
+Log Wrapper,41,Heater Bank2
+Log Wrapper,42,Hood Not At Temp
+Log Wrapper,43,Index Axis
+Log Wrapper,44,Infeed Roller Down Switch
+Log Wrapper,45,Infeed Roller Table not Down
+Log Wrapper,46,Infeed Roller Table not Up
+Log Wrapper,47,Infeed Roller Up Switch
+Log Wrapper,48,Input Conveyor Drive
+Log Wrapper,49,Invert Axis
+Log Wrapper,50,Invert not in Position
+Log Wrapper,51,Knife Positioner Axis
+Log Wrapper,52,Labelaire Low Labels
+Log Wrapper,53,Labelaire missing label
+Log Wrapper,54,Labelaire Offline
+Log Wrapper,55,Labelaire Web Break
+Log Wrapper,56,Lane Eyes not Clear
+Log Wrapper,57,Lane Pin Element
+Log Wrapper,58,Lane Pin Heater not at Temp
+Log Wrapper,59,Lane Width
+Log Wrapper,60,Loader Center Axis
+Log Wrapper,61,Loader Lane End Axis
+Log Wrapper,62,Loader not at Lane Table
+Log Wrapper,63,Loader not in Position
+Log Wrapper,64,Loader Turret End Axis
+Log Wrapper,65,Loader Up Down Axis
+Log Wrapper,66,Log Missing
+Log Wrapper,67,Log Over Height
+Log Wrapper,68,Log Roll Missing
+Log Wrapper,69,Log Tipped
+Log Wrapper,70,MaIn Heater Pivot Air
+Log Wrapper,71,Output Conveyor Drive
+Log Wrapper,72,Packing Not Selected
+Log Wrapper,73,Pack Data Invalid
+Log Wrapper,74,Pack Out Conveyor Drive
+Log Wrapper,75,Pin Heaters
+Log Wrapper,76,Pin Heaters Off
+Log Wrapper,77,Pin Heater Air Flow
+Log Wrapper,78,Registration Eye Blocked
+Log Wrapper,79,Registration Eye Clear
+Log Wrapper,80,Remove all Tape
+Log Wrapper,81,Remove Film Drawer Wrench
+Log Wrapper,82,Rolls Stuck On Singulator
+Log Wrapper,83,Roll did Not Drop
+Log Wrapper,84,Roll Not Seated
+Log Wrapper,85,Scrap Dancer Up
+Log Wrapper,86,Seal Bar Lane Thermocouple
+Log Wrapper,87,Seal Bar Main Element
+Log Wrapper,88,Seal Bar not at Temperature
+Log Wrapper,89,Seal Bar Trim element
+Log Wrapper,90,Seal System Closed
+Log Wrapper,91,Seal System Closed Switch
+Log Wrapper,92,Seal System Open
+Log Wrapper,93,Seal System Open Switch
+Log Wrapper,94,Seal System Wrapped
+Log Wrapper,95,Set Drop Floor
+Log Wrapper,96,Set Heater Height
+Log Wrapper,97,Set Lane Eyes
+Log Wrapper,98,Set Lane Table Counter
+Log Wrapper,99,Set Registration Eye
+Log Wrapper,100,Set Seal System Height
+Log Wrapper,101,Set Smart Loader Dividers
+Log Wrapper,102,Set Smart Loader Support Height
+Log Wrapper,103,Set Tape Stop Roller
+Log Wrapper,104,Side Guide Corner
+Log Wrapper,105,Side Guide Straight
+Log Wrapper,106,Side Push
+Log Wrapper,107,Singulator Core Drive Axis
+Log Wrapper,108,Singulator Rotate Axis
+Log Wrapper,109,Singulator Up down Axis
+Log Wrapper,110,Slitting Knife Clearance Prox
+Log Wrapper,111,Slitting Knives
+Log Wrapper,112,Spindle1 Drive
+Log Wrapper,113,Spindle2 Drive
+Log Wrapper,114,Tape Stop Extend Switch
+Log Wrapper,115,Tape Stop not Extended
+Log Wrapper,116,Tape Stop not Retracted
+Log Wrapper,117,Tape Stop Retract Switch
+Log Wrapper,118,Top Guide
+Log Wrapper,119,Top Labeler Low Labels
+Log Wrapper,120,Top Labeler Not Ready
+Log Wrapper,121,Transfer Conveyor Drive
+Log Wrapper,122,Turret Axis
+Log Wrapper,123,Turret not at Zero
+Log Wrapper,124,Turret not in Position
+Log Wrapper,125,Turret Pin Element
+Log Wrapper,126,Turret Pin Heater not at Temp
+Log Wrapper,127,Turret Thermocouple
+Log Wrapper,128,Unloader Axis
+Log Wrapper,129,Unload Hook Down Switch
+Log Wrapper,130,Unload Hook not Down
+Log Wrapper,131,Unload Hook not Up
+Log Wrapper,132,Unload Hook Up Switch
+Log Wrapper,133,Wrapper Group Sync
+Log Wrapper,134,Wrapper Log Transfer Conv Drive
+Log Wrapper,135,Wrapper Long Infeed Conveyor Drive
+Log Wrapper,136,Wrapper Pneumatic Safety Valve
+Log Wrapper,137,Wrapper Safety Interlock
+Log Wrapper,138,Wrapper Safety Reset Button
+Tray Former,4,FLAP FOLDER OUT OF POSITION
+Tray Former,5,FOLDER FAULT
+Tray Former,6,BLANK PASSED SENSOR ALLOW RAM FWD
+Tray Former,7,BLANK PASSED THROUGH BLANK SENSOR
+Tray Former,8,TRAY NOT PICKED AT END OF PICKER CYCLE
+Tray Former,9,ALARM LOSS OF DC POWER
+Tray Former,10,ALARM SERVO ERROR
+Tray Former,11,ALARM BLANK JAM
+Tray Former,12,ALARM MISSED PICK
+Tray Former,13,ALARM LOW GLUE SHUTOFF
+Tray Former,14,ALARM LOW GLUE TANK LEVEL
+Tray Former,15,ALARM EMPTY HOPPER
+Tray Former,16,ALARM LOW HOPPER
+Tray Former,17,ALARM EMPTY HOPPER CONVEYOR
+Tray Former,18,ALARM LOW HOPPER CONVEYOR
+Tray Former,19,ALARM MUB FLAP FOLDER IN WRONG POSITION
+Tray Former,20,BLANK JAM AT GLUE SENSOR
+Tray Former,21,SERVO HOMING
+Tray Former,22,SENSOR NOT WORKING NPICKER CYL EXTEND
+Tray Former,23,ALARM SENSOR NOT WORKING PICKER CYL RETRACT
+Tray Former,24,JOG MODE ENABLED ALARM
+Tray Former,25,GLUER NOT AT TEMP
+Tray Former,26,FAULT RESET BIT
+Tray Former,27,BLANK DROPPED
+Tray Former,28,BLANK JAM
+Tray Former,29,LATCH FOR REAR GUARD DOOR LH
+Tray Former,30,LATCH FOR REAR GUARD DOOR RH
+Tray Former,31,LATCH FOR SIDE GUARD DOOR LH
+Tray Former,32,LATCH FOR BLANK DETECT SENSOR
+Tray Former,33,LATCH FOR SIDE GUARD DOOR RH
+Tray Former,34,LATCH FOR OUTFEED GUARD DOOR LH
+Tray Former,35,LATCH FOR OUTFEED GUARD DOOR RH
+Tray Former,36,LATCH FOR LH ESTOP
+Case Packer,4,No_Ctrl_Pwr
+Case Packer,5,No_Dr_Ctrl_Pwr
+Case Packer,6,No_Air_Pres
+Case Packer,7,Air_Loss_Fault
+Case Packer,8,Main_Estop
+Case Packer,9,Remote2_Estop
+Case Packer,10,Remote3_Estop
+Case Packer,11,Remote4_Estop
+Case Packer,12,Remote5_Estop
+Case Packer,13,Main_Access_Door_NotLocked
+Case Packer,14,Access_Door2_NotLocked
+Case Packer,15,Access_Door3_NotLocked
+Case Packer,16,Access_Door4_NotLocked
+Case Packer,17,Access_Door5_NotLocked
+Case Packer,18,Main_Access_Door_KeySw_Missing
+Case Packer,19,Access_Door2_KeySw_Missing
+Case Packer,20,Access_Door3_KeySw_Missing
+Case Packer,21,Access_Door4_KeySw_Missing
+Case Packer,22,Access_Door5_KeySw_Missing
+Case Packer,23,InfeedConv_Vfd_Flt
+Case Packer,24,InfConvNotRunning
+Case Packer,25,FloodTbl_Vfd_Flt
+Case Packer,26,FloodTblNotRunning
+Case Packer,27,FloodTblRec_Vfd_Flt
+Case Packer,28,FloodTblRecNotRunning
+Case Packer,29,PinsConv_Vfd_Flt
+Case Packer,30,PinsConvNotRunning
+Case Packer,31,EmptyCaseConv_Vfd_Flt
+Case Packer,32,EmptyCaseConvNotRunning
+Case Packer,33,PwrAdj_Vfd_Flt
+Case Packer,34,PwrAdjNotRunning
+Case Packer,35,FullCaseConv_Vfd_Flt
+Case Packer,36,FullCaseConvNotRunning
+Case Packer,37,Robot_SOP_Estop
+Case Packer,38,Robot_TP_Estop
+Case Packer,39,Robot_Not_In_Auto
+Case Packer,40,Robot_TP_Enbl
+Case Packer,41,Robot_Faulted
+Case Packer,42,Robot_Cmd_Not_Rdy
+Case Packer,43,Robot_Cell_Rdy
+Case Packer,44,Robot_Cell_Aborted
+Case Packer,45,Robot_Cell_Paused
+Case Packer,46,Spare
+Case Packer,47,Robot_Unexpected_Fault
+Case Packer,48,Robot_Collision
+Case Packer,49,Robot_Hand_Breakage
+Case Packer,50,Tool Invalid
+Case Packer,51,Tool Not Present In Rack
+Case Packer,52,Tool Already On Rack
+Case Packer,53,Tool Exchange Error
+Case Packer,54,Tool Couple Unknown
+Case Packer,55,No_OkToDrop_Signal
+Case Packer,56,Funnels_ServoFlt
+Case Packer,57,Funnels_Recovering
+Case Packer,58,Rehome_Funnels
+Case Packer,59,IndexFlights_ServoFlt
+Case Packer,60,IndexFlights_Recovering
+Case Packer,61,Rehome_IndexFlights
+Case Packer,62,IndexFlights_NoRehomeBox
+Case Packer,63,SideBelts_ServoFlt
+Case Packer,64,SideBelts_Recovering
+Case Packer,65,Rehome_SideBelts
+Case Packer,66,Sercos_Ring_Fault
+Case Packer,67,PackSelected_NotValid
+Case Packer,68,FunnelsCaseMissing
+Case Packer,69,Battery_Low
+Case Packer,70,SideBelts_NoCases
+Case Packer,71,AutoAdjNotComplete
+Case Packer,72,CaseExitConvFull
+Case Packer,73,FullCaseConvClampFrontJam
+Case Packer,74,FullCaseConvClampBackJam
+Case Packer,75,FullCaseConvJamAtClamp
+Case Packer,76,EmptyCaseConvClampJam
+Case Packer,77,FunnelChangeOutClamp1Jam
+Case Packer,78,FunnelChangeOutClamp2Jam
+Case Packer,79,FunnelMissingLoadArea
+Case Packer,80,InfGateJam
+Case Packer,81,Controlnet Node 1 CLX Card Fault
+Case Packer,82,Controlnet Node 12 Lane Divider Right Meter
+Case Packer,83,Node3_Fault
+Case Packer,84,Controlnet Node 13 Lane Divider Left Meter
+Case Packer,85,Controlnet Node 5 Infeed Conveyor Fault
+Case Packer,86,Controlnet Node 6 Flood Table Fault
+Case Packer,87,Controlnet Node 7 Flood Table Recirculating Fault
+Case Packer,88,Controlnet Node 8 Pin Conveyor Fault
+Case Packer,89,Controlnet Node 9 Auto Adjust Fault
+Case Packer,90,Controlnet Node 10 Empty Case Conveyor Fault
+Case Packer,91,Controlnet Node 11 Full Case Conveyor Fault
+Case Packer,92,LOC10 EFuse_Blown_0
+Case Packer,93,LOC10 EFuse_Blown_1
+Case Packer,94,LOC10 EFuse_Blown_2
+Case Packer,95,LOC10 EFuse_Blown_3
+Case Packer,96,LOC10 EFuse_Blown_4
+Case Packer,97,LOC10 EFuse_Blown_5
+Case Packer,98,LOC10 EFuse_Blown_6
+Case Packer,99,LOC10 EFuse_Blown_7
+Case Packer,100,LOC10 EFuse_Blown_8
+Case Packer,101,LOC10 EFuse_Blown_9
+Case Packer,102,LOC10 EFuse_Blown_10
+Case Packer,103,LOC10 EFuse_Blown_11
+Case Packer,104,LOC10 EFuse_Blown_12
+Case Packer,105,LOC10 EFuse_Blown_13
+Case Packer,106,LOC10 EFuse_Blown_14
+Case Packer,107,LOC10 EFuse_Blown_15
+Case Packer,108,LOC11 EFuse_Blown_0
+Case Packer,109,LOC11 EFuse_Blown_1
+Case Packer,110,LOC11 EFuse_Blown_2
+Case Packer,111,LOC11 EFuse_Blown_3
+Case Packer,112,LOC11 EFuse_Blown_4
+Case Packer,113,LOC11 EFuse_Blown_5
+Case Packer,114,LOC11 EFuse_Blown_6
+Case Packer,115,LOC11 EFuse_Blown_7
+Case Packer,116,LOC11 EFuse_Blown_8
+Case Packer,117,LOC11 EFuse_Blown_9
+Case Packer,118,LOC11 EFuse_Blown_10
+Case Packer,119,LOC11 EFuse_Blown_11
+Case Packer,120,LOC11 EFuse_Blown_12
+Case Packer,121,LOC11 EFuse_Blown_13
+Case Packer,122,LOC11 EFuse_Blown_14
+Case Packer,123,LOC11 EFuse_Blown_15
+Case Packer,124,LOC12 EFuse_Blown_0
+Case Packer,125,LOC12 EFuse_Blown_1
+Case Packer,126,LOC12 EFuse_Blown_2
+Case Packer,127,LOC12 EFuse_Blown_3
+Case Packer,128,LOC12 EFuse_Blown_4
+Case Packer,129,LOC12 EFuse_Blown_5
+Case Packer,130,LOC12 EFuse_Blown_6
+Case Packer,131,LOC12 EFuse_Blown_7
+Case Packer,132,LOC12 EFuse_Blown_8
+Case Packer,133,LOC12 EFuse_Blown_9
+Case Packer,134,LOC12 EFuse_Blown_10
+Case Packer,135,LOC12 EFuse_Blown_11
+Case Packer,136,LOC12 EFuse_Blown_12
+Case Packer,137,LOC12 EFuse_Blown_13
+Case Packer,138,LOC12 EFuse_Blown_14
+Case Packer,139,LOC12 EFuse_Blown_15
+Case Packer,140,LOC13 EFuse_Blown_0
+Case Packer,141,LOC13 EFuse_Blown_1
+Case Packer,142,LOC13 EFuse_Blown_2
+Case Packer,143,LOC13 EFuse_Blown_3
+Case Packer,144,LOC13 EFuse_Blown_4
+Case Packer,145,LOC13 EFuse_Blown_5
+Case Packer,146,LOC13 EFuse_Blown_6
+Case Packer,147,LOC13 EFuse_Blown_7
+Case Packer,148,LOC13 EFuse_Blown_8
+Case Packer,149,LOC13 EFuse_Blown_9
+Case Packer,150,LOC13 EFuse_Blown_10
+Case Packer,151,LOC13 EFuse_Blown_11
+Case Packer,152,LOC13 EFuse_Blown_12
+Case Packer,153,LOC13 EFuse_Blown_13
+Case Packer,154,LOC13 EFuse_Blown_14
+Case Packer,155,LOC13 EFuse_Blown_15
+Case Packer,156,RemovePartial_Empty
+Case Packer,157,TaperNotRunning
+Case Packer,158,PrimPinsJam
+Case Packer,159,SecPinsJam
+Case Packer,160,InfBackstopJam
+Case Packer,161,CaseIndexStopJam
+Case Packer,162,Main_Access_Door_Open
+Case Packer,163,Access_Door2_Open
+Case Packer,164,Access_Door3_Open
+Case Packer,165,Access_Door4_Open
+Case Packer,166,Access_Door5_Open
+Case Packer,167,NoPrdtFlow
+Case Packer,168,FloodTableLowRolls
+Case Packer,169,NoRunPermissive
+Case Packer,170,Access_Door6_Open
+Case Packer,171,Access_Door6_NotLocked
+Case Packer,172,Spare
+Case Packer,173,Side_Belts_Timeout
+Case Packer,174,FloodTable1stPrdtMissingLn1
+Case Packer,175,FloodTable1stPrdtMissingLn2
+Case Packer,176,FloodTable1stPrdtMissingLn3
+Case Packer,177,FloodTable1stPrdtMissingLn4
+Case Packer,178,FloodTable1stPrdtMissingLn5
+Case Packer,179,FloodTable1stPrdtMissingLn6
+Case Packer,180,NoToolDetectedOnRobot
+Case Packer,181,MinSurgeFlagsCheckBridge
+Case Packer,182,GS626_NotLocked
+Case Packer,183,GS626_Open
+Case Packer,184,GS627_NotLocked
+Case Packer,185,GS627_Open
+Case Packer,186,GS628_NotLocked
+Case Packer,187,GS628_Open
+Case Packer,188,GS629_NotLocked
+Case Packer,189,GS629_Open
+Case Packer,190,Tool_Rack_Not_Present_PXS31313
+Case Packer,191,Lane_Divider_Jam
+Case Packer,192,Lane_Divider_Servo_Faulted
+Case Packer,193,Spare
+Case Packer,194,Spare
+Case Packer,195,Spare
+Case Packer,196,Spare
+Case Packer,197,Spare
+Case Packer,198,Funnel Invalid
+Case Packer,199,Funnel Not Present In Rack
+Case Packer,200,Funnel Already On Rack
+Case Packer,201,Funnel Exchange Error
+Case Packer,202,Tool Rack Missing
+Case Packer,203,Funnel Servo Not In Position
+Case Packer,204,Invalid Tool Rack Present
+Case Packer,205,Tool Not On EOAT
+Case Packer,206,Robot_Msg_Active.18
+Case Packer,207,Robot_Msg_Active.19
+Case Packer,208,Robot_Msg_Active.20
+Case Packer,209,Robot_Msg_Active.21
+Case Packer,210,Robot_Msg_Active.22
+Case Packer,211,Robot_Msg_Active.23
+Case Packer,212,Robot_Msg_Active.24
+Case Packer,213,Robot_Msg_Active.25
+Case Packer,214,Robot_Msg_Active.26
+Case Packer,215,Robot_Msg_Active.27
+Case Packer,216,Robot_Msg_Active.28
+Case Packer,217,Robot_Msg_Active.29
+Case Packer,218,Robot_Msg_Active.30
+Case Packer,219,Robot_Msg_Active.31
+Case Packer,220,Robot_Msg_Active.32
+Case Packer,221,Robot_Msg_Active.33
+Case Packer,222,Robot_Msg_Active.34
+Case Packer,223,Robot_Msg_Active.35
+Case Packer,224,Robot_Msg_Active.36
+Case Packer,225,Robot_Msg_Active.37
+Case Packer,226,Robot_Msg_Active.38
+Case Packer,227,Robot_Msg_Active.41
+Case Packer,228,Robot_Msg_Active.42
+Case Packer,229,Robot_Msg_Active.43
+Case Packer,230,Robot_Msg_Active.44
+Case Packer,231,Robot_Msg_Active.45
+Case Packer,232,Robot_Msg_Active.46
+Case Packer,233,Robot_Msg_Active.47
+Case Packer,234,Robot_Msg_Active.48
+Case Packer,235,Robot_Msg_Active.49
+Case Packer,236,Robot_Msg_Active.50
+Case Packer,237,Robot_Msg_Active.51
+Case Packer,238,Robot_Msg_Active.52
+Case Packer,239,Robot_Msg_Active.53
+Case Packer,240,Robot_Msg_Active.54
+Case Packer,241,Robot_Msg_Active.55
+Case Packer,242,Robot_Msg_Active.56
+Case Packer,243,Robot_Msg_Active.57
+Case Packer,244,Robot_Msg_Active.58
+Case Packer,245,Robot_Msg_Active.61
+Case Packer,246,Robot_Msg_Active.62
+Case Packer,247,Robot_Msg_Active.63
+Case Packer,248,Robot_Msg_Active.64
+Case Packer,249,Robot_Msg_Active.65
+Case Packer,250,Robot_Msg_Active.66
+Case Packer,251,Robot_Msg_Active.67
+Case Packer,252,Robot_Msg_Active.68
+Case Packer,253,Robot_Msg_Active.69
+Case Packer,254,Robot_Msg_Active.70
+Case Packer,255,Robot_Msg_Active.71
+Case Packer,256,Robot_Msg_Active.72
+Case Packer,257,Robot_Msg_Active.73
+Case Packer,258,Robot_Msg_Active.74
+Case Packer,259,Robot_Msg_Active.75
+Case Packer,260,Robot_Msg_Active.76
+Case Packer,261,Robot_Msg_Active.77
+Case Packer,262,Robot_Msg_Active.78
+Case Packer,263,Robot_Msg_Active.80
+Case Packer,264,Robot_Msg_Active.81
+Case Packer,265,Robot_Msg_Active.82
+Case Packer,266,Robot_Msg_Active.83
+Case Packer,267,Robot_Msg_Active.84
+Case Packer,268,Robot_Msg_Active.85
+Case Packer,269,Robot_Msg_Active.86
+Case Packer,270,Robot_Msg_Active.87
+Case Packer,271,Robot_Msg_Active.88
+Case Packer,272,Robot_Msg_Active.89
+Case Packer,273,Robot_Msg_Active.91
+Case Packer,274,Robot_Msg_Active.92
+Case Packer,275,Robot_Msg_Active.93
+Case Packer,276,Robot_Msg_Active.94
+Case Packer,277,Robot_Msg_Active.95
+Case Packer,278,Robot_Msg_Active.96
+Case Packer,279,Robot_Msg_Active.97
+Case Packer,280,Robot_Msg_Active.98
+Case Packer,281,Robot_Msg_Active.99
+Case Packer,282,Robot_Msg_Active.100
+Case Packer,283,Robot_Msg_Active.101
+Case Packer,284,Robot_Msg_Active.102
+Case Packer,285,Robot_Msg_Active.103
+Case Packer,286,Robot_Msg_Active.104
+Case Packer,287,Robot_Msg_Active.105
+Case Packer,288,Robot_Msg_Active.106
+Case Packer,289,Robot_Msg_Active.107
+Case Packer,290,Robot_Msg_Active.108
+Case Packer,291,Robot_Msg_Active.109
+Case Packer,292,Robot_Msg_Active.110
+Case Packer,293,Robot_Msg_Active.111
+Case Packer,294,Robot_Msg_Active.112
+Case Packer,295,Robot_Msg_Active.113
+Case Packer,296,Robot_Msg_Active.121
+Case Packer,297,Robot_Msg_Active.122
+Case Packer,298,Robot_Msg_Active.123
+Case Packer,299,Robot_Msg_Active.124
+Case Packer,300,Robot_Msg_Active.125
+Case Packer,301,Robot_Msg_Active.126
+Case Packer,302,Robot_Msg_Active.127
+Case Packer,303,Robot_Msg_Active.128
+Case Packer,304,Robot_Msg_Active.129
+Case Packer,305,Robot_Msg_Active.130
+Case Packer,306,Robot_Msg_Active.131
+Case Packer,307,Robot_Msg_Active.132
+Case Packer,308,Robot_Msg_Active.133
+Case Packer,309,Robot_Msg_Active.134
+Case Packer,310,Robot_Msg_Active.135
+Case Packer,311,Robot_Msg_Active.136
+Case Packer,312,Robot_Msg_Active.137
+Case Packer,313,Robot_Msg_Active.138
+Case Packer,314,Robot_Msg_Active.139
+Case Packer,315,Robot_Msg_Active.140
+Case Packer,316,Robot_Msg_Active.141
+Case Packer,317,Robot_Msg_Active.142
+Case Packer,318,Robot_Msg_Active.143
+Case Packer,319,Product_Missing
+Case Packer,320,CaseSealerJam
+Case Packer,321,FullCaseEndStopJam
+Palletizer,7,HMI_Estop
+Palletizer,8,Robot_Access_Estop
+Palletizer,9,SS_Access_Estop
+Palletizer,10,Low_Battery
+Palletizer,11,Node1_Fault
+Palletizer,12,Node3_Fault
+Palletizer,13,No_Ctrl_Pwr
+Palletizer,14,Spare
+Palletizer,15,Spare
+Palletizer,16,NoDr_Ctrl_Pwr
+Palletizer,17,Main_Door_Open
+Palletizer,18,Main_Door_KeySwMissing
+Palletizer,19,SS_Door_KeySwMissing
+Palletizer,20,Robot_Door_Open
+Palletizer,21,Robot_Door_KeySwMissing
+Palletizer,22,No_Air_Pres
+Palletizer,23,Air_Loss_Fault
+Palletizer,24,Spare
+Palletizer,25,Spare
+Palletizer,26,EP_Jam
+Palletizer,27,Ldpos_Jam
+Palletizer,28,Ldpos_Square_Jam
+Palletizer,29,SSRackLow
+Palletizer,30,M410i_SOP_Estop
+Palletizer,31,M410i_TP_Estop
+Palletizer,32,M410i_Not_In_Auto
+Palletizer,33,M410i_TP_Enbl
+Palletizer,34,Spare
+Palletizer,35,Spare
+Palletizer,36,M410i_Faulted
+Palletizer,37,M410i_Cmd_Not_Rdy
+Palletizer,38,M410i_Cell_Rdy
+Palletizer,39,M410i_Cell_Aborted
+Palletizer,40,M410i_Cell_Paused
+Palletizer,41,Spare
+Palletizer,42,M410i_Unexpected_Fault
+Palletizer,43,M410i_Collision
+Palletizer,44,Spare
+Palletizer,45,Spare
+Palletizer,46,M410i_Hand_Breakage
+Palletizer,47,Spare
+Palletizer,48,InfConv_NotRunning
+Palletizer,49,Ldpos_NotRunning
+Palletizer,50,EmptyPalConv_NotRunning
+Palletizer,51,EP_Light_Curtain_Blk
+Palletizer,52,EP_Light_Curtain_Flt
+Palletizer,53,FP_Light_Curtain_Blk
+Palletizer,54,FP_Light_Curtain_Flt
+Palletizer,55,PackSelected_NotValid
+Palletizer,56,M410i_Msg_Active.1
+Palletizer,57,M410i_Msg_Active.2
+Palletizer,58,M410i_Msg_Active.3
+Palletizer,59,M410i_Msg_Active.4
+Palletizer,60,M410i_Msg_Active.5
+Palletizer,61,M410i_Msg_Active.6
+Palletizer,62,M410i_Msg_Active.7
+Palletizer,63,M410i_Msg_Active.8
+Palletizer,64,M410i_Msg_Active.9
+Palletizer,65,M410i_Msg_Active.10
+Palletizer,66,M410i_Msg_Active.11
+Palletizer,67,M410i_Msg_Active.12
+Palletizer,68,M410i_Msg_Active.13
+Palletizer,69,M410i_Msg_Active.14
+Palletizer,70,M410i_Msg_Active.15
+Palletizer,71,M410i_Msg_Active.16
+Palletizer,72,M410i_Msg_Active.17
+Palletizer,73,M410i_Msg_Active.18
+Palletizer,74,M410i_Msg_Active.19
+Palletizer,75,M410i_Msg_Active.20
+Palletizer,76,M410i_Msg_Active.21
+Palletizer,77,M410i_Msg_Active.22
+Palletizer,78,M410i_Msg_Active.23
+Palletizer,79,M410i_Msg_Active.24
+Palletizer,80,Robot EOAT Clamp Not Closed
+Palletizer,81,M410i_Msg_Active.26
+Palletizer,82,M410i_Msg_Active.27
+Palletizer,83,M410i_Msg_Active.28
+Palletizer,84,Robot SS Cylinders Not Extended
+Palletizer,85,M410i_Msg_Active.30
+Palletizer,86,M410i_Msg_Active.31
+Palletizer,87,M410i_Msg_Active.32
+Palletizer,88,M410i_Msg_Active.33
+Palletizer,89,M410i_Msg_Active.34
+Palletizer,90,M410i_Msg_Active.35
+Palletizer,91,M410i_Msg_Active.36
+Palletizer,92,M410i_Msg_Active.37
+Palletizer,93,M410i_Msg_Active.38
+Palletizer,94,M410i_Msg_Active.39
+Palletizer,95,M410i_Msg_Active.40
+Palletizer,96,EP_Stack_Low
+Palletizer,97,EP_Stack_Empty
+Palletizer,98,M410i_Msg_Active.41
+Palletizer,99,M410i_Msg_Active.42
+Palletizer,100,EFuse_Blown_0
+Palletizer,101,EFuse_Blown_1
+Palletizer,102,EFuse_Blown_2
+Palletizer,103,EFuse_Blown_3
+Palletizer,104,EFuse_Blown_4
+Palletizer,105,EFuse_Blown_5
+Palletizer,106,EFuse_Blown_6
+Palletizer,107,EFuse_Blown_7
+Palletizer,108,EFuse_Blown_8
+Palletizer,109,EFuse_Blown_9
+Palletizer,110,EFuse_Blown_10
+Palletizer,111,EFuse_Blown_11
+Palletizer,112,EFuse_Blown_12
+Palletizer,113,EFuse_Blown_13
+Palletizer,114,EFuse_Blown_14
+Palletizer,115,EFuse_Blown_15
+Palletizer,116,EFuse_Blown_0
+Palletizer,117,EFuse_Blown_1
+Palletizer,118,EFuse_Blown_2
+Palletizer,119,EFuse_Blown_3
+Palletizer,120,EFuse_Blown_4
+Palletizer,121,EFuse_Blown_5
+Palletizer,122,EFuse_Blown_6
+Palletizer,123,EFuse_Blown_7
+Palletizer,124,EFuse_Blown_8
+Palletizer,125,EFuse_Blown_9
+Palletizer,126,EFuse_Blown_10
+Palletizer,127,EFuse_Blown_11
+Palletizer,128,EFuse_Blown_12
+Palletizer,129,EFuse_Blown_13
+Palletizer,130,EFuse_Blown_14
+Palletizer,131,EFuse_Blown_15
+Palletizer,132,EFuse_Blown_0
+Palletizer,133,EFuse_Blown_1
+Palletizer,134,EFuse_Blown_2
+Palletizer,135,EFuse_Blown_3
+Palletizer,136,EFuse_Blown_4
+Palletizer,137,EFuse_Blown_5
+Palletizer,138,EFuse_Blown_6
+Palletizer,139,EFuse_Blown_7
+Palletizer,140,EFuse_Blown_8
+Palletizer,141,EFuse_Blown_9
+Palletizer,142,EFuse_Blown_10
+Palletizer,143,EFuse_Blown_11
+Palletizer,144,EFuse_Blown_12
+Palletizer,145,EFuse_Blown_13
+Palletizer,146,EFuse_Blown_14
+Palletizer,147,EFuse_Blown_15
+Palletizer,148,EFuse_Blown_0
+Palletizer,149,EFuse_Blown_1
+Palletizer,150,EFuse_Blown_2
+Palletizer,151,EFuse_Blown_3
+Palletizer,152,EFuse_Blown_4
+Palletizer,153,EFuse_Blown_5
+Palletizer,154,EFuse_Blown_6
+Palletizer,155,EFuse_Blown_7
+Palletizer,156,EFuse_Blown_8
+Palletizer,157,EFuse_Blown_9
+Palletizer,158,EFuse_Blown_10
+Palletizer,159,EFuse_Blown_11
+Palletizer,160,EFuse_Blown_12
+Palletizer,161,EFuse_Blown_13
+Palletizer,162,EFuse_Blown_14
+Palletizer,163,EFuse_Blown_15
+Palletizer,164,SS_Door2_Open
+Palletizer,165,Main_Door_NotLocked
+Palletizer,166,SS_Door2_NotLocked
+Palletizer,167,Robot_Door_NotLocked
+Palletizer,168,PrimaryLiftJam
+Palletizer,169,SecondaryLiftJam
+Palletizer,170,InfBackstopJam
+Palletizer,171,Lantech_Offline
+Palletizer,172,Inf_Intrans_Timeout
+Palletizer,173,Inf_Invalid_Pattern
+Palletizer,174,InfXfrJam
+Palletizer,175,Inf_Unexp_Box_On_Xfr
+Palletizer,176,LdposSS_Square_Jam
+Palletizer,177,Alarm on barcode HMI indicating a barcode mismatch or error
+Sleever,4,Accu De Reel_FilmEnd
+Sleever,5,Accu De Reel_LowFilm
+Sleever,6,Accu De Reel_Not Activated
+Sleever,7,Accu De Reel_Trouble
+Sleever,8,AirKnive_Pump Not  At Speed
+Sleever,9,Transfer Belts_Fault Amplifier
+Sleever,10,Applicator NOT in AUTO
+Sleever,11,Backup 1 Product Jam Outfeed
+Sleever,12,Dancer Applicator End Position
+Sleever,13,Dancer Lever In Wrong Position
+Sleever,14,Conveyor_Fault Drive Conveyor APPLICATOR
+Sleever,15,Conveyor_Fault Drive Conveyor INFEED
+Sleever,16,Drive Dancer Applicator Fault
+Sleever,17,Exhaust_Fault Drive Exhaust 1
+Sleever,18,Exhaust_Fault Drive Exhaust 2
+Sleever,19,Label Positioner Stamper Unit_Fault Drive Stamper Unit
+Sleever,20,Fault Transfer Belts Jam
+Sleever,21,Fault Chuck Retun Outfeed
+Sleever,22,CLX Fault Slot 10
+Sleever,23,CLX Fault Slot 11
+Sleever,24,CLX Fault Slot 6
+Sleever,25,CLX Fault Slot 7
+Sleever,26,CLX Fault Slot 8
+Sleever,27,CLX Fault Slot 9
+Sleever,28,Free Space Applicator Fault
+Sleever,29,Free Space Tunnel Applicator Fault
+Sleever,30,Free Space Outfeed Applicator Fault
+Sleever,31,Fault Gate Not In Product Go Position
+Sleever,32,Fault Gate Not In Product Stop Position
+Sleever,33,Fault Product Flow Block At Infeed
+Sleever,34,Fault Product On Chuck
+Sleever,35,Fault Separator Chain Timing Prox
+Sleever,36,Fault Separator Disk Timing Prox
+Sleever,37,Fault Pusher Lifted Front
+Sleever,38,Fault Pusher Lifted Rear
+Sleever,39,Length Perfo Level Applicator in Wrong Position
+Sleever,40,Not Enable Reset E-Stop
+Sleever,41,MainSwitch Not Activated
+Sleever,42,Motion Configuration Fault
+Sleever,43,Motion  Coordinated System Time Loss Fault
+Sleever,44,Motion Group Not Synced
+Sleever,45,Motion Group Overlap Fault
+Sleever,46,Motion Module Fault
+Sleever,47,Motion Group Task Loading Fault
+Sleever,48,Motion Inhibit State
+Sleever,49,Cut Motor Brake Fault
+Sleever,50,Rotary Cutter Motor Protection Fault
+Sleever,51,Tunnel Guarding Faulted
+Sleever,52,Tunnel Guarding Product Jam Outfeed
+Sleever,53,Registation not Taught
+Sleever,54,Registration not Read
+Sleever,55,Separator Chain Fault Axis
+Sleever,56,Separator Disk Fault Axis
+Sleever,57,Shot Left Axis Fault
+Sleever,58,Shot Right Axis Fault
+Sleever,59,Transfer Axis Fault
+Sleever,60,Down Time Applicator Fault
+Sleever,61,Sleever Applicator Jam
+Sleever,62,Fault Conveyor Encoder Product Pitch Fault Axis
+Sleever,63,Separator Chain Fault Axis
+Sleever,64,Separator Disk Fault Axis
+Sleever,65,Controller Conveyors Line 1 Button Not Pushed
+Sleever,66,Controller Shrinking Line 1 Button Not Pushed
+Sleever,67,Controller Line 1 Production Button Not Pushed
+Sleever,68,Oven not up to Temp
+Sleever,69,Fault Conveyor Encoder Product Pitch Fault Axis
+Slitter,6,emergency stop alarm
+Slitter,7,Jumbo Unchucked During Run
+Slitter,8,Rewinding Cycle  Safety Alarm
+Slitter,9,Right Unwind Carraige Drive
+Slitter,10,Main Motor High Temperature
+Slitter,11,Left Unwinder Motor High Temperature
+Slitter,12,Right Unwinder Motor High Temperature
+Slitter,13,main motor drive not ready alarm
+Slitter,14,Spare
+Slitter,15,Spare
+Slitter,16,upper rewinder drive not ready alarm
+Slitter,17,lower rewinder drive not ready alarm
+Slitter,18,left unwinder drive not ready alarm
+Slitter,19,upper carriage drive not ready alarm
+Slitter,20,lower carriage drive not ready alarm
+Slitter,21,right unwinder drive not ready alarm 
+Slitter,22,turret motor drive not ready 
+Slitter,23,arms motor drive not ready
+Slitter,24,Spare
+Slitter,25,Spare
+Slitter,26,Sound Enclosure Area Scanner Tripped SCN2421
+Slitter,27,Sound Encl Plaform-Side Sick Light Curtain CR2505 CR2506
+Slitter,28,Unwind Horizontal STI Light Guard CR2905 CR2906
+Slitter,29,web break alarm
+Slitter,30,right trim broken alarm
+Slitter,31,left trim broken alarm
+Slitter,32,Strand Broken on Upper Pull Roll 2
+Slitter,33,Strand Broken on Lower Pull Roll 2
+Slitter,34,Spare
+Slitter,35,Spare
+Slitter,36,Strand Broken on Score Roll
+Slitter,37,Strand Broken on Upper Pull Roll 1
+Slitter,38,Strand Broken on Lower Pull Roll 1
+Slitter,39,safety enabled alarm
+Slitter,40,arms movement inverted alarm
+Slitter,41,upper carriage locked alarm
+Slitter,42, lower carriage locked alarm
+Slitter,43,Left Unwinder Carriage Drive NOT Ready
+Slitter,44,Spare
+Slitter,45,Spare
+Slitter,46,Final CutOff Arm Failed to Raise
+Slitter,47,Final CutOff Arm Failed to Cut
+Slitter,48,PXS32115 FINAL CUT RELEASED POSITION UNKNOWN
+Slitter,49,arms middle position unknown alarm
+Slitter,50,upper left arm up position unknown alarm
+Slitter,51,lower left arm up position unknown alarm
+Slitter,52,upper right arm up position unknown alarm
+Slitter,53,lower right arm up position unknown alarm
+Slitter,54,Spare
+Slitter,55,Spare
+Slitter,56,upper left arm down position unknown alarm
+Slitter,57,lower left arm down position unknown alarm
+Slitter,58,upper right arm down position unknown alarm
+Slitter,59,lower right arm down position unknown alarm
+Slitter,60,upper left spindle chuck not opened alarm
+Slitter,61,upper right spindle chuck not opened alarm
+Slitter,62,lower left spindle chuck not opened alarm
+Slitter,63,lower right spindle chuck not opened alarm
+Slitter,64,Spare
+Slitter,65,Spare
+Slitter,66,upper left spindle chuck not closed alarm
+Slitter,67,upper right spindle chuck not closed alarm
+Slitter,68,lower left spindle chuck not closed alarm
+Slitter,69,lower right spindle chuck not closed alarm
+Slitter,70,upper turret hook wrong position alarm
+Slitter,71,lower turret hook wrong position alarm
+Slitter,72,turret phase position unknown alarm
+Slitter,73,turret rotation verify positon unknown alarm
+Slitter,74,Spare
+Slitter,75,Spare
+Slitter,76,arms rotation verify position unknown alarm
+Slitter,77,upper contrast rod not forward alarm
+Slitter,78,lower contrast rod not forward alarm
+Slitter,79,upper contrast rod not backward alarm
+Slitter,80,lower contrast rod not backward alarm
+Slitter,81,upper contrast rod not locked alarm
+Slitter,82,lower contrast rod not locked alarm
+Slitter,83,upper contrast rod not unlocked alarm
+Slitter,84,Spare
+Slitter,85,Spare
+Slitter,86,lower contrast rod not unlocked alarm
+Slitter,87,upper arms safety enabled alarm
+Slitter,88,lower arms safety enabled alarm
+Slitter,89,lower carriage core cover not opened alarm
+Slitter,90,lower carriage core cover not closed alarm
+Slitter,91,upper carriage core cover not opened alarm
+Slitter,92,upper carriage core cover not closed alarm
+Slitter,93,Roll Jam At Upper Spoon  Dump
+Slitter,94,Spare
+Slitter,95,Spare
+Slitter,96,Roll Jam at Lower Spoon Dump
+Slitter,97,Wipe-Down Motor Auto.Breaker Released MCP406
+Slitter,98,Web Joint Fan Exhauster Auto.Breaker Released MCP413
+Slitter,99,Right Junct.Table Fan Exhauster Auto.Breaker Released MCP418
+Slitter,100,Left Junct.Table Fan Exhauster Auto.Breaker Released MCP423
+Slitter,101,Pv_Alarms_10.4
+Slitter,102,Pv_Alarms_10.5
+Slitter,103,Main Motor Fan Auto.Breaker Released MCP428
+Slitter,104,Spare
+Slitter,105,Spare
+Slitter,106,Rewinder Motors Fan Auto.Breaker Released MCP604
+Slitter,107,Carriage Motors Fan Auto.Breaker Released MCP609
+Slitter,108,Exit Conveyor A Drive Auto.Breaker Released MCP12218
+Slitter,109,Exit Conveyor B Drive Auto.Breaker Released MCP12318
+Slitter,110,Exit Conveyor C Drive Auto.Breaker Released MCP12418
+Slitter,111,Left Unwinder Motor Fan Auto.Breaker Released MCP703
+Slitter,112,Left Jumbo Roll Centering Motor Auto.Breaker Released MCP708
+Slitter,113,Left Unw.Opening_Closing Left Center Auto.Breaker Released MCP715
+Slitter,114,Spare
+Slitter,115,Spare
+Slitter,116,Left Unw.Opening_Closing Right Center Auto.Breaker Released MCP722
+Slitter,117,Right Unwinder Motor Fan Auto.Breaker Released MCP803
+Slitter,118,Right Jumbo Roll Centering Motor Auto.Breaker Released MCP808
+Slitter,119,Right Unw.Opening_Closing Left Center Auto.Breaker Released MCP815
+Slitter,120,Right Unw.Opening_Closing Right Center Auto.Breaker Released MCP822
+Slitter,121,Cores Agitator Drive Auto.Breaker Released MCP11518
+Slitter,122,Turret Drive Auto.Breaker Released MCP614
+Slitter,123,Loading_Unloading Spindle Levers Drive Auto.Breaker Released MCP619
+Slitter,124,Spare
+Slitter,125,Spare
+Slitter,126,Incline Filling Hopper Drive Auto.Breaker Released MCP12018
+Slitter,127,Hopper Conveyor Drive Auto.Breaker Released MCP12118
+Slitter,128,Left Unw.Traverse Motor Fan Auto.Breaker Released MCP624
+Slitter,129,Vertical Core Conveyor Infeed Breaker Tripped
+Slitter,130,Right Unw.Traverse Motor Fan Auto.Breaker Released MCP629
+Slitter,131,Internal Upper Rolls Conveyor Drive NOT Ready
+Slitter,132,Internal Lower Rolls Conveyor Drive NOT Ready
+Slitter,133,Rolls Conveyor A Drive NOT Ready
+Slitter,134,Spare
+Slitter,135,Spare
+Slitter,136,Rolls Conveyor B Drive NOT Ready
+Slitter,137,Rolls Conveyor C Drive NOT Ready
+Slitter,138,Upper Rolls Bucket Conveyor NOT Ready
+Slitter,139,Lower Rolls Bucket Conveyor NOT Ready
+Slitter,140,Double Rolls Into Upper Carriage Pockets
+Slitter,141,Double Rolls Into Lower Carriage Pockets
+Slitter,142,Upper Rolls Bucket Conveyor Locked
+Slitter,143,Lower Rolls Bucket Conveyor Locked
+Slitter,144,Spare
+Slitter,145,Spare
+Slitter,146,Roll Presence Under Upper Bucket Conveyor
+Slitter,147,Roll Presence Under Lower Bucket Conveyor
+Slitter,148,Upper Step Conveyor Overload-Jammed
+Slitter,149,Lower Step Conveyor Overload-Jammed
+Slitter,150,Rolls Double Stacked at Exit Conveyor
+Slitter,151,Lower Conveyor Roll Stop Jammed
+Slitter,152,Upper Conveyor Roll Stop Jammed
+Slitter,153,Upper Carriage Spoon not Retracted
+Slitter,154,Spare
+Slitter,155,Spare
+Slitter,156,Lower Carriage Spoon not Retracted
+Slitter,157,Left Unwind Brake Fans Not On Check FU2125
+Slitter,158,Right Unwind Brake Fans Not On Check FU2128
+Slitter,159,Upper Bar Not Present While Rotating
+Slitter,160,Lower Bar Not Present While Rotating
+Slitter,161,Lower Step Conveyor  Drive Faulted
+Slitter,162,Upper Step Conveyor  Drive Faulted
+Slitter,163,trims full alarm
+Slitter,164,Horizontal Core Hopper Drive NOT Ready
+Slitter,165,Vertical Core Hopper Drive NOT Ready
+Slitter,166,Spare 56
+Slitter,167,Offload Conveyor Faulted PA20102 E-12-3606-0017-0
+Slitter,168,Core Conveyor Vertical Infeed  Fault
+Slitter,169,Upper Rex conveor drive faulted
+Slitter,170,Lower Rex conveor drive faulted
+Slitter,171,Merge conveyor drive faulted
+Slitter,172,Lower flat output conveyor faulted
+Slitter,173,Upper flat output conveyor faulted
+Slitter,174,Reject Drive Is faulted
+Slitter,175,Reject Drive not Homed
+Slitter,176,Accumulator Bypass Diverter Jammed
+Slitter,177,core missing on upper carriage alarm 
+Slitter,178,core missing on lower carriage alarm
+Slitter,179,Rolls Jammed in Merge Station
+Slitter,180,upper carriage left stop position unknown alarm
+Slitter,181,upper carriage right stop position unknown alarm
+Slitter,182,lower carriage left stop position unknown alarm
+Slitter,183,lower carriage right stop position unknown alarm
+Slitter,184,Merge station roll jam at roll stop
+Slitter,185,Core Loader Lateral Door Opened LS1619
+Slitter,186,front sliding door opened
+Slitter,187,core loader back door opened alarm
+Slitter,188,unloading conveyor doors opened alarm
+Slitter,189,rolls conveyor door opened alarm
+Slitter,190,Knife Bank Left Door Opened LS1727
+Slitter,191,Drive Side Pulley Door Opened LS1721
+Slitter,192,PXS36711_12 RIGHT UNWINDER DOOR NOT OPENED
+Slitter,193,PXS36713 RIGHT UNWINDER DOOR NOT CLOSED
+Slitter,194,PXS36714_15 LEFT UNWINDER DOOR NOT OPENED
+Slitter,195,PXS36716 LEFT UNWINDER DOOR NOT CLOSED
+Slitter,196,Middle Sound Enclosure Left Door Opened GDS40101_CLS_OK_CLS_OK
+Slitter,197,Middle Sound Enclosure Right Door Opened GDS40105_CLS_OK
+Slitter,198,Unwind Sound Enclosure Left Door Opened LS1812
+Slitter,199,Unwind Sound Enclosure Right Door Opened LS1813
+Slitter,200,Merge Station Doors Not Locked
+Slitter,201,Merge Station Doors Not Closed
+Slitter,202,Conveying Sleever_Wrapper Diverter Door Open GS614
+Slitter,203,upper carriage left slow down position unknown alarm
+Slitter,204,PLC LOW BATTERY
+Slitter,205,packaging line not ready alarm 
+Slitter,206,manual spindle load alarm 
+Slitter,207,upper rolls conveyor full alarm
+Slitter,208,lower rolls conveyor full alarm
+Slitter,209,upper core check plug out alarm
+Slitter,210,lower core check plug out alarm
+Slitter,211,jumbo roll end ctrl disabled alarm
+Slitter,212,Communication to Sleever Down
+Slitter,213,iFix Down
+Slitter,214,Final CutOff Arm Instruction Error or Axis Fault
+Slitter,215,Final CutOff Arm Safety Fault
+Slitter,216,Safety Instruction OR Output Fault
+Slitter,217,Safety Instruction Fault Fault - Troubleshoot Cause and Reset With SFTY_FLT_RST_PB
+Slitter,218,Rolls Conveyor Speed set at Zero
+Slitter,219,Pv_Alarms_10.9
+Slitter,220,Web Joint Fan Exhauster Auto.Breaker Released_MCP413
+Slitter,221,Roll Conveyor  Upper Jammed
+Slitter,222,Roll Conveyor  Lower Jammed
+Slitter,223,Upper Bar Not Present While Rotating
+Slitter,224,Web Lock Light Curtain Blocked
+Slitter,225,Roll Length Over Limit
+Slitter,226,Tally Length Complete with Attempted Restart
+Slitter,227,PIoT Jumbo Data Not Entered
+Slitter,228,South Trim Winder Drive Comm Fault
+Slitter,229,South Trim Winder Drive Axis Fault
+Slitter,230,South Trim Winder Drive Safety Fault
+Slitter,231,South Trim Winder Drive Motion Instruction Error
+Slitter,232,North Trim Winder Drive Comm Fault
+Slitter,233,North Trim Winder Drive Axis Fault
+Slitter,234,North Trim Winder Drive Safety Fault
+Slitter,235,North Trim Winder Drive Motion Instruction Error
+Slitter,236,Pv_Alarms_16.12
+Slitter,237,South Trim Dancer Encoder Fault
+Slitter,238,North Trim Dancer Encoder Fault
+Slitter,239,Ethernet Comm Module CIM30400 Fault
+Slitter,240,Die Split
+Slitter,241,Flipped Edge
+Slitter,242,Splice
+Slitter,243,Unknown
+Slitter,244,Pv_Alarms_17.4
+Slitter,245,Pv_Alarms_17.5
+Slitter,246,Pv_Alarms_17.6
+Slitter,247,Pv_Alarms_17.7
+Slitter,248,Pv_Alarms_17.8
+Slitter,249,Pv_Alarms_17.9
+Slitter,250,Pv_Alarms_17.10
+Slitter,251,Pv_Alarms_17.11
+Slitter,252,Pv_Alarms_17.12
+Slitter,253,Pv_Alarms_17.13
+Slitter,254,Pv_Alarms_17.14
+Slitter,255,Pv_Alarms_17.15
+Slitter,256,Dancer OUT Timeout - Check a wrapped roller on unwind
+Slitter,257,jumbo roll end alarm 
+Slitter,258,core loader paddle opened alarm 
+Slitter,259,core loader plug not inserted alarm
+Slitter,260,rolls conveyor alarm
+Slitter,261,Cut Reject Sequence in Progress
+Slitter,262,packaging line crtl disabled alarm
+Slitter,263,Manual core paddle enabled
+Slitter,264,Jumbo Roll Splice Position
+Slitter,265,Slitter No Unwinders Ready To Be Shuttled
+Slitter,266,Unwinder Motion Safety Enabled
+Slitter,267,Left Unwinder Contrast Roller Up
+Slitter,268,Right Unwinder Contrast Roller Up
+Slitter,269,Splice Sensor Error
+Slitter,270,Splice Detected
+Slitter,271,Web Lock Down
+Slitter,272,Splice Table Rotated Up PXS33909
+Slitter,273,upper carriage right slow down position unknown alarm
+Slitter,274,lower carriage left slow down position unknown alarm
+Slitter,275,lower carriage right slow down position unknown alarm
+Slitter,276,UPPER LEFT CORE ALIGNEMENT NOT BACKWARD
+Slitter,277,UPPER RIGHT CORE ALIGNEMENT NOT BACKWARD
+Slitter,278,LOWER LEFT CORE ALIGNEMENT NOT BACKWARD
+Slitter,279,LOWER RIGHT CORE ALIGNEMENT NOT BACKWARD
+Slitter,280,SPLICE BLADE NOT AT END POSITION
+Slitter,281,PXS33814 SPLICE BLADE NOT AT HOME POSITION
+Slitter,282,PXS33901 LEFT WEB LOCK BAR NOT BACKWARD
+Slitter,283,PXS33902 RIGHT WEB LOCK BAR NOT BACKWARD
+Slitter,284,PXS33909 UPPER SPLICING TABLE NOT ROTATED DOWN
+Slitter,285,PXS34210 LEFT UNWINDER LEFT CENTER NOT UNLOCKED
+Slitter,286,PXS34211 LEFT UNWINDER RIGHT CENTER NOT UNLOCKED
+Slitter,287,PXS35010 RIGHT UNWINDER LEFT CENTER NOT UNLOCKED
+Slitter,288,PXS35011 RIGHT UNWINDER RIGHT CENTER NOT UNLOCKED
+Slitter,289,PXS34201 LEFT UNWINDER SPLICING TABLE 1 NOT HIGH
+Slitter,290,PXS34202 LEFT UNWINDER SPLICING TABLE 1 NOT LOW
+Slitter,291,PXS34203 LEFT UNWINDER SPLICING TABLE 2 NOT HIGH
+Slitter,292,PXS34204 LEFT UNWINDER SPLICING TABLE 2 NOT LOW
+Slitter,293,PXS35001 RIGHT UNWINDER SPLICING TABLE 1 NOT HIGH
+Slitter,294,PXS35002 RIGHT UNWINDER SPLICING TABLE 1 NOT LOW
+Slitter,295,PXS35003 RIGHT UNWINDER SPLICING TABLE 2 NOT HIGH
+Slitter,296,PXS35004 RIGHT UNWINDER SPLICING TABLE 2 NOT LOW
+Slitter,297,Left Unwinder Area Scanner Tripped SCN2221_SCN2231
+Slitter,298,Right Unwinder Area Scanner Tripped SCN2321_SCN2331
+Slitter,299,South Unw Hoist-Side Light Curtain CR3005_CR3006
+Slitter,300,North Unw Platform-Side Sick Light Curtain CR2605_CR2606
+Slitter,301,North Unw Hoist-Side Sick Light Curtain CR2805_CR2806
+Slitter,302,South Unw Platform-Side Sick Light Curtain CR2705_CR2706
+Slitter,303,Unwind Position Unknown
+Slitter,304,PXS33812 Left Unwinder Carriage Work Area NOT Detected
+Slitter,305,PXS33813 Right Unwinder Carriage Work Area NOT Detected
+Slitter,306,Left Unwinder Working Position LIMIT
+Slitter,307,Right Unwinder Working Position LIMIT
+Slitter,308,Left Unwinder Homing Position LIMIT
+Slitter,309,Right Unwinder Homing POsition LIMIT
+Slitter,310,PXS35813 Left Unwinder Carriage Homing Area NOT Detected
+Slitter,311,PXS37013 Right Unwinder Carriage Homing Area NOT Detected
+Slitter,312,Left Unwinder Carriage Position UNDEFINED
+Slitter,313,Right Unwinder Carriage Position UNDEFINED
+Slitter,314,Jumbo Data not Entered
+Slitter,315,Vision System Down or Offline
+Slitter,316,Roll Diameter is out of Control Limits from VS1
+Slitter,317,Edge Mark Detected
+Slitter,318,Communications to Accumulator Lost
+Slitter,319,Accumulator Faulted
+Slitter,320,Accumulator Warning
+Slitter,321,Roll Countdown Complete
+Slitter,322,Core Loader Light Curtain Blocked
+Slitter,323,Exit of Inspection Conveyor at High Level

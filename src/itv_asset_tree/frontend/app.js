@@ -7,7 +7,10 @@ let currentTree = null;
 
 /** HELPER FUNCTION: General function to send a POST request */
 async function sendPostRequest(url, data) {
+    const spinner = document.getElementById("loading-spinner");
+
     try {
+        if (spinner) spinner.style.display = "block";
         const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -22,7 +25,9 @@ async function sendPostRequest(url, data) {
     } catch (error) {
         console.error("❌ API Error:", error);
         alert(`⚠️ Error: ${error.message}`);
-    }
+    } finally {
+        // Hide the spinner after request finishes
+        if (spinner) spinner.style.display = "none";
 }
 
 /** Toggle visibility of an element */
@@ -316,6 +321,7 @@ function attachPushTreeListener() {
 /** TREE VISUALIZATION */
 async function updateTreeVisualization(treeName, workbookName) {
     console.log(`📡 [DEBUG] updateTreeVisualization() CALLED for Tree: '${treeName}', Workbook: '${workbookName}'`);
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     if (!treeName || !workbookName) {
         console.error("❌ Tree Name or Workbook Name is missing! Cannot update visualization.");
@@ -323,6 +329,7 @@ async function updateTreeVisualization(treeName, workbookName) {
     }
 
     try {
+        loadingSpinner.style.display = "block";
         // Force fresh response by adding timestamp
         const timestamp = new Date().getTime();
         const response = await fetch(`http://127.0.0.1:8000/visualize_tree/?tree_name=${treeName}&workbook_name=${workbookName}&_=${timestamp}`);
@@ -339,6 +346,8 @@ async function updateTreeVisualization(treeName, workbookName) {
     } catch (error) {
         console.error("❌ Error updating tree visualization:", error);
         alert("⚠️ Failed to update tree visualization.");
+    } finally {
+        loadingSpinner.style.display = "none";  // Hide spinner when done
     }
 }
 
@@ -542,13 +551,14 @@ async function insertItem() {
     const itemType = document.getElementById("item-type").value.trim();
     const formula = document.getElementById("formula").value.trim();
     const formulaParams = document.getElementById("formulaParams").value.trim();
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     if (!treeName || !workbookName || !parentPath || !itemName || !itemType) {
         alert("⚠️ Please provide Tree Name, Workbook Name, Parent Path, Name, and Type.");
         return;
     }
 
-    // ✅ Ensure proper formatting for formula parameters
+    // Ensure proper formatting for formula parameters
     let parsedFormulaParams = {};
     if (formulaParams) {
         try {
@@ -560,7 +570,7 @@ async function insertItem() {
         }
     }
 
-    // ✅ Prepare the item definition properly
+    // Prepare the item definition properly
     const itemDefinition = {
         Name: itemName,
         Type: itemType,
@@ -576,6 +586,7 @@ async function insertItem() {
     };
 
     try {
+        loadingSpinner.style.display = "block";
         console.log(`📡 Sending insert request: ${JSON.stringify(requestData)}`);
 
         const response = await fetch("http://127.0.0.1:8000/insert_item/", {
@@ -599,11 +610,14 @@ async function insertItem() {
     } catch (error) {
         console.error("❌ Error inserting item:", error);
         alert("⚠️ Failed to insert item. Check the console for details.");
+    } finally {
+        loadingSpinner.style.display = "none";  // ✅ Hide spinner when done
     }
 }
 
 async function removeItem() {
     const itemPath = document.getElementById("removePath").value.trim();
+    const loadingSpinner = document.getElementById("loading-spinner");
 
     if (!itemPath) {
         alert("⚠️ Please provide the full path of the item to remove.");
@@ -617,6 +631,7 @@ async function removeItem() {
     };
 
     try {
+        loadingSpinner.style.display = "block";  
         console.log(`📡 Sending remove request: ${JSON.stringify(requestData)}`);
 
         const response = await fetch("http://127.0.0.1:8000/remove_item/", {
@@ -639,6 +654,8 @@ async function removeItem() {
     } catch (error) {
         console.error("❌ Error removing item:", error);
         alert("⚠️ Failed to remove item. Check the console for details.");
+    } finally {
+        loadingSpinner.style.display = "none";  // ✅ Hide spinner when done
     }
 }
 
