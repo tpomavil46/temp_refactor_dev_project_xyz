@@ -50,6 +50,7 @@ python src/main.py
 - **Local Development:** Use `pip install -e .` for editable installs.
 - **Versioning:** Managed by `versioneer`
 - **Testing:** Uses `pytest` locally and `pytest-mock` for CI
+- **FastAPI:** Find web api at http://127.0.0.1:8000/docs
 
 ---
 You’re all set! 🎉 Start building with `itv_asset_tree`.
