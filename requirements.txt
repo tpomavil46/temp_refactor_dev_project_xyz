@@ -115,8 +115,8 @@ rpds-py==0.20.0
 scikit-learn==1.5.2
 scipy==1.14.1
 seaborn==0.13.2
-seeq @ file:///Users/tpomavil/Downloads/seeq-66.0.0.dev20241015-py3-none-any.whl#sha256=07d68026e34909cca7d784947f8c658a051a1f87145277a5590ea6d025b38203
-seeq-spy @ file:///Users/tpomavil/Downloads/seeq_spy-193.9-py3-none-any.whl#sha256=a5bcb5a78ce97d561fa363d1cb468d380f8e330c61862e9e7b6e41b232fd2bba
+seeq
+seeq-spy
 Send2Trash==1.8.3
 setuptools==75.1.0
 six==1.16.0
