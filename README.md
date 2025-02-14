@@ -4,13 +4,13 @@ ITV Asset Tree  **ITV Asset Tree** is a Python package designed to streamline th
 ## Installation Instructions for `itv_asset_tree`
 
 ## Prerequisites
-- **Python**: Version 3.10 or higher
+- **Python**: Version 3.11 or higher
 - **pip**: Latest version installed
 - **git**: Installed and configured
 
 ## 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/itv_asset_tree.git
+git clone https://github.com/tpomavil46/itv_asset_tree.git
 cd itv_asset_tree
 ```
 
@@ -27,10 +27,11 @@ pip install -r requirements.txt
 
 ## 4. Set Up Environment Variables
 Create a `.env` file in the root directory with the following content:
+Below is an example
 ```ini
-SERVER_USERNAME=
-SERVER_PASSWORD=
-SERVER_HOST=
+SERVER_USERNAME=your_email@example.com
+SERVER_PASSWORD=my_passwd
+SERVER_HOST=https://your_server_name.seeq.tech
 LOG_LEVEL=debug
 ```
 Update these values according to your server configuration.
@@ -48,7 +49,7 @@ python src/main.py
 ## Additional Notes
 - **Local Development:** Use `pip install -e .` for editable installs.
 - **Versioning:** Managed by `versioneer`
-- **Testing:** Uses `pytest` with `pytest-mock`
+- **Testing:** Uses `pytest` locally and `pytest-mock` for CI
 
 ---
 You’re all set! 🎉 Start building with `itv_asset_tree`.
