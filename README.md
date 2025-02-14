@@ -25,7 +25,12 @@ source venv/bin/activate  # On Windows use `venv\\Scripts\\activate`
 pip install -r requirements.txt
 ```
 
-## 4. Set Up Environment Variables
+## 4. Install Dependencies
+```bash
+pip install .
+```
+
+## 5. Set Up Environment Variables
 Create a `.env` file in the root directory with the following content:
 Below is an example
 ```ini
@@ -36,14 +41,14 @@ LOG_LEVEL=debug
 ```
 Update these values according to your server configuration.
 
-## 5. Verify Installation
+## 6. Verify Installation
 ```bash
 pytest tests/ # Run tests to ensure everything is working
 ```
 
-## 6. Usage
+## 7. Usage
 ```bash
-python src/main.py
+seeq-asset-tree
 ```
 
 ## Additional Notes
