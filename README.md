@@ -38,7 +38,7 @@ Update these values according to your server configuration.
 
 ## 5. Verify Installation
 ```bash
-pytest  # Run tests to ensure everything is working
+pytest tests/ # Run tests to ensure everything is working
 ```
 
 ## 6. Usage
