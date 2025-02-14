@@ -25,7 +25,7 @@ source venv/bin/activate  # On Windows use `venv\\Scripts\\activate`
 pip install -r requirements.txt
 ```
 
-## 4. Install Dependencies
+## 4. Install itv_asset_tree Package
 ```bash
 pip install .
 ```
