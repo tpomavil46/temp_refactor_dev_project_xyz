@@ -1127,8 +1127,16 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
         console.log("✅ Lookup Push Response:", result);
         alert(result.message);
 
-        // ✅ Call visualization update after successful push
-        updateTreeVisualization(treeName, workbookName);
+        // USE THE BACKEND VISUALIZATION DIRECTLY (from response)
+        if (result.tree_structure) {
+            console.log("📡 Using visualization directly from push_lookup response.");
+            document.getElementById("tree-visualization").innerHTML = 
+                `<pre style="white-space: pre-wrap;">${result.tree_structure}</pre>`;
+        } else {
+            // Fallback to updateTreeVisualization only if no structure is returned
+            console.warn("⚠️ No tree_structure returned from backend. Calling updateTreeVisualization...");
+            await updateTreeVisualization(treeName, workbookName);
+        }
 
     } catch (error) {
         console.error("Error pushing lookup data:", error);
