@@ -25,6 +25,7 @@ setup(
         "fastapi",
         "uvicorn",
         "pandas",
+        "seeq",
         "seeq-spy",
         "python-dotenv",
         "pytest"
