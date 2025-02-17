@@ -11,7 +11,7 @@ HOST = os.getenv("SERVER_HOST")
 USERNAME = os.getenv("SERVER_USERNAME")
 PASSWORD = os.getenv("SERVER_PASSWORD")
 
-# ✅ Create FastAPI instance
+# Create FastAPI instance
 app = FastAPI(
     title="ITV Asset Tree API",
     description="API for managing Seeq asset trees, lookup workflows, and duplicate resolution.",
@@ -20,10 +20,10 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# ✅ Register all API routers
+# Register all API routers
 app.include_router(router)
 
-# ✅ FastAPI Startup Event for Seeq Login
+# FastAPI Startup Event for Seeq Login
 @app.on_event("startup")
 async def startup_event():
     """Executes when FastAPI starts, logging into Seeq."""

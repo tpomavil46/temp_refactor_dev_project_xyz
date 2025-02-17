@@ -50,7 +50,7 @@ class TreeModifier(PushManager):
 
             print(f"✅ Successfully inserted '{item_definition['Name']}' under '{parent_name}'.")
 
-            # ✅ Push the tree update to Seeq
+            # Push the tree update to Seeq
             self.tree.push()
 
         except Exception as e:

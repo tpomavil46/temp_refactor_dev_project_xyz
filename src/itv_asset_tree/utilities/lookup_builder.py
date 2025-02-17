@@ -11,6 +11,7 @@ class LookupTableBuilder:
         self.key_column = key_column
         self.value_column = value_column
 
+    # Add a new method to the class to build lookup tables as a dictionary
     def build(self, data):
         """
         Builds lookup tables as a dictionary.
@@ -27,6 +28,7 @@ class LookupTableBuilder:
             lookup_tables[group_name] = table
         return lookup_tables
 
+    # Add a new static method to the class to save the lookup table data to a CSV file
     @staticmethod
     def save_lookup_to_csv(lookup_data, parent_paths, output_file):
         """

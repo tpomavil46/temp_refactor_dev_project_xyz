@@ -177,6 +177,7 @@ def add_items_from_lookup_csv(tree, csv_path="lookup_strings_output.csv"):
         except Exception as e:
             print(f"❌ Error adding item '{name}': {e}")
 
+# Function to create lookup tables from a CSV
 def create_lookup_tables(resolved_csv_path):
     """
     Create lookup tables from resolved CSV.
@@ -230,7 +231,8 @@ def add_new_item_to_tree(tree):
         print(f"✅ Added '{name}' under '{parent}'.")
     except Exception as e:
         print(f"❌ Error adding item: {e}")
-        
+
+# Function to add items to the tree from a CSV file        
 def add_items_from_csv(tree_modifier):
     """
     Add items to the tree from a CSV file using TreeModifier.

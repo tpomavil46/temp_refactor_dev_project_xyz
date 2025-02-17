@@ -344,19 +344,6 @@ async def insert_item(request: InsertItemRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Insert failed: {str(e)}")
 
-# @app.post("/move_item/")
-# def move_item(request: MoveRequest):
-#     """Move an item to a new location in the tree."""
-#     print(f"🔍 Received move request: {request.dict()}")  # Debugging line
-
-#     try:
-#         modifier = TreeModifier(request.workbook_name, request.tree_name)
-#         modifier.move_item(request.source_path, request.destination_path)
-#         return {"message": f"✅ Moved item from '{request.source_path}' to '{request.destination_path}'."}
-#     except Exception as e:
-#         print(f"❌ Move failed: {e}")  # Debug
-#         raise HTTPException(status_code=400, detail=str(e))
-
 @app.post("/move_item/")
 def move_item(request: MoveRequest):
     try:
@@ -370,18 +357,6 @@ def move_item(request: MoveRequest):
         return {"message": f"✅ Moved item from '{request.source_path}' to '{request.destination_path}'."}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-# @app.post("/remove_item/")
-# async def remove_item(request: RemoveRequest):
-#     """Remove an item from the tree."""
-#     try:
-#         print(f"🔍 [DEBUG] Received remove request payload: {request.dict()}")  # ✅ Debugging
-#         modifier = TreeModifier(request.workbook_name, request.tree_name)
-#         modifier.remove_item(request.item_path)
-#         return {"message": f"✅ Removed item '{request.item_path}' from the tree."}
-#     except Exception as e:
-#         print(f"❌ Remove failed: {e}")  # Debug
-#         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post("/remove_item/")
 async def remove_item(request: RemoveRequest):
