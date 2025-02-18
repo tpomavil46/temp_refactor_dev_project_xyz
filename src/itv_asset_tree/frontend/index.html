@@ -24,6 +24,7 @@
                 <select id="control-selector">
                     <option value="asset-tree-controls">Asset Tree Controls</option>
                     <option value="lookup-controls">Lookup Workflow</option>
+                    <option value="accelerator-templates">Accelerator Templates</option>
                 </select>
             </div>
 
@@ -48,6 +49,21 @@
                     <button id="clear-tree">Clear Tree</button>
                     <button id="openModifyDialog">Modify Tree</button>
                 </div>
+            </div>
+
+            <!-- Accelerator Templates -->
+            <div id="accelerator-templates" class="section" style="display: none;">
+                <h2>Accelerator Templates</h2>
+                <label for="templateSelect">Select Template:</label>
+                <select id="templateSelect"></select>
+
+                <label for="parametersInput">Template Parameters (JSON format):</label>
+                <textarea id="parametersInput" rows="5"></textarea>
+
+                <label for="assetTreeInput">Asset Tree Name:</label>
+                <input type="text" id="assetTreeInput" />
+
+                <button id="applyTemplateButton">Apply Template</button>
             </div>
 
             <!-- Lookup Workflow -->
@@ -193,5 +209,6 @@
     </div>
 
     <script src="/static/app.js"></script>
+    <script src="/static/accelerator_template_ui.js"></script>
 </body>
 </html>

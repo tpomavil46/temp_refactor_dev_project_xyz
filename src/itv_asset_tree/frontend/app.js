@@ -1183,8 +1183,9 @@ function setupControlToggle() {
     const controlSelector = document.getElementById("control-selector");
     const assetTreeControls = document.getElementById("asset-tree-controls");
     const lookupControls = document.getElementById("lookup-controls");
+    const templateScreen = document.getElementById("accelerator-templates"); // Add template screen
 
-    if (!controlSelector || !assetTreeControls || !lookupControls) {
+    if (!controlSelector || !assetTreeControls || !lookupControls || !templateScreen) {
         console.error("❌ Dropdown or control sections are missing in the DOM!");
         return;
     }
@@ -1194,9 +1195,17 @@ function setupControlToggle() {
         const selectedValue = event.target.value;
         console.log("📌 Dropdown value changed to:", selectedValue);
 
-        // Toggle visibility of sections based on dropdown selection
-        assetTreeControls.style.display = selectedValue === "asset-tree-controls" ? "block" : "none";
-        lookupControls.style.display = selectedValue === "lookup-controls" ? "block" : "none";
+        assetTreeControls.style.display = "none";
+        lookupControls.style.display = "none";
+        templateScreen.style.display = "none";  // Hide all first
+
+        if (selectedValue === "asset-tree-controls") {
+            assetTreeControls.style.display = "block";
+        } else if (selectedValue === "lookup-controls") {
+            lookupControls.style.display = "block";
+        } else if (selectedValue === "accelerator-templates") {
+            templateScreen.style.display = "block";  // Show templates screen
+        }
 
         console.log(`✅ Controls toggled to: ${selectedValue}`);
     });
@@ -1204,7 +1213,8 @@ function setupControlToggle() {
     // Set initial visibility
     assetTreeControls.style.display = "block";
     lookupControls.style.display = "none";
-    console.log("✅ Initial visibility: Asset Tree Controls shown, Lookup Workflow hidden.");
+    templateScreen.style.display = "none";  // Hide templates on load
+    console.log("✅ Initial visibility set.");
 }
 
 /** Setup Dropdown Visibility */
@@ -1212,8 +1222,9 @@ function setupDropdownVisibility() {
     const controlSelector = document.getElementById("control-selector");
     const assetTreeControls = document.getElementById("asset-tree-controls");
     const lookupControls = document.getElementById("lookup-controls");
+    const templateScreen = document.getElementById("accelerator-templates"); // Add template screen
 
-    if (!controlSelector || !assetTreeControls || !lookupControls) {
+    if (!controlSelector || !assetTreeControls || !lookupControls || !templateScreen) {
         console.error("Dropdown or control sections are missing in the DOM.");
         return;
     }
@@ -1221,21 +1232,34 @@ function setupDropdownVisibility() {
     console.log("📌 Setting up dropdown listener.");
     controlSelector.addEventListener("change", (event) => {
         console.log("Dropdown value changed to:", event.target.value);
-        assetTreeControls.style.display = event.target.value === "asset-tree-controls" ? "block" : "none";
-        lookupControls.style.display = event.target.value === "lookup-controls" ? "block" : "none";
+
+        assetTreeControls.style.display = "none";
+        lookupControls.style.display = "none";
+        templateScreen.style.display = "none";  // Hide all first
+
+        if (event.target.value === "asset-tree-controls") {
+            assetTreeControls.style.display = "block";
+        } else if (event.target.value === "lookup-controls") {
+            lookupControls.style.display = "block";
+        } else if (event.target.value === "accelerator-templates") {
+            templateScreen.style.display = "block";  // Show templates screen
+        }
+
         console.log(`✅ Switched to: ${event.target.value}`);
     });
 }
 
-/** 🔹 Setup Initial Visibility */
+/** Setup Initial Visibility */
 function setupInitialVisibility() {
     const assetTreeControls = document.getElementById("asset-tree-controls");
     const lookupControls = document.getElementById("lookup-controls");
+    const templateScreen = document.getElementById("accelerator-templates"); // Add template screen
 
-    if (assetTreeControls && lookupControls) {
+    if (assetTreeControls && lookupControls && templateScreen) {
         assetTreeControls.style.display = "block";
         lookupControls.style.display = "none";
-        console.log("✅ Initial visibility: Asset Tree Controls shown, Lookup Workflow hidden.");
+        templateScreen.style.display = "none";  // Hide templates on initial load
+        console.log("✅ Initial visibility: Asset Tree Controls shown, others hidden.");
     } else {
         console.error("❌ Control sections not found in the DOM.");
     }
@@ -1273,6 +1297,24 @@ function attachEventListeners() {
         }
     });
 }
+
+
+
+// Add this helper function to populate the dropdown
+function populateTemplateDropdown(templates) {
+    const selectElement = document.getElementById("template-selector");
+    selectElement.innerHTML = "";
+
+    templates.forEach(template => {
+        const option = document.createElement("option");
+        option.value = template;
+        option.textContent = template;
+        selectElement.appendChild(option);
+    });
+}
+
+// Added call loadTemplates() in the DOMContentLoaded event
+// Find the existing DOMContentLoaded event listener and add this line inside:
 
 document.addEventListener("DOMContentLoaded", function () {
     if (!isListenersAttached) {

@@ -17,6 +17,7 @@ from typing import Optional, Dict
 
 # from itv_asset_tree.router import router
 from itv_asset_tree.endpoints.duplicates import router as duplicates_router
+from itv_asset_tree.endpoints import template_api
 from itv_asset_tree.managers.tree_builder import TreeBuilder
 from itv_asset_tree.managers.tree_modifier import TreeModifier
 from itv_asset_tree.managers.push_manager import PushManager
@@ -34,6 +35,7 @@ app = FastAPI()
 
 # Include routers
 app.include_router(duplicates_router, prefix="/duplicates")
+app.include_router(template_api.router, prefix="/api/v1/template", tags=["template"])
 
 # Setup CORS
 app.add_middleware(
