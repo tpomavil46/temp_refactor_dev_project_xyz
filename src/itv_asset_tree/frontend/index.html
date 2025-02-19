@@ -23,7 +23,7 @@
                 <label for="control-selector">Select Controls:</label>
                 <select id="control-selector">
                     <option value="asset-tree-controls">Asset Tree Controls</option>
-                    <option value="lookup-controls">Lookup Workflow</option>
+                    <option value="lookup-controls">CSV Workflow</option>
                     <option value="accelerator-templates">Accelerator Templates</option>
                 </select>
             </div>
@@ -54,21 +54,27 @@
             <!-- Accelerator Templates -->
             <div id="accelerator-templates" class="section" style="display: none;">
                 <h2>Accelerator Templates</h2>
+
+                <!-- ✅ Status message -->
+                <p id="templateStatus">Loading templates...</p> 
+
                 <label for="templateSelect">Select Template:</label>
                 <select id="templateSelect"></select>
 
                 <label for="parametersInput">Template Parameters (JSON format):</label>
-                <textarea id="parametersInput" rows="5"></textarea>
+                <textarea id="parametersInput" rows="5" placeholder='{"param1": "value1"}'></textarea>
 
                 <label for="assetTreeInput">Asset Tree Name:</label>
-                <input type="text" id="assetTreeInput" />
+                <input type="text" id="assetTreeInput" placeholder="Enter Asset Tree Name" />
 
                 <button id="applyTemplateButton">Apply Template</button>
+
+                <pre id="templateStatus">Waiting for user input...</pre>
             </div>
 
-            <!-- Lookup Workflow -->
+            <!-- CSV Workflow -->
             <div id="lookup-controls" class="section" style="display: none;">
-                <h2>Lookup Workflow</h2>
+                <h2>CSV Workflow</h2>
                 <div class="group">
                     <!-- Step 1: Upload Raw CSV -->
                      <!-- Tree & Workbook Name Inputs (Needed for Lookup Push) -->
@@ -94,7 +100,7 @@
                         <button id="resolve-duplicates">Resolve Duplicates</button>
                     </div>
 
-                    <!-- Duplicate Rows Modal (Embedded in Lookup Workflow) -->
+                    <!-- Duplicate Rows Modal (Embedded in CSV Workflow) -->
                     <div id="duplicates-modal" style="display: none;">
                         <h3>Resolve Duplicates</h3>
                         <p>Select rows to keep:</p>
@@ -115,7 +121,7 @@
                     <!-- Parent Path Section -->
                     <div id="parent-path-section" style="display: none;">
                         <h3>Set Parent Paths</h3>
-                        <p>Specify Parent Paths for each Lookup String:</p>
+                        <p>Specify Parent Paths:</p>
                         <div id="parent-paths-section">
                             <!-- Dynamic inputs for Parent Paths will be populated here -->
                         </div>
@@ -124,8 +130,8 @@
 
                     <!-- Step 4: Push Lookup -->
                     <div id="push-lookup-section" style="display: none;">
-                        <h3>Push Lookup Table</h3>
-                        <button id="push-lookup-btn">Push Lookup to Seeq</button>
+                        <h3>Push to Seeq </h3>
+                        <button id="push-lookup-btn">Push to Seeq</button>
                     </div>
                 </div>
             </div>

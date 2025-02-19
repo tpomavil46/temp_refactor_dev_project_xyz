@@ -1,5 +1,9 @@
+# Description: Main API file for the ITV Asset Tree project.
+# api.py within the api directory:
+
 import os
 import io
+import pathlib
 import uvicorn
 import pandas as pd
 from contextlib import redirect_stdout
@@ -16,12 +20,10 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict
 
 # from itv_asset_tree.router import router
-from itv_asset_tree.endpoints.duplicates import router as duplicates_router
-from itv_asset_tree.endpoints import template_api
+from itv_asset_tree.api.csv_workflow import router as csv_workflow_router
+from itv_asset_tree.api.templates import router as templates_router
 from itv_asset_tree.managers.tree_builder import TreeBuilder
 from itv_asset_tree.managers.tree_modifier import TreeModifier
-from itv_asset_tree.managers.push_manager import PushManager
-from itv_asset_tree.managers.tree_manager import TreeManager
 
 # Load environment variables
 load_dotenv()
@@ -34,8 +36,10 @@ router = APIRouter(tags=["Asset Tree"])
 app = FastAPI()
 
 # Include routers
-app.include_router(duplicates_router, prefix="/duplicates")
-app.include_router(template_api.router, prefix="/api/v1/template", tags=["template"])
+# app.include_router(api_router)
+app.include_router(csv_workflow_router, prefix="/api/csv_workflow")
+# app.include_router(templates_router, prefix="/api/templates")
+router.include_router(templates_router, prefix="/api/v1/template", tags=["Templates"])
 
 # Setup CORS
 app.add_middleware(
@@ -55,7 +59,14 @@ UPLOAD_DIR = "./uploaded_files"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Define frontend directory
-frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "frontend"))
+# Ensure we correctly resolve the frontend directory path
+frontend_dir = str(pathlib.Path(__file__).parent.parent / "frontend")
+
+if not os.path.exists(frontend_dir):
+    raise RuntimeError(f"❌ Frontend directory not found: {frontend_dir}")
+
+# Attach Static Files
+app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
 
 # Attach Static Files (if serving assets like JS, CSS)
 app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
@@ -129,8 +140,7 @@ async def process_csv(workbook_name: str = Body(...), tree_name: str = Body(...)
         builder.build_tree_from_csv(friendly_name=current_tree_name, description="🌳 Tree built from CSV")
 
         current_tree = builder.tree
-        push_manager = PushManager(tree=current_tree)
-        push_manager.push()
+        builder.tree.push()
 
         visualize_output = io.StringIO()
         with redirect_stdout(visualize_output):
@@ -161,14 +171,16 @@ async def create_empty_tree(request: Request):
         tree_builder = TreeBuilder(workbook=workbook_name)
         current_tree = tree_builder.build_empty_tree(friendly_name=tree_name, description="Empty tree created")
 
-        push_manager = PushManager(tree=current_tree)
-        push_manager.push()
-
+        current_tree.push()
+        
+        print("📊 [DEBUG] Tree push succeeded.")
+        
         visualization = f"{tree_name}\n|-- (empty root node)"
         return {"message": f"✅ Empty tree '{tree_name}' created and pushed successfully.", "tree_structure": visualization}
     except Exception as e:
         return {"detail": f"❌ Failed to create and push empty tree: {e}"}
-
+    
+# Search and Visualize Tree
 @router.get("/search_tree/", tags=["Asset Tree"])
 async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(...)):
     try:
@@ -326,7 +338,7 @@ class RemoveRequest(BaseModel):
     workbook_name: str
     item_path: str  # Ensure full path is provided
 
-@app.post("/insert_item/")
+@app.post("/insert_item/", tags=["Asset Tree"])
 async def insert_item(request: InsertItemRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)
@@ -346,7 +358,7 @@ async def insert_item(request: InsertItemRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Insert failed: {str(e)}")
 
-@app.post("/move_item/")
+@app.post("/move_item/", tags=["Asset Tree"])
 def move_item(request: MoveRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)
@@ -360,7 +372,7 @@ def move_item(request: MoveRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/remove_item/")
+@app.post("/remove_item/", tags=["Asset Tree"])
 async def remove_item(request: RemoveRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)

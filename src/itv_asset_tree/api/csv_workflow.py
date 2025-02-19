@@ -1,3 +1,6 @@
+# duplicates.py filr in the api directory:
+# # itv_asset_tree/src/itv_asset_tree/api/duplicates.py
+
 from fastapi import APIRouter, UploadFile, HTTPException, Form, Body, File
 from pydantic import BaseModel
 import pandas as pd
@@ -30,7 +33,7 @@ UPLOAD_DIR = "./output" # Directory to store uploaded files
 
 router = APIRouter()
 
-@router.post("/upload_raw_csv/")
+@router.post("/upload_raw_csv/", tags=["CSV Workflow"])
 async def upload_raw_csv(file: UploadFile = File(...)):
     """
     Endpoint to upload and validate a raw CSV file.
@@ -52,7 +55,7 @@ async def upload_raw_csv(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"❌ Failed to upload raw CSV: {str(e)}")
 
 # Endpoint to identify duplicates
-@router.post("/get_duplicates/")
+@router.post("/get_duplicates/", tags=["CSV Workflow"])
 async def get_duplicates(
     file: UploadFile,
     group_column: str = Form(...),
@@ -78,7 +81,7 @@ async def get_duplicates(
 
 
 # Endpoint to resolve duplicates
-@router.post("/resolve_duplicates/")
+@router.post("/resolve_duplicates/", tags=["CSV Workflow"])
 async def resolve_duplicates_endpoint(
     file: UploadFile,
     group_column: str = Form(...),
@@ -121,7 +124,7 @@ async def resolve_duplicates_endpoint(
         raise HTTPException(status_code=500, detail=str(e))
     
 # function to get the names of lookup strings
-@router.get("/names/")
+@router.get("/names/", tags=["CSV Workflow"])
 async def get_lookup_string_names():
     """
     Fetch names for lookup strings from the resolved_data.csv file.
@@ -142,7 +145,7 @@ async def get_lookup_string_names():
     return {"lookup_names": lookup_names}
 
 # function to generate lookup strings
-@router.post("/generate_lookup/")
+@router.post("/generate_lookup/", tags=["CSV Workflow"])
 async def generate_lookup(
     group_column: str = Form(...),
     key_column: str = Form(...),
@@ -174,7 +177,7 @@ class ParentPathsRequest(BaseModel):
     key_column: str  # Column for the key values
     value_column: str  # Column for the value descriptions
 
-@router.post("/set_parent_paths/")
+@router.post("/set_parent_paths/", tags=["CSV Workflow"])
 async def set_parent_paths(request: ParentPathsRequest):
     """
     Assign Parent Paths to lookup strings and save the final lookup_output.csv.
@@ -234,7 +237,7 @@ async def set_parent_paths(request: ParentPathsRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/push_lookup/")
+@router.post("/push_lookup/", tags=["CSV Workflow"])
 async def push_lookup(tree_name: str = Form(...), workbook_name: str = Form(...)):
     """
     Pushes lookup_output.csv to the specified tree in Seeq and returns the visualization.
