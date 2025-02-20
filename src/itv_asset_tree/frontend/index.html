@@ -62,7 +62,11 @@
                 <input type="text" id="searchQueryInput" placeholder="e.g., Area ?_*" />
 
                 <label for="typeInput">Type:</label>
-                <input type="text" id="typeInput" placeholder="e.g., StoredSignal" value="StoredSignal" />
+                <select id="typeInput">
+                    <option value="StoredSignal">Stored Signal</option>
+                    <option value="Calculations">Calculations</option>
+                    <option value="Metric">Metric</option>
+                </select>
 
                 <label for="datasourceInput">Datasource Name:</label>
                 <input type="text" id="datasourceInput" placeholder="e.g., Example Data" />
@@ -72,6 +76,9 @@
 
                 <label for="assetTreeInput">Asset Tree Name:</label>
                 <input type="text" id="assetTreeInput" placeholder="Enter Asset Tree Name" />
+
+                <label for="buildPathInput">Build Path:</label>
+                <input type="text" id="buildPathInput" placeholder="e.g., My HVAC Units >> Facility #1" />
 
                 <button id="applyTemplateButton">Apply Template</button>
                 <pre id="templateStatus">Waiting for user input...</pre>
