@@ -58,17 +58,22 @@
                 <!-- ✅ Status message -->
                 <p id="templateStatus">Loading templates...</p> 
 
+                <label for="searchQueryInput">Name (Search Query):</label>
+                <input type="text" id="searchQueryInput" placeholder="e.g., Area ?_*" />
+
+                <label for="typeInput">Type:</label>
+                <input type="text" id="typeInput" placeholder="e.g., StoredSignal" value="StoredSignal" />
+
+                <label for="datasourceInput">Datasource Name:</label>
+                <input type="text" id="datasourceInput" placeholder="e.g., Example Data" />
+
                 <label for="templateSelect">Select Template:</label>
                 <select id="templateSelect"></select>
-
-                <label for="parametersInput">Template Parameters (JSON format):</label>
-                <textarea id="parametersInput" rows="5" placeholder='{"param1": "value1"}'></textarea>
 
                 <label for="assetTreeInput">Asset Tree Name:</label>
                 <input type="text" id="assetTreeInput" placeholder="Enter Asset Tree Name" />
 
                 <button id="applyTemplateButton">Apply Template</button>
-
                 <pre id="templateStatus">Waiting for user input...</pre>
             </div>
 

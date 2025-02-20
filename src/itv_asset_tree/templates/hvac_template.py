@@ -15,3 +15,11 @@ class HVAC(Asset):
     @Asset.Attribute()
     def Relative_Humidity(self, metadata):
         return metadata[metadata['Name'].str.contains('Humidity')]
+    
+    @staticmethod
+    def get_required_parameters():
+        return {
+            "temperature_signal": "string (Tag name of temperature signal)",
+            "pressure_signal": "string (Tag name of pressure signal)",
+            "flow_signal": "string (Tag name of flow signal)"
+        }
