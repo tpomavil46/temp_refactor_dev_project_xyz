@@ -24,7 +24,7 @@
                 <select id="control-selector">
                     <option value="asset-tree-controls">Asset Tree Controls</option>
                     <option value="lookup-controls">CSV Workflow</option>
-                    <option value="accelerator-templates">Accelerator Templates</option>
+                    <option value="accelerator-templates">Bulk Analytics</option>
                 </select>
             </div>
 
@@ -53,32 +53,55 @@
 
             <!-- Accelerator Templates -->
             <div id="accelerator-templates" class="section" style="display: none;">
-                <h2>Accelerator Templates</h2>
+                <h2>Bulk Analytics</h2>
 
                 <!-- ✅ Status message -->
-                <p id="templateStatus">Loading templates...</p> 
+                <p id="templateStatus">Loading templates...</p>
 
-                <label for="searchQueryInput">Name (Search Query):</label>
-                <input type="text" id="searchQueryInput" placeholder="e.g., Area ?_*" />
+                <div id="typeContainer">
+                    <label for="typeInput">Type:</label>
+                    <select id="typeInput">
+                        <option value="StoredSignal">Stored Signal</option>
+                        <option value="Calculations">Calculations</option>
+                        <option value="Metric">Metric</option>
+                    </select>
+                </div>
 
-                <label for="typeInput">Type:</label>
-                <select id="typeInput">
-                    <option value="StoredSignal">Stored Signal</option>
-                    <option value="Calculations">Calculations</option>
-                    <option value="Metric">Metric</option>
-                </select>
+                <div id="datasourceContainer">
+                    <label for="datasourceInput">Datasource Name:</label>
+                    <input type="text" id="datasourceInput" placeholder="e.g., Example Data" />
+                </div>
 
-                <label for="datasourceInput">Datasource Name:</label>
-                <input type="text" id="datasourceInput" placeholder="e.g., Example Data" />
+                <div id="searchQueryContainer">
+                    <label for="searchQueryInput">Name (Search Query):</label>
+                    <input type="text" id="searchQueryInput" placeholder="e.g., Area ?_*" />
+                </div>
 
-                <label for="templateSelect">Select Template:</label>
-                <select id="templateSelect"></select>
+                <!-- Select Template (This is the Base Template) -->
+                <div id="templateContainer">
+                    <label id="templateLabel" for="templateSelect">Select Template:</label>
+                    <select id="templateSelect">
+                        <option value="HVAC">HVAC</option>
+                        <option value="PumpMonitoring">Pump Monitoring</option>
+                        <!-- Add more options as needed -->
+                    </select>
+                </div>
+                
+                <div id="calculationsTemplateContainer">
+                    <label for="calculationsTemplateInput">Calculations Template Name:</label>
+                    <input type="text" id="calculationsTemplateInput" placeholder="e.g., HVAC_With_Calcs">
+                </div>
 
-                <label for="assetTreeInput">Asset Tree Name:</label>
-                <input type="text" id="assetTreeInput" placeholder="Enter Asset Tree Name" />
+                <!-- Workbook Name -->
+                <div id="workbookNameContainer">
+                    <label for="workbookNameInput">Workbook Name:</label>
+                    <input type="text" id="workbookNameInput" placeholder="Enter Workbook Name" />
+                </div>
 
-                <label for="buildPathInput">Build Path:</label>
-                <input type="text" id="buildPathInput" placeholder="e.g., My HVAC Units >> Facility #1" />
+                <div id="buildPathContainer">
+                    <label for="buildPathInput">Build Path:</label>
+                    <input type="text" id="buildPathInput" placeholder="e.g., My HVAC Units >> Facility #1" />
+                </div>
 
                 <button id="applyTemplateButton">Apply Template</button>
                 <pre id="templateStatus">Waiting for user input...</pre>

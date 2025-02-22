@@ -75,49 +75,80 @@ function getSeeqType(selectedType, templateType) {
     return selectedType; // Otherwise, return the selected type directly
 }
 
-// Function to apply the selected template
 async function applyTemplate() {
+    console.log("🚀 Applying template...");
+
     const templateSelect = document.getElementById('templateSelect');
     const typeInput = document.getElementById('typeInput');
-    const searchQuery = document.getElementById('searchQueryInput').value;
-    const type = getSeeqType(typeInput.options[typeInput.selectedIndex].value, templateSelect.value);
-    const datasourceName = document.getElementById('datasourceInput').value;
-    const assetTree = document.getElementById('assetTreeInput').value;
-    const statusElement = document.getElementById('templateStatus');
-    const buildPath = document.getElementById('buildPathInput').value;
 
-    // Auto-switch template when "Calculations" is selected
-    if (typeInput.value === "Calculations") {
-        console.log("🔄 Switching to HVAC_With_Calcs...");
-        templateSelect.value = "HVAC_With_Calcs";
+    if (!templateSelect) {
+        console.error("❌ templateSelect not found in the DOM!");
+        return;
+    }
+    if (!typeInput) {
+        console.error("❌ typeInput not found in the DOM!");
+        return;
     }
 
-    const templateType = templateSelect.value;
+    // ✅ Ensure all necessary fields exist
+    const searchQuery = document.getElementById('searchQueryInput')?.value.trim() || "";
+    const datasourceName = document.getElementById('datasourceInput')?.value.trim() || "";
+    const workbookName = document.getElementById('workbookNameInput')?.value.trim() || "";
+    const buildPath = document.getElementById('buildPathInput')?.value.trim() || "";
+    const calculationsTemplate = document.getElementById('calculationsTemplateInput')?.value.trim() || "";
 
-    if (!templateType) {
+    // ✅ Base template is selected from the dropdown
+    const baseTemplate = templateSelect.value; 
+
+    const statusElement = document.getElementById('templateStatus');
+    if (!statusElement) {
+        console.error("❌ statusElement not found in the DOM!");
+        return;
+    }
+
+    const type = getSeeqType(typeInput.options[typeInput.selectedIndex]?.value || "", templateSelect.value);
+
+    if (!templateSelect.value) {
         alert("⚠️ Please select a template.");
         return;
     }
-    if (!searchQuery || !type || !datasourceName) {
-        alert("⚠️ Please fill out the Search Query, Type, and Datasource Name fields.");
-        return;
+
+    let payload = {
+        template_name: templateSelect.value,
+        type: type,
+        build_asset_regex: "(Area .)_.*",
+        build_path: buildPath || "My HVAC Units >> Facility #1",
+        workbook_name: workbookName,
+        search_query: searchQuery,
+        base_template: baseTemplate,
+        calculations_template: calculationsTemplate,
+        datasource_name: datasourceName  // ✅ Ensure this is included!
+    };
+
+    let apiEndpoint = "/api/v1/template/build";  // Default for Stored Signals
+
+    if (type.includes("Calculated")) {
+        if (!workbookName || !baseTemplate || !calculationsTemplate) {
+            alert("⚠️ Please provide required fields for Calculated Signals (Workbook Name, Base Template, and Calculations Template).");
+            return;
+        }
+        payload.base_template = baseTemplate;  // ✅ Added missing field
+        payload.calculations_template = calculationsTemplate;
+        apiEndpoint = "/api/v1/template/build_calculated";  // ✅ New endpoint
+    } else {
+        if (!datasourceName) {
+            alert("⚠️ Please provide a Datasource Name for Stored Signals.");
+            return;
+        }
+        payload.datasource_name = datasourceName;
     }
 
     statusElement.innerText = "⏳ Applying template...";
 
     try {
-        const payload = {
-            template_name: templateType,
-            search_query: searchQuery,
-            type: type, // ✅ Now dynamically mapped
-            datasource_name: datasourceName,
-            build_asset_regex: "(Area .)_.*",
-            build_path: buildPath || "My HVAC Units >> Facility #1",
-        };
-
         console.log("🔍 Payload Sent to FastAPI:", JSON.stringify(payload, null, 2));
 
-        const response = await fetch('/api/v1/template/build', {
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
@@ -139,14 +170,24 @@ async function applyTemplate() {
 }
 
 // Ensure event listener is attached when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     console.log("✅ Document Loaded.");
 
-    const templateSelect = document.getElementById('templateSelect');
-    const applyTemplateButton = document.getElementById('applyTemplateButton');
+    const templateSelect = document.getElementById("templateSelect");
+    const applyTemplateButton = document.getElementById("applyTemplateButton");
     const typeInput = document.getElementById("typeInput");
 
-    if (!templateSelect || !applyTemplateButton || !typeInput) {
+    // Get field containers for visibility toggling
+    const datasourceContainer = document.getElementById("datasourceContainer");
+    const searchQueryContainer = document.getElementById("searchQueryContainer");
+    const workbookNameContainer = document.getElementById("workbookNameContainer");
+    const buildPathContainer = document.getElementById("buildPathContainer");
+    const templateContainer = document.getElementById("templateContainer"); // Previously Select Template
+    const calculationsTemplateContainer = document.getElementById("calculationsTemplateContainer"); // New Calculations Template
+
+    if (!templateSelect || !applyTemplateButton || !typeInput ||
+        !datasourceContainer || !searchQueryContainer || !workbookNameContainer ||
+        !buildPathContainer || !templateContainer || !calculationsTemplateContainer) {
         console.error("❌ Missing required elements in HTML.");
         return;
     }
@@ -154,25 +195,83 @@ document.addEventListener('DOMContentLoaded', () => {
     // ✅ Load templates after ensuring the dropdown exists
     loadTemplates();
 
-    // ✅ Detect changes to typeInput and switch template dynamically
-    typeInput.addEventListener("change", function () {
-        const selectedType = this.value;
-        const baseTemplate = templateSelect.value.replace("_With_Calcs", ""); // Ensure we have base template
-        
-        if (selectedType === "Calculations") {
-            const calcTemplate = `${baseTemplate}_With_Calcs`;
-            console.log(`🔄 Switching to ${calcTemplate}...`);
-            templateSelect.value = calcTemplate;
-        } else {
-            console.log(`🔄 Switching back to base template: ${baseTemplate}`);
-            templateSelect.value = baseTemplate;
+    // Function to update form fields dynamically based on Type selection
+    function updateFormFields() {
+        console.log("🛠 Running updateFormFields...");
+    
+        const typeInput = document.getElementById("typeInput");
+        const selectedType = typeInput ? typeInput.value.trim() : null;
+        if (!selectedType) {
+            console.error("❌ Type input is missing!");
+            return;
         }
-    });
+    
+        const datasourceContainer = document.getElementById("datasourceContainer");
+        const searchQueryContainer = document.getElementById("searchQueryContainer");
+        const workbookNameContainer = document.getElementById("workbookNameContainer");
+        const buildPathContainer = document.getElementById("buildPathContainer");
+        const templateContainer = document.getElementById("templateContainer");
+        const calculationsTemplateContainer = document.getElementById("calculationsTemplateContainer");
+    
+        // Debug what exists
+        console.log("🔍 Checking container elements...");
+        console.log("datasourceContainer:", datasourceContainer);
+        console.log("searchQueryContainer:", searchQueryContainer);
+        console.log("workbookNameContainer:", workbookNameContainer);
+        console.log("buildPathContainer:", buildPathContainer);
+        console.log("templateContainer:", templateContainer);
+        console.log("calculationsTemplateContainer:", calculationsTemplateContainer);
+    
+        if (!datasourceContainer || !searchQueryContainer || !workbookNameContainer ||
+            !buildPathContainer || !templateContainer || !calculationsTemplateContainer) {
+            console.error("❌ One or more container fields are missing!");
+            return;
+        }
+    
+        // Show/Hide Fields
+        if (selectedType === "StoredSignal") {
+            console.log("🔄 Switching to Stored Signal mode...");
+            datasourceContainer.classList.remove("hidden");
+            searchQueryContainer.classList.remove("hidden");
+            workbookNameContainer.classList.remove("hidden");
+            buildPathContainer.classList.remove("hidden");
+            templateContainer.classList.remove("hidden"); // ✅ Show Select Template
+            calculationsTemplateContainer.classList.add("hidden"); // ❌ Hide Calculations Template
+            document.getElementById("templateLabel").innerText = "Select Template:";
+        } else if (selectedType === "Calculations") {
+            console.log("🔄 Switching to Calculations mode...");
+            datasourceContainer.classList.remove("hidden");
+            searchQueryContainer.classList.remove("hidden");
+            workbookNameContainer.classList.remove("hidden");
+            buildPathContainer.classList.remove("hidden");
+            templateContainer.classList.remove("hidden"); // ✅ Show Base Template (same field)
+            calculationsTemplateContainer.classList.remove("hidden"); // ✅ Show Calculations Template
+            document.getElementById("templateLabel").innerText = "Base Template:";
+        } else {
+            console.warn("⚠️ Unknown type selected, defaulting to Stored Signal.");
+        }
+    
+        console.log("✅ Final Updated Classes:", {
+            datasource: datasourceContainer.classList,
+            searchQuery: searchQueryContainer.classList,
+            workbook: workbookNameContainer.classList,
+            buildPath: buildPathContainer.classList,
+            template: templateContainer.classList,
+            calculationsTemplate: calculationsTemplateContainer.classList
+        });
+    }
 
-    // ✅ Refresh UI when switching templates
+    // ✅ Detect changes to Type selection and apply updates
+    typeInput.addEventListener("change", updateFormFields);
+
+    // ✅ Detect changes to Template selection for logging/debugging
     templateSelect.addEventListener("change", () => {
         console.log(`🔄 Switched to template: ${templateSelect.value}`);
     });
 
-    applyTemplateButton.addEventListener('click', applyTemplate);
+    // ✅ Attach Apply Template button click event
+    applyTemplateButton.addEventListener("click", applyTemplate);
+
+    // ✅ Run the function at the end to set initial field visibility
+    setTimeout(updateFormFields, 200);
 });

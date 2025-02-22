@@ -25,12 +25,19 @@ TEMPLATE_CLASSES = {
 }
 
 class BuildRequest(BaseModel):
-    template_name: str
-    search_query: str
-    type: str
-    datasource_name: str
-    build_asset_regex: Optional[str] = None
-    build_path: Optional[str] = Field("My HVAC Units >> Facility #1", description="Path for asset placement")
+    template_name: str = Field(..., description="The name of the template to apply")
+    type: str = Field(..., description="The type of signal (StoredSignal, CalculatedSignal, etc.)")
+    search_query: Optional[str] = Field(None, description="Query used to find matching signals")  # ✅ ADDED
+    build_asset_regex: str = Field(..., description="Regex to extract asset names from signals")
+    build_path: str = Field(..., description="Path where the asset should be built")
+
+    # ✅ Conditionally Required Fields
+    datasource_name: Optional[str] = Field(None, description="Datasource Name (Only required for Stored Signals)")
+    workbook_name: Optional[str] = Field(None, description="Workbook Name (Required for Seeq push)")
+
+    # ✅ New Fields for Calculated Signals
+    base_template: Optional[str] = Field(None, description="Base template used for stored signals")
+    calculations_template: Optional[str] = Field(None, description="Template applied to add calculations")
 
 @router.get("/templates/", tags=["Templates"])
 async def get_templates():
@@ -65,179 +72,149 @@ TEMPLATE_CLASSES = {
 # Mapping calculated templates to their base versions
 BASE_TEMPLATE_MAP = {template + "_With_Calcs": template for template in TEMPLATE_CLASSES if not template.endswith("_With_Calcs")}
 
-# @router.post("/build", tags=["Templates"])
-# def build_template(request: BuildRequest):
-#     try:
-#         logger.info(f"🔍 Received request: {request.dict()}")
-
-#         if not request.search_query or not request.type or not request.datasource_name:
-#             raise HTTPException(status_code=400, detail="❌ Missing required search parameters (search_query, type, datasource_name).")
-
-#         # ✅ Determine if this is a calculated template and fetch base stored signals first
-#         base_template = request.template_name.replace("_With_Calcs", "") if "_With_Calcs" in request.template_name else None
-
-#         if base_template:
-#             logger.info(f"🔄 Detected calculated template '{request.template_name}'. Fetching stored signals from '{base_template}' first...")
-
-#             # ✅ Fetch base template signals using StoredSignal type
-#             base_request = BuildRequest(
-#                 template_name=base_template,
-#                 search_query=request.search_query,
-#                 type="StoredSignal",  # ✅ Always fetch stored signals first
-#                 datasource_name=request.datasource_name,
-#                 build_asset_regex=request.build_asset_regex,
-#                 build_path=request.build_path
-#             )
-
-#             base_search_results = fetch_base_metadata(base_request)
-
-#             if base_search_results.empty:
-#                 raise HTTPException(status_code=400, detail=f"🚨 No matching stored signals found for base template '{base_template}'!")
-
-#             logger.info(f"✅ Successfully retrieved base metadata from '{base_template}'. Now applying calculations...")
-
-#             # ✅ Apply the requested calculated template on top of stored signals
-#             model_class = TEMPLATE_CLASSES[request.template_name]
-#             calculated_df = spy.assets.build(model_class, base_search_results)
-
-#             # ✅ Merge stored signals and calculated attributes
-#             build_df = pd.concat([base_search_results, calculated_df], ignore_index=True)
-
-#         else:
-#             # ✅ Perform search for non-calculated templates
-#             query_payload = {
-#                 "Name": request.search_query,
-#                 "Type": request.type,  # ✅ Dynamically passed type
-#                 "Datasource Name": request.datasource_name
-#             }
-#             search_results = spy.search(query_payload)
-
-#             if search_results.empty:
-#                 raise HTTPException(status_code=400, detail="🚨 No matching signals found in Seeq!")
-
-#             search_results = search_results[["ID", "Name", "Datasource Name"]]
-
-#             # ✅ Apply regex if provided
-#             extracted_asset = search_results["Name"].str.extract(rf'({request.build_asset_regex})') if request.build_asset_regex else search_results[["Name"]]
-#             search_results["Build Asset"] = extracted_asset[0]
-#             search_results["Build Path"] = request.build_path
-
-#             # ✅ Standard processing for stored signals
-#             model_class = TEMPLATE_CLASSES[request.template_name]
-#             build_df = spy.assets.build(model_class, search_results)
-
-#         # ✅ Inspect for NaN before pushing
-#         if build_df.isna().any().any():
-#             logger.warning(f"⚠️ Detected NaN values in DataFrame before push:\n{build_df.isna().sum()}")
-
-#         # ✅ Fix NaN values before push
-#         build_df.fillna("", inplace=True)
-
-#         logger.info(f"✅ Final Build DataFrame before push:\n{build_df}")
-
-#         # ✅ Ensure 'Formula Parameters' is correctly formatted
-#         if "Formula Parameters" in build_df.columns:
-#             logger.info("🔍 Validating 'Formula Parameters' before push...")
-
-#             def validate_formula_parameters(value):
-#                 """Ensures each formula parameter follows 'var=ID' or 'var=Path' format or defaults to {}."""
-#                 if pd.isna(value) or value == "":
-#                     return {}  # ✅ Replace NaN or empty values with an empty dictionary
-#                 if isinstance(value, dict):
-#                     formatted_params = {}
-#                     for k, v in value.items():
-#                         if isinstance(v, dict) and "ID" in v:
-#                             formatted_params[k] = f"{k}={v['ID']}"
-#                         elif isinstance(v, dict) and "Path" in v:
-#                             formatted_params[k] = f"{k}={v['Path']}"
-#                         else:
-#                             logger.warning(f"⚠️ Unexpected format for formula parameter: {k} -> {v}")
-#                     return formatted_params
-#                 return value  # ✅ Return as-is if already correctly formatted
-
-#             # ✅ Only process if the column exists
-#             build_df["Formula Parameters"] = build_df["Formula Parameters"].apply(validate_formula_parameters)
-
-#             # ✅ Log any remaining problematic entries
-#             invalid_entries = build_df[~build_df["Formula Parameters"].apply(lambda x: isinstance(x, dict))]
-#             if not invalid_entries.empty:
-#                 logger.warning(f"⚠️ Found invalid formula parameters:\n{invalid_entries[['Formula Parameters']]}")
-
-#             logger.info(f"✅ Final Build DataFrame before push:\n{build_df}")
-
-#         # ✅ Push to Seeq after cleaning formula parameters
-#         spy.push(metadata=build_df, workbook="SPy Documentation Examples >> spy.assets")
-#         logger.info(f"✅ Successfully pushed '{request.template_name}' to Seeq.")
-        
-#         # ✅ Push to Seeq
-#         spy.push(metadata=build_df, workbook="SPy Documentation Examples >> spy.assets")
-#         logger.info(f"✅ Successfully pushed '{request.template_name}' to Seeq.")
-
-#         return {"message": f"✅ Successfully applied template '{request.template_name}'"}
-
-#     except Exception as e:
-#         logger.error(f"❌ Unexpected Error: {e}\n{traceback.format_exc()}")
-#         raise HTTPException(status_code=500, detail=f"❌ Failed to apply template: {str(e)}")
-
 @router.post("/build", tags=["Templates"])
 def build_template(request: BuildRequest):
     try:
         logger.info(f"🔍 Received request: {request.dict()}")
 
-        # ✅ Validate required parameters
-        if not request.search_query or not request.type or not request.datasource_name:
-            raise HTTPException(status_code=400, detail="❌ Missing required search parameters (search_query, type, datasource_name).")
+        # ✅ Validate required parameters based on type
+        if request.type.startswith("Stored") and not request.datasource_name:
+            raise HTTPException(status_code=400, detail="🚨 Datasource Name is required for Stored Signals.")
+        if request.type.startswith("Calculated") and not request.asset_tree_name:
+            raise HTTPException(status_code=400, detail="🚨 Asset Tree Name is required for Calculated Signals.")
 
-        logger.info(f"🔎 Running spy.search() with: Name='{request.search_query}', Type='{request.type}', Datasource='{request.datasource_name}'")
+        # ✅ Ensure we fetch stored signals first if needed
+        if request.type.startswith("Calculated"):
+            logger.info(f"🔄 Fetching existing tree: {request.asset_tree_name}")
+            existing_tree = fetch_existing_tree(request.asset_tree_name)
 
-        # ✅ Perform search in Seeq
-        query_payload = {
-            "Name": request.search_query,
-            "Type": request.type,
-            "Datasource Name": request.datasource_name
-        }
-        search_results = spy.search(query_payload)
+            if existing_tree.empty:
+                raise HTTPException(status_code=400, detail="🚨 No existing asset tree found in Seeq!")
 
-        # ✅ Log search results (Check if empty)
-        if search_results.empty:
-            logger.error("🚨 No matching signals found in Seeq! Check query.")
-            raise HTTPException(status_code=400, detail="🚨 No matching signals found in Seeq! Check query.")
-
-        logger.info(f"✅ Found {len(search_results)} signals matching query.")
-        logger.info(f"📊 Search Results:\n{search_results.head(5)}")  # Print top 5 results
-
-        # Process search results
-        search_results = search_results[["ID", "Name", "Datasource Name"]]
-
-        # ✅ Fix the extraction to avoid setting a DataFrame
-        extracted_asset = search_results["Name"].str.extract(rf'({request.build_asset_regex})') if request.build_asset_regex else search_results[["Name"]]
-        search_results["Build Asset"] = extracted_asset[0]  # Extract first column as a Series
-
-        search_results["Build Path"] = request.build_path if request.build_path else "My HVAC Units >> Facility #1"
-
-        logger.info(f"✅ Processed search results:\n{search_results.head(5)}")
-
-        # Select model class
-        if request.template_name == "HVAC":
-            model_class = HVAC
+            search_results = existing_tree
         else:
-            raise ValueError(f"Unknown template name: {request.template_name}")
+            logger.info(f"🔎 Running spy.search() with: Name='{request.search_query}', Type='{request.type}', Datasource='{request.datasource_name}'")
 
-        # Build the asset structure
+            # ✅ Perform search in Seeq
+            query_payload = {
+                "Name": request.search_query,
+                "Type": request.type,
+                "Datasource Name": request.datasource_name
+            }
+            search_results = spy.search(query_payload)
+
+            if search_results.empty:
+                raise HTTPException(status_code=400, detail="🚨 No matching signals found in Seeq! Check query.")
+
+            logger.info(f"✅ Retrieved {len(search_results)} results:\n{search_results.head()}")
+
+            # ✅ Ensure required columns exist
+            if "Build Path" not in search_results.columns:
+                search_results["Build Path"] = request.build_path  # ✅ Set from request
+            if "Build Asset" not in search_results.columns:
+                search_results["Build Asset"] = search_results["Name"].str.extract(rf'({request.build_asset_regex})')[0]  # ✅ Extract Asset Name
+
+            logger.info(f"📋 Final Processed Search Results:\n{search_results.head()}")
+
+        # ✅ Select template class
+        model_class = TEMPLATE_CLASSES.get(request.template_name)
+        if not model_class:
+            raise HTTPException(status_code=400, detail=f"🚨 Unknown template: {request.template_name}")
+
+        # ✅ Build and push asset tree
         build_df = spy.assets.build(model_class, search_results)
-        logger.info(f"✅ Build DataFrame:\n{build_df}")
-
-        build_df["Type"].fillna("StoredSignal", inplace=True)
-
-        # Push to Seeq
         spy.push(metadata=build_df, workbook="SPy Documentation Examples >> spy.assets")
-        logger.info("✅ Successfully pushed to Seeq.")
 
+        logger.info("✅ Successfully pushed to Seeq.")
         return {"message": f"✅ Successfully applied template '{request.template_name}'"}
 
     except Exception as e:
         logger.error(f"❌ Unexpected Error: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"❌ Failed to apply template: {str(e)}")
+
+def fetch_existing_tree(request: BuildRequest):
+    """Helper function to fetch an existing asset tree in Seeq."""
+    tree_query = {
+        "Name": request.asset_tree_name or request.build_path,  # ✅ Try both name and path
+        "Type": "Asset"  # ✅ Searching for an existing tree, NOT raw signals
+    }
+
+    logger.info(f"🔎 Searching for existing asset tree: {tree_query}")
+    tree_results = spy.search(tree_query)
+
+    if tree_results.empty:
+        logger.warning(f"⚠️ No existing asset tree found for '{tree_query['Name']}'!")
+        return pd.DataFrame()  # Return empty DF if the tree is missing
+
+    logger.info(f"✅ Found asset tree:\n{tree_results}")
+    return tree_results
+ 
+@router.post("/build_calculated", tags=["Templates"])
+def build_calculated_template(request: BuildRequest):
+    try:
+        logger.info(f"🔍 Received request for calculated template: {request.dict()}")
+
+        # ✅ Validate required parameters for Calculated Signals
+        if not request.base_template:
+            raise HTTPException(status_code=400, detail="🚨 Base Template Name is required for Calculated Signals.")
+        if not request.calculations_template:
+            raise HTTPException(status_code=400, detail="🚨 Calculations Template Name is required for Calculated Signals.")
+
+        # ✅ Fetch stored signals metadata using the base template
+        logger.info(f"🔄 Fetching stored signals using base template: {request.base_template}")
+
+        base_request = BuildRequest(
+            template_name=request.base_template,
+            search_query=request.search_query,
+            type="StoredSignal",
+            datasource_name=request.datasource_name,
+            build_asset_regex=request.build_asset_regex,
+            build_path=request.build_path
+        )
+
+        base_results = build_template(base_request)  # ✅ Reuse /build to get stored signals
+
+        if not base_results or "message" not in base_results:
+            raise HTTPException(status_code=400, detail="🚨 Failed to retrieve base stored signals!")
+
+        # ✅ Convert base results into a dataframe
+        logger.info("🔍 Running spy.search() to get base stored signals dataframe...")
+        base_df = spy.search({"Name": request.search_query, "Type": "StoredSignal", "Datasource Name": request.datasource_name})
+
+        if base_df.empty:
+            raise HTTPException(status_code=400, detail="🚨 No stored signals found in Seeq!")
+
+        logger.info(f"✅ Retrieved {len(base_df)} stored signals:\n{base_df.head()}")
+
+        # ✅ Copy the original metadata but change the build template
+        logger.info("📋 Copying metadata dataframe for modification...")
+        hvac_with_calcs_metadata_df = base_df.copy()
+
+        # ✅ Ensure required columns are present
+        if "Build Path" not in hvac_with_calcs_metadata_df.columns:
+            hvac_with_calcs_metadata_df["Build Path"] = request.build_path  # ✅ Set from request
+        if "Build Asset" not in hvac_with_calcs_metadata_df.columns:
+            hvac_with_calcs_metadata_df["Build Asset"] = hvac_with_calcs_metadata_df["Name"].str.extract(rf'({request.build_asset_regex})')[0]  # ✅ Extract Asset Name
+
+        logger.info(f"📋 Final Processed DataFrame for Calculations:\n{hvac_with_calcs_metadata_df.head()}")
+
+        # ✅ Apply calculations template
+        calc_model_class = TEMPLATE_CLASSES.get(request.calculations_template)
+        if not calc_model_class:
+            raise HTTPException(status_code=400, detail=f"🚨 Unknown calculations template: {request.calculations_template}")
+
+        build_with_calcs_df = spy.assets.build(calc_model_class, hvac_with_calcs_metadata_df)  # ✅ Now has required columns!
+
+        # ✅ Push updated data to Seeq
+        logger.info("📤 Pushing updated calculated signals to Seeq...")
+        spy.push(metadata=build_with_calcs_df, workbook="SPy Documentation Examples >> spy.assets")
+
+        logger.info("✅ Successfully pushed calculated template to Seeq.")
+        return {"message": f"✅ Successfully applied calculated template '{request.calculations_template}'"}
+
+    except Exception as e:
+        logger.error(f"❌ Unexpected Error in build_calculated: {e}\n{traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to apply calculated template: {str(e)}")
     
 def fetch_base_metadata(request: BuildRequest):
     """Helper function to retrieve base signals from Seeq before applying calculations."""
@@ -256,9 +233,14 @@ def fetch_base_metadata(request: BuildRequest):
 
     search_results = search_results[["ID", "Name", "Datasource Name"]]
 
-    # ✅ Apply regex if needed
-    extracted_asset = search_results["Name"].str.extract(rf'({request.build_asset_regex})') if request.build_asset_regex else search_results[["Name"]]
-    search_results["Build Asset"] = extracted_asset[0]
-    search_results["Build Path"] = request.build_path
+    # ✅ Apply regex safely
+    if request.build_asset_regex:
+        extracted_asset = search_results["Name"].str.extract(rf'({request.build_asset_regex})')
+        search_results["Build Asset"] = extracted_asset[0]  # ✅ Avoid assigning a DataFrame
+    else:
+        search_results["Build Asset"] = None  # Set explicitly to avoid errors
+
+    # ✅ Ensure build path is always defined
+    search_results["Build Path"] = request.build_path if request.build_path else "My HVAC Units >> Facility #1"
 
     return search_results

@@ -266,3 +266,33 @@ button:hover {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Universal hidden class */
+.hidden {
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Ensure containers transition smoothly */
+#datasourceContainer, 
+#searchQueryContainer, 
+#workbookNameContainer,
+#buildPathContainer,
+#templateContainer,
+#calculationsTemplateContainer {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Specifically force hidden fields to disappear */
+#datasourceContainer.hidden, 
+#searchQueryContainer.hidden, 
+#workbookNameContainer.hidden,
+#buildPathContainer.hidden,
+#templateContainer.hidden,
+#calculationsTemplateContainer.hidden {
+    display: none !important;
+}
