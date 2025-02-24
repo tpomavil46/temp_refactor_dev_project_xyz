@@ -7,9 +7,10 @@ from seeq import spy
 import logging
 from typing import Optional
 import traceback
+import json
 
 # Import template classes
-from itv_asset_tree.templates.hvac_template import HVAC, HVAC_With_Calcs
+from itv_asset_tree.templates.hvac_template import HVAC, HVAC_With_Calcs, Refrigerator, Compressor
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -21,7 +22,8 @@ router = APIRouter()
 TEMPLATE_CLASSES = {
     "HVAC": HVAC,
     "HVAC_With_Calcs": HVAC_With_Calcs,
-    # Future expansion: "Pumps": PumpTemplate
+    "Refrigerator": Refrigerator,  # ✅ Ensure hierarchical templates are included
+    "Compressor": Compressor
 }
 
 class BuildRequest(BaseModel):
@@ -46,6 +48,28 @@ async def get_templates():
     """
     return {"available_templates": list(TEMPLATE_CLASSES.keys())}
 
+@router.get("/templates/hierarchical", tags=["Templates"])
+async def get_hierarchical_templates():
+    """
+    Fetches hierarchical templates that contain nested asset components.
+    """
+    try:
+        logger.info("🔍 Fetching hierarchical templates...")
+
+        hierarchical_templates = {
+            name for name, cls in TEMPLATE_CLASSES.items() if hasattr(cls, "build_components")
+        }
+
+        if not hierarchical_templates:
+            logger.warning("⚠️ No hierarchical templates found.")
+
+        logger.info(f"✅ Hierarchical templates retrieved: {hierarchical_templates}")
+        return {"hierarchical_templates": list(hierarchical_templates)}
+
+    except Exception as e:
+        logger.error(f"❌ Error fetching hierarchical templates: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to fetch hierarchical templates: {str(e)}")
+
 @router.get("/templates/{template_name}/parameters", tags=["Templates"])
 async def get_template_parameters(template_name: str):
     """
@@ -62,11 +86,12 @@ async def get_template_parameters(template_name: str):
     except Exception as e:
         return {"error": str(e)}
 
-# Define available templates
+# Define available templates (Hierarchical templates added)
 TEMPLATE_CLASSES = {
     "HVAC": HVAC,
     "HVAC_With_Calcs": HVAC_With_Calcs,
-    # Future expansion: "Pumps": PumpTemplate, "Pumps_With_Calcs": PumpTemplateWithCalcs
+    "Refrigerator": Refrigerator,  # Add hierarchical templates
+    "Compressor": Compressor
 }
 
 # Mapping calculated templates to their base versions
@@ -148,6 +173,119 @@ def fetch_existing_tree(request: BuildRequest):
 
     logger.info(f"✅ Found asset tree:\n{tree_results}")
     return tree_results
+
+@router.get("/fetch_signals", tags=["Templates"])
+async def fetch_signals(search_query: str, datasource_name: str):
+    """
+    Fetch available signals from Seeq based on the user's search query.
+    """
+    try:
+        logger.info(f"🔍 Fetching available signals for query: {search_query} in datasource: {datasource_name}")
+
+        query_payload = {
+            "Name": search_query,
+            "Type": "StoredSignal",
+            "Datasource Name": datasource_name
+        }
+        search_results = spy.search(query_payload)
+
+        if search_results.empty:
+            logger.warning("⚠️ No signals found!")
+            return {"signals": []}
+
+        signal_names = search_results["Name"].tolist()
+        logger.info(f"✅ Found {len(signal_names)} signals.")
+
+        return {"signals": signal_names}
+
+    except Exception as e:
+        logger.error(f"❌ Error fetching signals: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to fetch signals: {str(e)}")
+
+@router.get("/fetch_components", tags=["Templates"])
+async def fetch_components():
+    """
+    Fetch available hierarchical components from registered asset templates.
+    """
+    try:
+        logger.info("🔍 Fetching available hierarchical components...")
+
+        components_found = {}
+
+        for template_name, template_class in TEMPLATE_CLASSES.items():
+            components = []
+            try:
+                logger.info(f"🔎 Inspecting template: {template_name}")
+
+                for attr_name in dir(template_class):
+                    attr = getattr(template_class, attr_name, None)
+
+                    # ✅ Ensure it’s a method AND is marked with `@Asset.Component()`
+                    if callable(attr) and hasattr(attr, "_spy_component"):
+                        components.append(attr_name)
+                        logger.info(f"✅ Found component '{attr_name}' in {template_name}")
+
+                components_found[template_name] = components
+
+            except Exception as e:
+                logger.warning(f"⚠️ Error extracting components from {template_name}: {e}")
+
+        flat_component_list = [comp for comp_list in components_found.values() for comp in comp_list]
+
+        # ✅ If no components were detected, use defaults
+        if not flat_component_list:
+            logger.warning("⚠️ No hierarchical components detected, using fallback values.")
+            flat_component_list = ["Refrigerator", "Compressor", "Motor", "Pump"]
+
+        logger.info(f"📋 Final extracted components: {json.dumps(flat_component_list, indent=2)}")
+        return {"components": flat_component_list}
+
+    except Exception as e:
+        logger.error(f"❌ Error fetching components: {e}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to fetch components: {str(e)}")
+
+    
+@router.post("/build_hierarchical", tags=["Templates"])
+def build_hierarchical_template(request: BuildRequest):
+    try:
+        logger.info(f"🔍 Received request for hierarchical template: {request.dict()}")
+
+        query_payload = {
+            "Name": request.search_query,
+            "Type": "StoredSignal",
+            "Datasource Name": request.datasource_name
+        }
+        metadata_df = spy.search(query_payload)
+
+        if metadata_df.empty:
+            raise HTTPException(status_code=400, detail="🚨 No matching signals found in Seeq!")
+
+        logger.info(f"✅ Retrieved {len(metadata_df)} signals:\n{metadata_df.head()}")
+
+        # ✅ Apply assigned components from UI
+        for signal_name, component in request.signal_assignments.items():
+            metadata_df.loc[metadata_df["Name"] == signal_name, "Component"] = component
+
+        # ✅ Assign Build Path
+        metadata_df["Build Path"] = request.build_path
+
+        # ✅ Select hierarchical model dynamically
+        hierarchical_model = TEMPLATE_CLASSES.get(request.template_name)
+        if not hierarchical_model:
+            raise HTTPException(status_code=400, detail=f"🚨 Unknown hierarchical template: {request.template_name}")
+
+        logger.info(f"📋 Final Processed DataFrame:\n{metadata_df.head()}")
+
+        # ✅ Build and push to Seeq
+        build_df = spy.assets.build(hierarchical_model, metadata_df)
+        spy.push(metadata=build_df, workbook=request.workbook_name)
+
+        logger.info("✅ Successfully pushed hierarchical template to Seeq.")
+        return {"message": f"✅ Successfully applied hierarchical template '{request.template_name}'"}
+
+    except Exception as e:
+        logger.error(f"❌ Unexpected Error in build_hierarchical: {e}\n{traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to apply hierarchical template: {str(e)}")
  
 @router.post("/build_calculated", tags=["Templates"])
 def build_calculated_template(request: BuildRequest):

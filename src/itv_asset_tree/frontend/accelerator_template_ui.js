@@ -1,9 +1,5 @@
 // src/itv_asset_tree/frontend/accelerator_template_ui.js
 
-/**
- * accelerator_template_ui.js - Vanilla JavaScript UI integration for Accelerator Templates.
- */
-
 /// Function to load template parameters dynamically
 async function loadTemplateParameters() {
     const templateType = document.getElementById('templateSelect').value;
@@ -61,6 +57,24 @@ async function loadTemplates() {
     }
 }
 
+// ✅ Fetch available hierarchical templates from FastAPI
+async function loadHierarchicalTemplates() {
+    console.log("🔄 Fetching hierarchical templates...");
+    try {
+        const response = await fetch("/api/v1/template/templates/hierarchical");
+        const data = await response.json();
+
+        if (data.hierarchical_templates && Array.isArray(data.hierarchical_templates)) {
+            hierarchicalTemplates = new Set(data.hierarchical_templates);  // ✅ Store templates as a Set
+            console.log("✅ Hierarchical templates loaded:", hierarchicalTemplates);
+        } else {
+            console.warn("⚠️ No hierarchical templates found or invalid response format.");
+        }
+    } catch (error) {
+        console.error("❌ Failed to load hierarchical templates:", error);
+    }
+}
+
 // Function to map the user-selected type to a valid Seeq type
 function getSeeqType(selectedType, templateType) {
     if (selectedType === "Calculations") {
@@ -73,6 +87,162 @@ function getSeeqType(selectedType, templateType) {
         return "CalculatedSignal";  // Fallback if not recognized
     }
     return selectedType; // Otherwise, return the selected type directly
+}
+
+function populateSignalAssignmentTable(signals) {
+    console.log("🔄 Populating signal assignment table...");
+
+    const tableBody = document.getElementById("signalAssignmentBody");
+    const componentDropdown = document.getElementById("componentColumnInput");
+
+    if (!tableBody) {
+        console.error("❌ Signal assignment table body not found!");
+        return;
+    }
+
+    tableBody.innerHTML = ""; // Clear existing rows
+
+    if (!signals || signals.length === 0) {
+        console.warn("⚠️ No signals available to assign.");
+        return;
+    }
+
+    signals.forEach(signal => {
+        const row = document.createElement("tr");
+
+        const nameCell = document.createElement("td");
+        nameCell.textContent = signal; // ✅ Signal name
+        row.appendChild(nameCell);
+
+        const componentCell = document.createElement("td");
+        const select = document.createElement("select");
+
+        // ✅ Populate dropdown with component options
+        if (componentDropdown) {
+            Array.from(componentDropdown.options).forEach(option => {
+                const opt = document.createElement("option");
+                opt.value = option.value;
+                opt.textContent = option.textContent;
+                select.appendChild(opt);
+            });
+        }
+
+        componentCell.appendChild(select);
+        row.appendChild(componentCell);
+
+        tableBody.appendChild(row);
+    });
+
+    document.getElementById("signalAssignmentContainer").classList.remove("hidden"); // ✅ Show table
+    console.log("✅ Signal assignment table populated.");
+}
+
+async function fetchAvailableTags() {
+    const searchQuery = document.getElementById("searchQueryInput").value.trim();
+    const datasourceName = document.getElementById("datasourceInput").value.trim();
+
+    if (!searchQuery || !datasourceName) {
+        alert("⚠️ Please enter a search query and datasource name.");
+        return;
+    }
+
+    console.log(`🔍 Fetching available signals for query: ${searchQuery}`);
+
+    try {
+        const response = await fetch(`/api/v1/template/fetch_signals?search_query=${encodeURIComponent(searchQuery)}&datasource_name=${encodeURIComponent(datasourceName)}`);
+        const data = await response.json();
+
+        if (response.ok && data.signals && Array.isArray(data.signals) && data.signals.length > 0) {
+            console.log("✅ Signals retrieved:", data.signals);
+
+            // Populate the assignment table with signal names
+            populateSignalAssignmentTable(data.signals);
+
+        } else {
+            console.error("❌ Failed to fetch signals:", data.detail || "No signals found.");
+            alert(`❌ Error: ${data.detail || "No signals found."}`);
+        }
+    } catch (error) {
+        console.error("❌ Error fetching signals:", error);
+    }
+}
+
+async function fetchAvailableComponents() {
+    console.log("🔄 Fetching available components...");
+    try {
+        const response = await fetch("/api/v1/template/fetch_components");
+        const data = await response.json();
+
+        // Ensure components exist, otherwise use fallback values
+        if (!data.components || !Array.isArray(data.components) || data.components.length === 0) {
+            console.warn("⚠️ No components found in API response, using fallback values.");
+            data.components = ["Refrigerator", "Compressor", "Motor", "Pump"];
+        } else {
+            console.log("✅ Components retrieved:", data.components);
+        }
+
+        // ✅ Populate the "Select Components" dropdown
+        const componentDropdown = document.getElementById("componentColumnInput");
+        if (!componentDropdown) {
+            console.error("❌ Component selection dropdown not found in DOM!");
+            return;
+        }
+
+        // Clear existing options
+        componentDropdown.innerHTML = "";
+
+        // Populate dropdown with components
+        data.components.forEach(component => {
+            const option = document.createElement("option");
+            option.value = component;
+            option.textContent = component;
+            componentDropdown.appendChild(option);
+        });
+
+        // ✅ Ensure the component selection field is visible
+        componentDropdown.classList.remove("hidden");
+        document.getElementById("hierarchicalAssetsContainer").classList.remove("hidden");
+
+        // ✅ Populate the signal assignment table
+        const signalAssignmentBody = document.getElementById("signalAssignmentBody");
+        if (!signalAssignmentBody) {
+            console.error("❌ Signal assignment table body not found in DOM!");
+            return;
+        }
+
+        // Clear existing table rows
+        signalAssignmentBody.innerHTML = "";
+
+        // Populate table rows with dropdowns for each component
+        data.components.forEach(component => {
+            const row = document.createElement("tr");
+
+            const signalCell = document.createElement("td");
+            signalCell.textContent = `Assign to ${component}`;
+
+            const selectCell = document.createElement("td");
+            const selectDropdown = document.createElement("select");
+
+            // Populate dropdown with all components
+            data.components.forEach(opt => {
+                const option = document.createElement("option");
+                option.value = opt;
+                option.textContent = opt;
+                selectDropdown.appendChild(option);
+            });
+
+            selectCell.appendChild(selectDropdown);
+            row.appendChild(signalCell);
+            row.appendChild(selectCell);
+            signalAssignmentBody.appendChild(row);
+        });
+
+        // ✅ Ensure the assignment table is visible
+        document.getElementById("signalAssignmentContainer").classList.remove("hidden");
+
+    } catch (error) {
+        console.error("❌ Failed to fetch components:", error);
+    }
 }
 
 async function applyTemplate() {
@@ -169,109 +339,70 @@ async function applyTemplate() {
     }
 }
 
-// Ensure event listener is attached when DOM is loaded
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     console.log("✅ Document Loaded.");
 
-    const templateSelect = document.getElementById("templateSelect");
-    const applyTemplateButton = document.getElementById("applyTemplateButton");
-    const typeInput = document.getElementById("typeInput");
+    await fetchAvailableComponents();  // ✅ Auto-fetch components
+    await loadHierarchicalTemplates(); // ✅ Fetch hierarchical templates dynamically
 
-    // Get field containers for visibility toggling
-    const datasourceContainer = document.getElementById("datasourceContainer");
-    const searchQueryContainer = document.getElementById("searchQueryContainer");
-    const workbookNameContainer = document.getElementById("workbookNameContainer");
-    const buildPathContainer = document.getElementById("buildPathContainer");
-    const templateContainer = document.getElementById("templateContainer"); // Previously Select Template
-    const calculationsTemplateContainer = document.getElementById("calculationsTemplateContainer"); // New Calculations Template
+    // ✅ Ensure the button and dropdown exist before adding event listeners
+    const fetchTagsButton = document.getElementById("fetchTagsButton");
+    const componentDropdown = document.getElementById("componentColumnInput");
+    const hierarchicalAssetsContainer = document.getElementById("hierarchicalAssetsContainer");
 
-    if (!templateSelect || !applyTemplateButton || !typeInput ||
-        !datasourceContainer || !searchQueryContainer || !workbookNameContainer ||
-        !buildPathContainer || !templateContainer || !calculationsTemplateContainer) {
-        console.error("❌ Missing required elements in HTML.");
-        return;
+    if (fetchTagsButton) {
+        fetchTagsButton.addEventListener("click", fetchAvailableTags);
+        fetchTagsButton.classList.remove("hidden");  // ✅ Ensure it's visible
+        console.log("✅ Fetch Tags button is now visible.");
+    } else {
+        console.error("❌ Fetch Tags button not found in DOM!");
     }
 
-    // ✅ Load templates after ensuring the dropdown exists
-    loadTemplates();
-
-    // Function to update form fields dynamically based on Type selection
-    function updateFormFields() {
-        console.log("🛠 Running updateFormFields...");
-    
-        const typeInput = document.getElementById("typeInput");
-        const selectedType = typeInput ? typeInput.value.trim() : null;
-        if (!selectedType) {
-            console.error("❌ Type input is missing!");
-            return;
-        }
-    
-        const datasourceContainer = document.getElementById("datasourceContainer");
-        const searchQueryContainer = document.getElementById("searchQueryContainer");
-        const workbookNameContainer = document.getElementById("workbookNameContainer");
-        const buildPathContainer = document.getElementById("buildPathContainer");
-        const templateContainer = document.getElementById("templateContainer");
-        const calculationsTemplateContainer = document.getElementById("calculationsTemplateContainer");
-    
-        // Debug what exists
-        console.log("🔍 Checking container elements...");
-        console.log("datasourceContainer:", datasourceContainer);
-        console.log("searchQueryContainer:", searchQueryContainer);
-        console.log("workbookNameContainer:", workbookNameContainer);
-        console.log("buildPathContainer:", buildPathContainer);
-        console.log("templateContainer:", templateContainer);
-        console.log("calculationsTemplateContainer:", calculationsTemplateContainer);
-    
-        if (!datasourceContainer || !searchQueryContainer || !workbookNameContainer ||
-            !buildPathContainer || !templateContainer || !calculationsTemplateContainer) {
-            console.error("❌ One or more container fields are missing!");
-            return;
-        }
-    
-        // Show/Hide Fields
-        if (selectedType === "StoredSignal") {
-            console.log("🔄 Switching to Stored Signal mode...");
-            datasourceContainer.classList.remove("hidden");
-            searchQueryContainer.classList.remove("hidden");
-            workbookNameContainer.classList.remove("hidden");
-            buildPathContainer.classList.remove("hidden");
-            templateContainer.classList.remove("hidden"); // ✅ Show Select Template
-            calculationsTemplateContainer.classList.add("hidden"); // ❌ Hide Calculations Template
-            document.getElementById("templateLabel").innerText = "Select Template:";
-        } else if (selectedType === "Calculations") {
-            console.log("🔄 Switching to Calculations mode...");
-            datasourceContainer.classList.remove("hidden");
-            searchQueryContainer.classList.remove("hidden");
-            workbookNameContainer.classList.remove("hidden");
-            buildPathContainer.classList.remove("hidden");
-            templateContainer.classList.remove("hidden"); // ✅ Show Base Template (same field)
-            calculationsTemplateContainer.classList.remove("hidden"); // ✅ Show Calculations Template
-            document.getElementById("templateLabel").innerText = "Base Template:";
-        } else {
-            console.warn("⚠️ Unknown type selected, defaulting to Stored Signal.");
-        }
-    
-        console.log("✅ Final Updated Classes:", {
-            datasource: datasourceContainer.classList,
-            searchQuery: searchQueryContainer.classList,
-            workbook: workbookNameContainer.classList,
-            buildPath: buildPathContainer.classList,
-            template: templateContainer.classList,
-            calculationsTemplate: calculationsTemplateContainer.classList
-        });
+    if (componentDropdown) {
+        componentDropdown.classList.remove("hidden");  // ✅ Ensure the components dropdown is visible
+        console.log("✅ Component selection field is now visible.");
+    } else {
+        console.error("❌ Component selection dropdown not found in DOM!");
     }
 
-    // ✅ Detect changes to Type selection and apply updates
-    typeInput.addEventListener("change", updateFormFields);
+    if (hierarchicalAssetsContainer) {
+        hierarchicalAssetsContainer.classList.remove("hidden");  // ✅ Ensure hierarchical section is visible
+        console.log("✅ Hierarchical Assets section is now visible.");
+    } else {
+        console.error("❌ Hierarchical Assets section not found in DOM!");
+    }
 
-    // ✅ Detect changes to Template selection for logging/debugging
-    templateSelect.addEventListener("change", () => {
-        console.log(`🔄 Switched to template: ${templateSelect.value}`);
-    });
+    document.getElementById("templateSelect").addEventListener("change", updateFormFields);
+    document.getElementById("applyTemplateButton").addEventListener("click", applyTemplate);
+    document.getElementById("typeInput").addEventListener("change", updateFormFields);
 
-    // ✅ Attach Apply Template button click event
-    applyTemplateButton.addEventListener("click", applyTemplate);
-
-    // ✅ Run the function at the end to set initial field visibility
     setTimeout(updateFormFields, 200);
 });
+
+// ✅ Store hierarchical templates dynamically
+let hierarchicalTemplates = new Set();
+
+function updateFormFields() {
+    console.log("🛠 Running updateFormFields...");
+
+    const selectedTemplate = document.getElementById("templateSelect").value.trim();
+    const hierarchicalAssetsContainer = document.getElementById("hierarchicalAssetsContainer");
+    const componentDropdown = document.getElementById("componentColumnInput");
+    const fetchTagsButton = document.getElementById("fetchTagsButton");
+
+    // ✅ Always show Fetch Tags Button
+    fetchTagsButton.classList.remove("hidden");
+
+    if (hierarchicalTemplates.has(selectedTemplate)) {
+        hierarchicalAssetsContainer.classList.remove("hidden");
+        componentDropdown.classList.remove("hidden"); // ✅ Ensure the Components Selection Field is visible
+        console.log(`✅ Showing hierarchical fields for template: ${selectedTemplate}`);
+
+        // ✅ Auto-fetch components when a hierarchical template is selected
+        fetchAvailableComponents();
+    } else {
+        hierarchicalAssetsContainer.classList.add("hidden");
+        componentDropdown.classList.add("hidden"); // ✅ Hide Components Selection Field if not hierarchical
+        console.log(`🚫 Hiding hierarchical fields for non-hierarchical template: ${selectedTemplate}`);
+    }
+}

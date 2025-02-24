@@ -77,22 +77,54 @@
                     <input type="text" id="searchQueryInput" placeholder="e.g., Area ?_*" />
                 </div>
 
-                <!-- Select Template (This is the Base Template) -->
+                <!-- Hierarchical Assets Section -->
+                <div id="hierarchicalAssetsContainer" class="hidden">
+                    <h3>Assign Components</h3>
+
+                    <!-- ✅ Fetch Available Tags Button -->
+                    <button id="fetchTagsButton">Fetch Available Tags</button>
+
+                    ✅ Available Components Selection Field
+                    <label for="componentColumnInput">Select Components:</label>
+                    <select id="componentColumnInput" multiple>
+                        <!-- Options will be dynamically populated -->
+                    </select>
+
+                    <!-- ✅ Signal Assignment Table -->
+                    <div id="signalAssignmentContainer" class="hidden">
+                        <h3>Assign Signals to Components</h3>
+                        <table id="signalAssignmentTable">
+                            <thead>
+                                <tr>
+                                    <th>Signal Name</th>
+                                    <th>Assigned Component</th>
+                                </tr>
+                            </thead>
+                            <tbody id="signalAssignmentBody">
+                                <!-- Dynamically populated rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ✅ Select Template (This is the Base Template) -->
                 <div id="templateContainer">
                     <label id="templateLabel" for="templateSelect">Select Template:</label>
                     <select id="templateSelect">
                         <option value="HVAC">HVAC</option>
                         <option value="PumpMonitoring">Pump Monitoring</option>
-                        <!-- Add more options as needed -->
+                        <option value="Refrigerator">Refrigerator</option> <!-- ✅ Include hierarchical templates -->
+                        <option value="Compressor">Compressor</option>
                     </select>
                 </div>
-                
-                <div id="calculationsTemplateContainer">
+
+                <!-- ✅ Calculations Template -->
+                <div id="calculationsTemplateContainer" class="hidden">
                     <label for="calculationsTemplateInput">Calculations Template Name:</label>
                     <input type="text" id="calculationsTemplateInput" placeholder="e.g., HVAC_With_Calcs">
                 </div>
 
-                <!-- Workbook Name -->
+                <!-- ✅ Workbook Name -->
                 <div id="workbookNameContainer">
                     <label for="workbookNameInput">Workbook Name:</label>
                     <input type="text" id="workbookNameInput" placeholder="Enter Workbook Name" />
