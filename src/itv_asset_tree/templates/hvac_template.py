@@ -141,3 +141,84 @@ class Compressor(Asset):
             asset.High_Power() for asset in self.all_assets()
             if isinstance(asset, Compressor) and self.parent == asset.parent and self != asset
         ]).roll_up('union')
+        
+from seeq.spy.assets import Asset
+
+class HVAC_With_Metrics(HVAC):
+    @Asset.Attribute()
+    def Too_Humid(self, metadata):
+        return {
+            'Type': 'Condition',
+            'Name': 'Too Humid',
+            'Formula': '$relhumid.valueSearch(isGreaterThan(70%))',
+            'Formula Parameters': {
+                '$relhumid': self.Relative_Humidity(),
+            }
+        }
+
+    @Asset.Attribute()
+    def Humidity_Upper_Bound(self, metadata):
+        return {
+            'Type': 'Signal',
+            'Name': 'Humidity Upper Bound',
+            'Formula': '$relhumid + 10',
+            'Formula Parameters': {
+                '$relhumid': self.Relative_Humidity(),
+            }
+        }
+
+    @Asset.Attribute()
+    def Humidity_Lower_Bound(self, metadata):
+        return {
+            'Type': 'Signal',
+            'Name': 'Humidity Lower Bound',
+            'Formula': '$relhumid - 10',
+            'Formula Parameters': {
+                '$relhumid': self.Relative_Humidity(),
+            }
+        }
+
+    @Asset.Attribute()
+    def Humidity_Statistic_KPI(self, metadata):
+        return {
+            'Type': 'Metric',
+            'Measured Item': self.Relative_Humidity(),
+            'Statistic': 'Range'
+        }
+
+    @Asset.Attribute()
+    def Humidity_Simple_KPI(self, metadata):
+        return {
+            'Type': 'Metric',
+            'Measured Item': self.Relative_Humidity(),
+            'Thresholds': {
+                'HiHi': self.Humidity_Upper_Bound(),
+                'LoLo': self.Humidity_Lower_Bound()
+            }
+        }
+
+    @Asset.Attribute()
+    def Humidity_Condition_KPI(self, metadata):
+        return {
+            'Type': 'Metric',
+            'Measured Item': self.Relative_Humidity(),
+            'Statistic': 'Maximum',
+            'Bounding Condition': self.Too_Humid(),
+            'Bounding Condition Maximum Duration': '30h'
+        }
+
+    @Asset.Attribute()
+    def Humidity_Continuous_KPI(self, metadata):
+        return {
+            'Type': 'Metric',
+            'Measured Item': self.Relative_Humidity(),
+            'Statistic': 'Minimum',
+            'Duration': '6h',
+            'Period': '4h',
+            'Metric Neutral Color':'#189E4D',
+            'Thresholds': {
+                'HiHiHi#FF0000': 60,
+                'HiHi': 40,
+                'LoLo#0000ff': 20
+            }
+        }
