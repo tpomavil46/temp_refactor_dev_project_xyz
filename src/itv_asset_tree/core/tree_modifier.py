@@ -112,19 +112,48 @@
 #         except Exception as e:
 #             raise RuntimeError(f"❌ Error visualizing tree: {e}")
 
+from seeq import spy
+from seeq.spy.assets import Tree
 from itv_asset_tree.core.tree_inserter import TreeInserter
 from itv_asset_tree.core.tree_deleter import TreeDeleter
+from itv_asset_tree.utils.logger import log_info, log_error
+from itv_asset_tree.config import settings
 
 class TreeModifier:
     """Handles modifications to an existing asset tree."""
 
-    def __init__(self, tree):
-        self.tree = tree
-        self.inserter = TreeInserter(tree)
-        self.deleter = TreeDeleter(tree)
+    def __init__(self, workbook_name: str, tree_name: str):
+        """Initialize TreeModifier with a valid tree object from Seeq."""
+        self.workbook_name = workbook_name
+        self.tree_name = tree_name
+
+        # Ensure we are logged into Seeq before making any API calls
+        if not spy.user:
+            log_info("🔑 Logging into Seeq...")
+            try:
+                spy.login(url=settings.SERVER_HOST, username=settings.SERVER_USERNAME, password=settings.SERVER_PASSWORD)
+                log_info("✅ Successfully logged into Seeq.")
+            except Exception as e:
+                log_error(f"❌ Seeq login failed: {e}")
+                raise RuntimeError("❌ Failed to log into Seeq. Check your credentials.")
+
+        # Try to retrieve and load the existing tree
+        try:
+            log_info(f"🔍 Loading tree '{tree_name}' from workbook '{workbook_name}'...")
+            self.tree = Tree(tree_name, workbook=workbook_name)
+            log_info(f"✅ Successfully loaded tree '{tree_name}' from workbook '{workbook_name}'.")
+        except Exception as e:
+            log_error(f"❌ Failed to load tree '{tree_name}': {e}")
+            raise RuntimeError(f"Tree '{tree_name}' could not be loaded.")
+
+        # Initialize Inserter and Deleter
+        self.inserter = TreeInserter(self.tree)
+        self.deleter = TreeDeleter(self.tree)
 
     def insert(self, parent_path, item_definition):
+        """Insert an item into the tree."""
         self.inserter.insert_item(parent_path, item_definition)
 
     def delete(self, item_path):
+        """Delete an item from the tree."""
         self.deleter.delete_item(item_path)

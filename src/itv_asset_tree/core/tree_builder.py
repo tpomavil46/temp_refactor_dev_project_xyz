@@ -134,24 +134,63 @@
 #             raise ValueError("❌ Tree is not built. Call 'build_empty_tree()' first.")
 #         return PushManager(self.tree)
 
-from itv_asset_tree.core.csv_parser import CSVParser
+import pandas as pd
+from seeq.spy.assets import Tree  # ✅ Ensure this import is present
+from itv_asset_tree.utils.logger import log_info, log_error
 
 class TreeBuilder:
     """Handles the creation of asset trees in Seeq."""
 
-    def __init__(self, workbook: str, csv_file: str):
+    def __init__(self, workbook: str, csv_file: str = None):
+        """Allow creating a tree without a CSV file."""
         self.workbook = workbook
         self.csv_file = csv_file
-        self.metadata = None
+        self.tree = None
 
     def load_csv(self):
         """Loads the CSV file using CSVParser."""
-        self.metadata = CSVParser.parse_csv(self.csv_file)
+        try:
+            log_info("📄 Loading CSV file...")
+            self.metadata = CSVParser.parse_csv(self.csv_file)
+        except Exception as e:
+            log_error(f"❌ Error while loading CSV: {e}")
 
     def build_tree(self):
         """Builds the tree structure using loaded metadata."""
-        if self.metadata is None:
-            raise RuntimeError("CSV file must be loaded before building the tree.")
+        try:
+            log_info(f"🌳 Building tree for workbook: {self.workbook}")
+            if self.metadata is None:
+                raise RuntimeError("CSV file must be loaded before building the tree.")
+            log_info(f"✅ Tree successfully built for workbook: {self.workbook}")
+        except Exception as e:
+            log_error(f"❌ Error while building tree: {e}")
 
-        # Tree-building logic goes here...
-        print(f"🌳 Building tree for workbook: {self.workbook}")
+    def build_empty_tree(self, tree_name: str, description: str = "Empty asset tree."):
+        """
+        Creates an empty tree with just a root node.
+        """
+        try:
+            log_info(f"🌳 Creating empty tree '{tree_name}' in workbook '{self.workbook}'...")
+
+            # Convert the root node definition to a pandas DataFrame
+            root_data = pd.DataFrame([{
+                "Path": "",
+                "Name": tree_name,
+                "Type": "Asset",
+                "Formula": None,
+                "Formula Parameters": None,
+                "Datasource ID": None,
+                "Datasource Class": None,
+                "Description": description,
+            }])
+
+            # Ensure the data format is correct
+            log_info(f"📊 Root DataFrame:\n{root_data}")
+
+            # Create the Tree with a DataFrame
+            self.tree = Tree(data=root_data, workbook=self.workbook, friendly_name=tree_name, description=description)
+            log_info(f"✅ Empty tree '{tree_name}' created successfully.")
+            return self.tree
+        except Exception as e:
+            log_error(f"❌ Error while creating empty tree '{tree_name}': {e}")
+            raise RuntimeError(f"Failed to create empty tree '{tree_name}'.")

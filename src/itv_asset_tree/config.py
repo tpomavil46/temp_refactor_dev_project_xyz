@@ -1,12 +1,11 @@
-# src/itv_asset_tree/config.py
-from pydantic import BaseSettings
+import os
+from dotenv import load_dotenv
 
-class Settings(BaseSettings):
-    app_name: str = "ITV Asset Tree"
-    debug: bool = False
-    database_url: str
+load_dotenv()
 
-    class Config:
-        env_file = ".env"
+class Settings:
+    SERVER_USERNAME: str = os.getenv("SERVER_USERNAME")
+    SERVER_PASSWORD: str = os.getenv("SERVER_PASSWORD")
+    SERVER_HOST: str = os.getenv("SERVER_HOST")
 
 settings = Settings()

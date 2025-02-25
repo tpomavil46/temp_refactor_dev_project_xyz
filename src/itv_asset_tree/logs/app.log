@@ -1,0 +1,98 @@
+2025-02-25 12:01:55,075 [INFO] CLI: Modifying tree 'TestTree' with operation 'insert'
+2025-02-25 12:03:47,179 [INFO] CLI: Building tree for TestWorkbook
+2025-02-25 12:03:47,179 [INFO] 📄 Loading CSV file...
+2025-02-25 12:03:47,181 [INFO] 🌳 Building tree for workbook: TestWorkbook
+2025-02-25 12:03:47,181 [INFO] ✅ Tree successfully built for workbook: TestWorkbook
+2025-02-25 12:04:49,607 [INFO] CLI: Modifying tree 'TestTree' with operation 'insert'
+2025-02-25 12:06:43,756 [INFO] CLI: Modifying tree 'TestTree' in workbook 'TestWorkbook' with operation 'insert'
+2025-02-25 12:07:50,194 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:07:50,194 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:07:53,925 [INFO] CLI: Modifying tree 'TestTree' in workbook 'TestWorkbook' with operation 'insert'
+2025-02-25 12:07:53,925 [INFO] 🔍 Searching for tree 'TestTree' in workbook 'TestWorkbook'...
+2025-02-25 12:07:53,926 [ERROR] ❌ Failed to load tree 'TestTree': Not logged in. Execute spy.login() before calling this function.
+2025-02-25 12:11:33,310 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:11:33,310 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:11:40,414 [INFO] CLI: Modifying tree 'TestTree' in workbook 'TestWorkbook' with operation 'insert'
+2025-02-25 12:11:40,414 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:11:42,452 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:11:42,452 [INFO] 🔍 Searching for tree 'TestTree' in workbook 'TestWorkbook'...
+2025-02-25 12:11:43,349 [ERROR] ❌ Failed to load tree 'TestTree': ❌ Tree 'TestTree' not found in workbook 'TestWorkbook'.
+2025-02-25 12:13:18,088 [INFO] CLI: Modifying tree 'Test Tree' in workbook 'TestWorkbook' with operation 'insert'
+2025-02-25 12:13:18,088 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:13:20,410 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:13:20,410 [INFO] 🔍 Searching for tree 'Test Tree' in workbook 'TestWorkbook'...
+2025-02-25 12:13:20,954 [ERROR] ❌ Failed to load tree 'Test Tree': ❌ Tree 'Test Tree' not found in workbook 'TestWorkbook'.
+2025-02-25 12:19:39,217 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:19:39,217 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:19:43,522 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:19:43,522 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:19:56,684 [INFO] CLI: Modifying tree 'Test Tree' in workbook 'TestWorkbook' with operation 'insert'
+2025-02-25 12:19:56,684 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:19:58,897 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:19:58,897 [INFO] 🔍 Searching for tree 'Test Tree' in workbook 'TestWorkbook'...
+2025-02-25 12:19:59,483 [ERROR] ❌ Failed to load tree 'Test Tree': ❌ Tree 'Test Tree' not found in workbook 'TestWorkbook'. Double-check the name and location.
+2025-02-25 12:21:23,921 [INFO] CLI: Modifying tree 'My HVAC Units' in workbook 'Template Test' with operation 'insert'
+2025-02-25 12:21:23,922 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:21:26,320 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:21:26,321 [INFO] 🔍 Searching for tree 'My HVAC Units' in workbook 'Template Test'...
+2025-02-25 12:21:26,844 [ERROR] ❌ Failed to load tree 'My HVAC Units': type object 'Tree' has no attribute 'from_metadata'
+2025-02-25 12:22:50,479 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:22:50,479 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:23:02,262 [INFO] CLI: Modifying tree 'My HVAC Units' in workbook 'Template Test' with operation 'insert'
+2025-02-25 12:23:02,262 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:23:04,573 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:23:04,573 [INFO] 🔍 Searching for tree 'My HVAC Units' in workbook 'Template Test'...
+2025-02-25 12:23:05,159 [INFO] 🔄 Found tree ID: 0EFF1281-72DF-FB50-8964-56A5B882EE1D
+2025-02-25 12:23:05,159 [ERROR] ❌ Failed to load tree 'My HVAC Units': type object 'Tree' has no attribute 'from_id'
+2025-02-25 12:24:26,041 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:24:26,042 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:24:35,228 [INFO] CLI: Modifying tree 'My HVAC Units' in workbook 'Template Test' with operation 'insert'
+2025-02-25 12:24:35,228 [INFO] 🔑 Logging into Seeq...
+2025-02-25 12:24:37,594 [INFO] ✅ Successfully logged into Seeq.
+2025-02-25 12:24:37,594 [INFO] 🔍 Loading tree 'My HVAC Units' from workbook 'Template Test'...
+2025-02-25 12:24:39,558 [INFO] ✅ Successfully loaded tree 'My HVAC Units' from workbook 'Template Test'.
+2025-02-25 12:30:02,186 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:30:02,186 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:36:22,145 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:36:22,145 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:40:13,856 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:40:13,856 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 12:41:01,615 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 12:41:01,615 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:26:18,262 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:26:18,263 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:26:20,365 [INFO] CLI: Creating empty tree 'New Empty Tree' in workbook 'Template Test'
+2025-02-25 13:41:35,880 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:41:35,880 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:42:28,989 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:42:28,989 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:42:32,418 [INFO] CLI: Creating empty tree 'New Empty Tree' in workbook 'Template Test'
+2025-02-25 13:42:32,418 [INFO] 🌳 Creating empty tree 'New Empty Tree' in workbook 'Template Test'...
+2025-02-25 13:42:32,418 [ERROR] ❌ Error while creating empty tree 'New Empty Tree': name 'Tree' is not defined
+2025-02-25 13:43:56,035 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:43:56,036 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:44:13,476 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:44:13,476 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:44:25,248 [INFO] CLI: Creating empty tree 'New Empty Tree' in workbook 'Template Test'
+2025-02-25 13:44:25,249 [INFO] 🌳 Creating empty tree 'New Empty Tree' in workbook 'Template Test'...
+2025-02-25 13:44:25,249 [ERROR] ❌ Error while creating empty tree 'New Empty Tree': Argument 'data' should be type DataFrame or str, but is type list
+2025-02-25 13:45:25,043 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:45:25,043 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:45:52,397 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:45:52,397 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:46:13,114 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:46:13,114 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:46:17,111 [INFO] CLI: Creating empty tree 'New Empty Tree' in workbook 'Template Test'
+2025-02-25 13:46:17,111 [INFO] 🌳 Creating empty tree 'New Empty Tree' in workbook 'Template Test'...
+2025-02-25 13:46:17,114 [INFO] 📊 Root DataFrame:
+  Path            Name   Type Formula Formula Parameters Datasource ID Datasource Class        Description
+0       New Empty Tree  Asset    None               None          None             None  Empty asset tree.
+2025-02-25 13:46:17,170 [INFO] ✅ Empty tree 'New Empty Tree' created successfully.
+2025-02-25 13:48:04,876 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:48:04,876 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:48:16,839 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:48:16,840 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:49:34,794 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:49:34,794 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
+2025-02-25 13:51:08,120 [INFO] 📌 Checking available classes in hvac_template: ['Asset', 'Compressor', 'HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'ItemGroup', 'Refrigerator', '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__']
+2025-02-25 13:51:08,120 [INFO] 📌 TEMPLATE_CLASSES initialized at startup: ['HVAC', 'HVAC_With_Calcs', 'HVAC_With_Metrics', 'Refrigerator', 'Compressor']
