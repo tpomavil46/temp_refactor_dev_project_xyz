@@ -321,7 +321,7 @@
 
 import click
 from itv_asset_tree.core.tree_builder import TreeBuilder
-from itv_asset_tree.core.tree_modifier import TreeModifier
+# from itv_asset_tree.core.tree_modifier import TreeModifier
 from itv_asset_tree.utils.logger import log_info
 
 @click.group()
@@ -369,6 +369,139 @@ def create_empty_tree_cli(workbook_name, tree_name):
     builder.build_empty_tree(tree_name)
     
     click.echo(f"✅ Empty tree '{tree_name}' created successfully.")
+    
+@cli.command("visualize-tree")
+def visualize_tree_cli(workbook_name: str, tree_name: str):
+    """CLI Command to visualize an asset tree."""
+    log_info(f"CLI: Visualizing tree '{tree_name}' in workbook '{workbook_name}'")
+    
+    try:
+        modifier = TreeModifier(workbook_name, tree_name)
+        visualization = modifier.visualize_tree()
+        log_info(f"\nTree Structure:\n{visualization}")
+    except Exception as e:
+        log_error(f"❌ Error visualizing tree: {e}")
+        
+@cli.command("push-tree")
+def push_tree_cli(workbook_name: str, tree_name: str):
+    """CLI Command to push a tree to Seeq."""
+    log_info(f"CLI: Pushing tree '{tree_name}' in workbook '{workbook_name}' to Seeq...")
+    
+    try:
+        modifier = TreeModifier(workbook_name, tree_name)
+        modifier.push_tree()
+        log_info(f"✅ Tree '{tree_name}' pushed successfully.")
+    except Exception as e:
+        log_error(f"❌ Error pushing tree: {e}")
+        
+@cli.command("resolve-duplicates")
+def resolve_duplicates_cli(csv_file: str):
+    """CLI Command to resolve duplicates in a CSV."""
+    log_info(f"CLI: Resolving duplicates in '{csv_file}'")
+    
+    try:
+        resolver = DuplicateResolver(strategy=KeepFirstStrategy())  # Default strategy
+        resolved_data = resolver.resolve_csv(csv_file)
+        resolved_data.to_csv("resolved_data.csv", index=False)
+        log_info(f"✅ Resolved data saved to 'resolved_data.csv'.")
+    except Exception as e:
+        log_error(f"❌ Error resolving duplicates: {e}")
+        
+@cli.command("generate-lookup")
+def generate_lookup_cli(csv_file: str):
+    """CLI Command to generate lookup tables from a CSV."""
+    log_info(f"CLI: Generating lookup tables from '{csv_file}'")
+    
+    try:
+        lookup_builder = LookupTableBuilder(csv_file)
+        lookup_builder.create_lookup()
+        log_info(f"✅ Lookup tables generated successfully.")
+    except Exception as e:
+        log_error(f"❌ Error generating lookup tables: {e}")
+        
+@cli.command("add-items-from-csv")
+def add_items_from_csv_cli(workbook_name: str, tree_name: str, csv_file: str):
+    """CLI Command to add items to an existing tree from a CSV."""
+    log_info(f"CLI: Adding items from '{csv_file}' to tree '{tree_name}' in workbook '{workbook_name}'")
+    
+    try:
+        modifier = TreeModifier(workbook_name, tree_name)
+        modifier.add_items_from_csv(csv_file)
+        log_info(f"✅ Items added successfully.")
+    except Exception as e:
+        log_error(f"❌ Error adding items from CSV: {e}")
+        
+@cli.command("build-tree")
+def build_tree_cli(workbook_name: str, csv_file: str = None):
+    """CLI Command to build an asset tree from CSV or create an empty tree."""
+    log_info(f"CLI: Building tree in workbook '{workbook_name}'")
+
+    try:
+        builder = TreeBuilder(workbook_name, csv_file)
+        
+        if csv_file:
+            builder.parse_csv()
+            friendly_name = input("Enter a friendly name for the tree: ").strip()
+            description = input("Enter a description for the tree: ").strip()
+            builder.build_tree_from_csv(friendly_name, description)
+        else:
+            tree_name = input("Enter tree name: ").strip()
+            description = input("Enter tree description: ").strip()
+            builder.build_empty_tree(tree_name, description)
+
+        log_info(f"✅ Tree built successfully in workbook '{workbook_name}'.")
+    except Exception as e:
+        log_error(f"❌ Error building tree: {e}")
+        
+def interactive_menu():
+    """Interactive CLI menu for managing Seeq asset trees."""
+    while True:
+        print("\nSelect an option:")
+        print("1. Create an empty tree")
+        print("2. Build tree from CSV")
+        print("3. Visualize tree")
+        print("4. Push tree to Seeq")
+        print("5. Modify tree (Insert/Delete)")
+        print("6. Resolve duplicates in CSV")
+        print("7. Generate lookup tables")
+        print("8. Add items from CSV")
+        print("9. Exit")
+
+        choice = input("Enter your choice (1-9): ").strip()
+        if choice == "1":
+            workbook = input("Enter workbook name: ").strip()
+            tree_name = input("Enter tree name: ").strip()
+            create_empty_tree_cli(workbook, tree_name)
+        elif choice == "2":
+            workbook = input("Enter workbook name: ").strip()
+            csv_file = input("Enter CSV file path: ").strip()
+            build_tree_cli(workbook, csv_file)
+        elif choice == "3":
+            workbook = input("Enter workbook name: ").strip()
+            tree_name = input("Enter tree name: ").strip()
+            visualize_tree_cli(workbook, tree_name)
+        elif choice == "4":
+            workbook = input("Enter workbook name: ").strip()
+            tree_name = input("Enter tree name: ").strip()
+            push_tree_cli(workbook, tree_name)
+        elif choice == "5":
+            print("Modify tree not implemented yet.")
+        elif choice == "6":
+            csv_file = input("Enter CSV file path: ").strip()
+            resolve_duplicates_cli(csv_file)
+        elif choice == "7":
+            csv_file = input("Enter CSV file path: ").strip()
+            generate_lookup_cli(csv_file)
+        elif choice == "8":
+            workbook = input("Enter workbook name: ").strip()
+            tree_name = input("Enter tree name: ").strip()
+            csv_file = input("Enter CSV file path: ").strip()
+            add_items_from_csv_cli(workbook, tree_name, csv_file)
+        elif choice == "9":
+            print("Exiting CLI.")
+            break
+        else:
+            print("Invalid choice, try again.")
 
 cli.add_command(create_empty_tree_cli, name="create-empty-tree")
 cli.add_command(build_tree)

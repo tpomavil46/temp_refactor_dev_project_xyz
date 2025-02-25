@@ -5,22 +5,19 @@ from itv_asset_tree.utils.logger import log_info
 from pathlib import Path
 import importlib
 
-# ✅ Define FastAPI app
 app = FastAPI(
     title="ITV Asset Tree API",
     description="API for managing Seeq asset trees and CSV lookups",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    # debug=settings.debug,
-    debug=True,
 )
 
 @app.on_event("startup")
 async def startup_event():
-    """Ensure Seeq login occurs at startup"""
-    log_info("🔌 Starting application and logging into Seeq...")
-    connect_to_seeq()  # ✅ Calls function from startup_handler.py
+    """Executes when FastAPI starts, ensuring Seeq login occurs."""
+    log_info("🚀 FastAPI startup initiated...")
+    connect_to_seeq()  # ✅ Ensure Seeq login runs at startup
 
 # ✅ Middleware for logging requests
 @app.middleware("http")
