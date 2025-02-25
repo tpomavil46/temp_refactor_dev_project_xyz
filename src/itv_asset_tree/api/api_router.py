@@ -1,11 +1,11 @@
 # src/itv_asset_tree/api/api_router.py
 
 from fastapi import APIRouter
-from .api import router as api_router
-from .csv_workflow import router as csv_workflow_router
-from .templates import router as templates_router
+from itv_asset_tree.api.csv_lookup_generator import router as csv_lookup_router
+from itv_asset_tree.api.templates import router as templates_router
+from itv_asset_tree.web.frontend_router import router as frontend_router
 
 router = APIRouter()
-router.include_router(api_router, prefix="/api/api")
-router.include_router(csv_workflow_router, prefix="/api/csv_workflow")
-router.include_router(templates_router, prefix="/api/templates")
+router.include_router(csv_lookup_router, prefix="/csv-lookup", tags=["CSV Lookup"])
+router.include_router(templates_router, prefix="/templates", tags=["Templates"])
+router.include_router(frontend_router, prefix="/frontend", tags=["Frontend"])
