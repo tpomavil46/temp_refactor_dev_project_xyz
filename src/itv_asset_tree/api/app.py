@@ -12,7 +12,8 @@ app = FastAPI(
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
-    debug=settings.debug,
+    # debug=settings.debug,
+    debug=True,
 )
 
 @app.on_event("startup")
