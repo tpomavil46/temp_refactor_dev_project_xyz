@@ -8,23 +8,40 @@ import logging
 from typing import Optional
 import traceback
 import json
+import importlib
 
-# Import template classes
-from itv_asset_tree.templates.hvac_template import HVAC, HVAC_With_Calcs, Refrigerator, Compressor
-
-# Configure logging
+# ✅ Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-router = APIRouter()
+# ✅ Force reloading `hvac_template.py`
+import itv_asset_tree.templates.hvac_template
+importlib.reload(itv_asset_tree.templates.hvac_template)
 
-# Define available templates
+# ✅ Explicitly import ALL template classes (ensures visibility)
+from itv_asset_tree.templates.hvac_template import (
+    HVAC,
+    HVAC_With_Calcs,
+    HVAC_With_Metrics,  # 🚀 Ensure it's included!
+    Refrigerator,
+    Compressor
+)
+
+# ✅ Log available classes in `hvac_template`
+logger.info(f"📌 Checking available classes in hvac_template: {dir(itv_asset_tree.templates.hvac_template)}")
+
+# ✅ Define available templates
 TEMPLATE_CLASSES = {
     "HVAC": HVAC,
     "HVAC_With_Calcs": HVAC_With_Calcs,
-    "Refrigerator": Refrigerator,  # ✅ Ensure hierarchical templates are included
+    "HVAC_With_Metrics": HVAC_With_Metrics,  # 🚀 It should now be included
+    "Refrigerator": Refrigerator,
     "Compressor": Compressor
 }
+
+logger.info(f"📌 TEMPLATE_CLASSES initialized at startup: {list(TEMPLATE_CLASSES.keys())}")
+
+router = APIRouter()
 
 class BuildRequest(BaseModel):
     template_name: str = Field(..., description="The name of the template to apply")
@@ -40,12 +57,16 @@ class BuildRequest(BaseModel):
     # ✅ New Fields for Calculated Signals
     base_template: Optional[str] = Field(None, description="Base template used for stored signals")
     calculations_template: Optional[str] = Field(None, description="Template applied to add calculations")
+    
+    # ✅ New Field for Metrics
+    metrics_template: Optional[str] = Field(None, description="Template applied to add metrics")
 
 @router.get("/templates/", tags=["Templates"])
 async def get_templates():
     """
     Fetches available templates.
     """
+    logger.info(f"📌 TEMPLATE_CLASSES at runtime: {json.dumps(list(TEMPLATE_CLASSES.keys()), indent=2)}")
     return {"available_templates": list(TEMPLATE_CLASSES.keys())}
 
 @router.get("/templates/hierarchical", tags=["Templates"])
@@ -85,14 +106,6 @@ async def get_template_parameters(template_name: str):
         }
     except Exception as e:
         return {"error": str(e)}
-
-# Define available templates (Hierarchical templates added)
-TEMPLATE_CLASSES = {
-    "HVAC": HVAC,
-    "HVAC_With_Calcs": HVAC_With_Calcs,
-    "Refrigerator": Refrigerator,  # Add hierarchical templates
-    "Compressor": Compressor
-}
 
 # Mapping calculated templates to their base versions
 BASE_TEMPLATE_MAP = {template + "_With_Calcs": template for template in TEMPLATE_CLASSES if not template.endswith("_With_Calcs")}
@@ -353,6 +366,94 @@ def build_calculated_template(request: BuildRequest):
     except Exception as e:
         logger.error(f"❌ Unexpected Error in build_calculated: {e}\n{traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"❌ Failed to apply calculated template: {str(e)}")
+    
+@router.post("/build_metrics", tags=["Templates"])
+def build_metrics_template(request: BuildRequest):
+    try:
+        logger.info(f"🔍 RAW Request Data: {request.dict()}")  # Log the raw request as received
+
+        # ✅ Validate that base_template exists
+        if not request.base_template:
+            raise HTTPException(status_code=400, detail="🚨 Base Template Name is required for Metrics.")
+
+        if not request.metrics_template:
+            raise HTTPException(status_code=400, detail="🚨 Metrics Template Name is required.")
+
+        # 🔍 **Debugging Case Sensitivity**
+        logger.info(f"📌 Raw `metrics_template`: '{request.metrics_template}'")
+
+        # 🔍 **Log All Available Templates Before the Check**
+        logger.info(f"📌 Available templates in TEMPLATE_CLASSES: {list(TEMPLATE_CLASSES.keys())}")
+
+        # 🔥 **Fix Case Sensitivity Issue**
+        corrected_template = next((key for key in TEMPLATE_CLASSES if key.lower() == request.metrics_template.lower()), None)
+        if corrected_template:
+            logger.info(f"✅ Found matching template (ignoring case): '{corrected_template}'")
+            request.metrics_template = corrected_template
+        else:
+            logger.warning(f"⚠️ No case-insensitive match found for '{request.metrics_template}' in TEMPLATE_CLASSES!")
+
+        # 🔍 **Log after correction**
+        logger.info(f"📌 Final `metrics_template` after correction: '{request.metrics_template}'")
+
+        if request.metrics_template not in TEMPLATE_CLASSES:
+            logger.error(f"❌ Available templates: {list(TEMPLATE_CLASSES.keys())}")
+            raise HTTPException(status_code=400, detail=f"🚨 Unknown metrics template: {request.metrics_template}")
+
+        logger.info(f"🔄 Fetching stored signals using base template: {request.base_template}")
+
+        # ✅ Construct a base request object for retrieving stored signals
+        base_request = BuildRequest(
+            template_name=request.base_template,
+            search_query=request.search_query,
+            type="StoredSignal",
+            datasource_name=request.datasource_name,
+            build_asset_regex=request.build_asset_regex,
+            build_path=request.build_path
+        )
+
+        base_results = build_template(base_request)
+
+        if not base_results or "message" not in base_results:
+            raise HTTPException(status_code=400, detail="🚨 Failed to retrieve base stored signals!")
+
+        # ✅ Convert base results into a dataframe
+        logger.info("🔍 Running spy.search() to get base stored signals dataframe...")
+        base_df = spy.search({
+            "Name": request.search_query, 
+            "Type": "StoredSignal", 
+            "Datasource Name": request.datasource_name
+        })
+
+        if base_df.empty:
+            raise HTTPException(status_code=400, detail="🚨 No stored signals found in Seeq!")
+
+        logger.info(f"✅ Retrieved {len(base_df)} stored signals:\n{base_df.head()}")
+
+        # ✅ Ensure required columns exist before applying metrics
+        base_df["Build Path"] = request.build_path if request.build_path else "My HVAC Units >> Facility #1"
+        base_df["Build Asset"] = base_df["Name"].str.extract(rf'({request.build_asset_regex})')[0]
+
+        logger.info(f"📋 Final Processed DataFrame for Metrics:\n{base_df.head()}")
+
+        # ✅ Select and apply the metrics template
+        metrics_model_class = TEMPLATE_CLASSES.get(request.metrics_template)
+        if not metrics_model_class:
+            logger.error(f"❌ Available templates after correction: {list(TEMPLATE_CLASSES.keys())}")
+            raise HTTPException(status_code=400, detail=f"🚨 Unknown metrics template: {request.metrics_template}")
+
+        build_with_metrics_df = spy.assets.build(metrics_model_class, base_df)
+
+        # ✅ Push the updated data to Seeq
+        logger.info("📤 Pushing updated metrics signals to Seeq...")
+        spy.push(metadata=build_with_metrics_df, workbook=request.workbook_name)
+
+        logger.info("✅ Successfully pushed metrics template to Seeq.")
+        return {"message": f"✅ Successfully applied metrics template '{request.metrics_template}'"}
+
+    except Exception as e:
+        logger.error(f"❌ Unexpected Error in build_metrics_template: {e}\n{traceback.format_exc()}")
+        raise HTTPException(status_code=500, detail=f"❌ Failed to apply metrics template: {str(e)}")
     
 def fetch_base_metadata(request: BuildRequest):
     """Helper function to retrieve base signals from Seeq before applying calculations."""

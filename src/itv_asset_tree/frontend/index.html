@@ -84,12 +84,6 @@
                     <!-- ✅ Fetch Available Tags Button -->
                     <button id="fetchTagsButton">Fetch Available Tags</button>
 
-                    <!-- Available Components Selection Field -->
-                    <!-- <label for="componentColumnInput">Select Components:</label>
-                    <select id="componentColumnInput" multiple>
-                        <!-- Options will be dynamically populated -->
-                    <!-- </select> -->
-
                     <!-- ✅ Signal Assignment Table -->
                     <div id="signalAssignmentContainer" class="hidden">
                         <h3>Assign Signals to Components</h3>
@@ -112,6 +106,13 @@
                     <label id="templateLabel" for="templateSelect">Select Template:</label>
                     <select id="templateSelect">
                         <option value="HVAC">HVAC</option>
+                        <option value=""HVAC_With_Calcs">HVAC With Calculations</option>
+                        <option value="HVAC_With_Metrics">HVAC With Metrics</option>
+                        <option value="Pump">Pump</option>
+                        <option value="Fan">Fan</option>
+                        <option value="Chiller">Chiller</option>
+                        <option value="Boiler">Boiler</option>
+                        <option value="CoolingTower">Cooling Tower</option>
                         <option value="PumpMonitoring">Pump Monitoring</option>
                         <option value="Refrigerator">Refrigerator</option> <!-- ✅ Include hierarchical templates -->
                         <option value="Compressor">Compressor</option>
@@ -122,6 +123,12 @@
                 <div id="calculationsTemplateContainer" class="hidden">
                     <label for="calculationsTemplateInput">Calculations Template Name:</label>
                     <input type="text" id="calculationsTemplateInput" placeholder="e.g., HVAC_With_Calcs">
+                </div>
+
+                <!-- ✅ Metrics Template -->
+                <div id="metricsTemplateContainer" class="hidden">
+                    <label for="metricsTemplateInput">Metrics Template Name:</label>
+                    <input type="text" id="metricsTemplateInput" placeholder="e.g., HVAC_With_Metrics">
                 </div>
 
                 <!-- ✅ Workbook Name -->

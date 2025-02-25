@@ -152,7 +152,7 @@ async function fetchAvailableTags() {
         if (response.ok && data.signals && Array.isArray(data.signals) && data.signals.length > 0) {
             console.log("✅ Signals retrieved:", data.signals);
 
-            // ✅ Populate the assignment table with stored components
+            // ✅ Use cached components to prevent dropdown wipeout
             populateSignalAssignmentTable(data.signals, cachedComponents);
 
         } else {
@@ -172,7 +172,6 @@ async function fetchAvailableComponents() {
         const response = await fetch("/api/v1/template/fetch_components");
         const data = await response.json();
 
-        // Ensure components exist, otherwise use fallback values
         if (!data.components || !Array.isArray(data.components) || data.components.length === 0) {
             console.warn("⚠️ No components found in API response, using fallback values.");
             cachedComponents = ["Refrigerator", "Compressor", "Motor", "Pump"];
@@ -182,26 +181,6 @@ async function fetchAvailableComponents() {
         }
 
         console.log("📌 Cached components:", cachedComponents);
-
-        // ✅ Populate the "Select Components" dropdown
-        const componentDropdown = document.getElementById("componentColumnInput");
-        if (!componentDropdown) {
-            console.error("❌ Component selection dropdown not found in DOM!");
-            return;
-        }
-
-        // Clear existing options
-        componentDropdown.innerHTML = "";
-
-        // Populate dropdown with components
-        cachedComponents.forEach(component => {
-            const option = document.createElement("option");
-            option.value = component;
-            option.textContent = component;
-            componentDropdown.appendChild(option);
-        });
-
-        console.log("✅ Component selection dropdown updated.");
 
     } catch (error) {
         console.error("❌ Failed to fetch components:", error);
@@ -213,73 +192,53 @@ async function applyTemplate() {
 
     const templateSelect = document.getElementById('templateSelect');
     const typeInput = document.getElementById('typeInput');
+    const calculationsTemplateInput = document.getElementById('calculationsTemplateInput');
+    const metricsTemplateInput = document.getElementById('metricsTemplateInput');
 
-    if (!templateSelect) {
-        console.error("❌ templateSelect not found in the DOM!");
-        return;
-    }
-    if (!typeInput) {
-        console.error("❌ typeInput not found in the DOM!");
+    if (!templateSelect || !typeInput) {
+        console.error("❌ Missing templateSelect or typeInput in the DOM!");
         return;
     }
 
-    // ✅ Ensure all necessary fields exist
     const searchQuery = document.getElementById('searchQueryInput')?.value.trim() || "";
     const datasourceName = document.getElementById('datasourceInput')?.value.trim() || "";
     const workbookName = document.getElementById('workbookNameInput')?.value.trim() || "";
     const buildPath = document.getElementById('buildPathInput')?.value.trim() || "";
-    const calculationsTemplate = document.getElementById('calculationsTemplateInput')?.value.trim() || "";
+    const baseTemplate = templateSelect.value;
 
-    // ✅ Base template is selected from the dropdown
-    const baseTemplate = templateSelect.value; 
+    console.log("🔍 Entered Search Query:", searchQuery); // ✅ Debugging Line
 
-    const statusElement = document.getElementById('templateStatus');
-    if (!statusElement) {
-        console.error("❌ statusElement not found in the DOM!");
-        return;
-    }
-
-    const type = getSeeqType(typeInput.options[typeInput.selectedIndex]?.value || "", templateSelect.value);
-
-    if (!templateSelect.value) {
-        alert("⚠️ Please select a template.");
+    // Check if searchQuery is set correctly
+    if (!searchQuery) {
+        alert("⚠️ Search Query is required!");
         return;
     }
 
     let payload = {
         template_name: templateSelect.value,
-        type: type,
-        build_asset_regex: "(Area .)_.*",
+        type: getSeeqType(typeInput.options[typeInput.selectedIndex]?.value || "", templateSelect.value),
+        build_asset_regex: searchQuery,  // ✅ Use user-inputted search query dynamically
         build_path: buildPath || "My HVAC Units >> Facility #1",
         workbook_name: workbookName,
-        search_query: searchQuery,
+        search_query: searchQuery, // ✅ Make sure this is sent properly
         base_template: baseTemplate,
-        calculations_template: calculationsTemplate,
-        datasource_name: datasourceName  // ✅ Ensure this is included!
+        calculations_template: calculationsTemplateInput ? calculationsTemplateInput.value.trim() : "",
+        metrics_template: metricsTemplateInput ? metricsTemplateInput.value.trim() : "",
+        datasource_name: datasourceName
     };
+
+    console.log("📌 Final Payload Before Sending:", JSON.stringify(payload, null, 2)); // ✅ Debugging Line
 
     let apiEndpoint = "/api/v1/template/build";  // Default for Stored Signals
 
-    if (type.includes("Calculated")) {
-        if (!workbookName || !baseTemplate || !calculationsTemplate) {
-            alert("⚠️ Please provide required fields for Calculated Signals (Workbook Name, Base Template, and Calculations Template).");
-            return;
-        }
-        payload.base_template = baseTemplate;  // ✅ Added missing field
-        payload.calculations_template = calculationsTemplate;
-        apiEndpoint = "/api/v1/template/build_calculated";  // ✅ New endpoint
-    } else {
-        if (!datasourceName) {
-            alert("⚠️ Please provide a Datasource Name for Stored Signals.");
-            return;
-        }
-        payload.datasource_name = datasourceName;
+    if (payload.type.includes("Calculated")) {
+        apiEndpoint = "/api/v1/template/build_calculated";
+    } else if (payload.type.includes("Metric")) {
+        apiEndpoint = "/api/v1/template/build_metrics";
     }
 
-    statusElement.innerText = "⏳ Applying template...";
-
     try {
-        console.log("🔍 Payload Sent to FastAPI:", JSON.stringify(payload, null, 2));
+        console.log("🔍 Sending request to:", apiEndpoint);
 
         const response = await fetch(apiEndpoint, {
             method: 'POST',
@@ -290,15 +249,13 @@ async function applyTemplate() {
         const result = await response.json();
 
         if (response.ok) {
-            statusElement.innerText = `✅ ${result.message}`;
             console.log("✅ Template applied successfully:", result);
         } else {
-            statusElement.innerText = `❌ Error: ${result.detail}`;
             console.error("❌ Failed to apply template:", result);
+            alert(`❌ Error: ${result.detail}`);
         }
     } catch (error) {
-        console.error('❌ Failed to apply template:', error);
-        statusElement.innerText = "❌ Failed to apply template. Check console for details.";
+        console.error("❌ Request failed:", error);
     }
 }
 
@@ -350,27 +307,31 @@ function updateFormFields() {
 
     const selectedType = document.getElementById("typeInput").value.trim();
     const calculationsTemplateContainer = document.getElementById("calculationsTemplateContainer");
+    const metricsTemplateContainer = document.getElementById("metricsTemplateContainer");  // ✅ NEW
     const templateContainer = document.getElementById("templateContainer");
     const templateLabel = document.getElementById("templateLabel");
 
-    if (!calculationsTemplateContainer || !templateContainer || !templateLabel) {
+    if (!calculationsTemplateContainer || !metricsTemplateContainer || !templateContainer || !templateLabel) {
         console.error("❌ Missing required elements in the DOM for template visibility.");
         return;
     }
 
     if (selectedType === "StoredSignal") {
         console.log("🔄 Switching to Stored Signal mode...");
-
-        // ✅ Show Base Template, Hide Calculations Template
         calculationsTemplateContainer.classList.add("hidden");
+        metricsTemplateContainer.classList.add("hidden");
         templateContainer.classList.remove("hidden");
         templateLabel.innerText = "Select Template:";
-
     } else if (selectedType === "Calculations") {
         console.log("🔄 Switching to Calculations mode...");
-
-        // ✅ Show Calculations Template
         calculationsTemplateContainer.classList.remove("hidden");
+        metricsTemplateContainer.classList.add("hidden");
+        templateContainer.classList.remove("hidden");
+        templateLabel.innerText = "Base Template:";
+    } else if (selectedType === "Metric") {
+        console.log("🔄 Switching to Metrics mode...");
+        calculationsTemplateContainer.classList.add("hidden");
+        metricsTemplateContainer.classList.remove("hidden");
         templateContainer.classList.remove("hidden");
         templateLabel.innerText = "Base Template:";
     } else {
@@ -379,6 +340,7 @@ function updateFormFields() {
 
     console.log("✅ Final Updated Classes:", {
         calculationsTemplateContainer: calculationsTemplateContainer.classList,
+        metricsTemplateContainer: metricsTemplateContainer.classList,
         templateContainer: templateContainer.classList,
     });
 }

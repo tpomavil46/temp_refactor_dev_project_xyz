@@ -141,8 +141,6 @@ class Compressor(Asset):
             asset.High_Power() for asset in self.all_assets()
             if isinstance(asset, Compressor) and self.parent == asset.parent and self != asset
         ]).roll_up('union')
-        
-from seeq.spy.assets import Asset
 
 class HVAC_With_Metrics(HVAC):
     @Asset.Attribute()
