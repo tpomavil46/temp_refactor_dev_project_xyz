@@ -18,7 +18,7 @@ setup(
     author="Tim Pomaville",
     author_email="tim.pomaville@itvizion.com",
     url="https://github.com/tpomavil46/Seeq-Asset-Trees",
-    packages=find_packages(where="src", include=["itv_asset_tree", "itv_asset_tree.*"]), # Finds all packages inside src/
+    packages=find_packages(where="src", include=["itv_asset_tree", "itv_asset_tree*"]), # Finds all packages inside src/
     package_dir={"": "src"},  # Maps root to src/
     include_package_data=True,  # Ensures non-Python files are included
     install_requires = [

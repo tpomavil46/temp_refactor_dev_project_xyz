@@ -38,17 +38,17 @@ except Exception as e:
     print(f"❌ Failed to login to Seeq: {e}")
     
 # Now import your modules
-from itv_asset_tree.managers.tree_builder import TreeBuilder
-from itv_asset_tree.managers.push_manager import PushManager
-from itv_asset_tree.utilities.csv_parser import CSVHandler
-from itv_asset_tree.utilities.duplicate_resolution import (
+from itv_asset_tree.core.tree_builder import TreeBuilder
+from itv_asset_tree.core.push_manager import PushManager
+from itv_asset_tree.utils.csv_parser import CSVHandler
+from itv_asset_tree.utils.duplicate_resolution import (
     DuplicateResolver, 
     KeepFirstStrategy, 
     KeepLastStrategy, 
     RemoveAllStrategy, 
     UserSpecificStrategy
 )
-from itv_asset_tree.utilities.lookup_builder import LookupTableBuilder
+from itv_asset_tree.utils.lookup_builder import LookupTableBuilder
 from seeq.spy import search
 from seeq.spy.assets import Tree
 from tkinter import Tk, filedialog

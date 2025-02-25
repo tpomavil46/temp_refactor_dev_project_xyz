@@ -20,10 +20,11 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict
 
 # from itv_asset_tree.router import router
-from itv_asset_tree.api.csv_workflow import router as csv_workflow_router
-from itv_asset_tree.api.templates import router as templates_router
-from itv_asset_tree.managers.tree_builder import TreeBuilder
-from itv_asset_tree.managers.tree_modifier import TreeModifier
+# from itv_asset_tree.api.csv_workflow import router as csv_workflow_router
+# from itv_asset_tree.api.templates import router as templates_router
+from itv_asset_tree.web.frontend_router import router as frontend_router
+from itv_asset_tree.core.tree_builder import TreeBuilder
+from itv_asset_tree.core.tree_modifier import TreeModifier
 
 # Load environment variables
 load_dotenv()
@@ -35,11 +36,21 @@ HOST = os.getenv("SERVER_HOST")
 router = APIRouter(tags=["Asset Tree"])
 app = FastAPI()
 
+# Define frontend paths
+frontend_dir = os.path.dirname(__file__)
+templates_dir = os.path.join(frontend_dir, "templates")
+static_dir = os.path.join(frontend_dir, "static")
+
+# Serve static files (CSS, JS)
+if os.path.exists(static_dir):
+    router.mount("/static", StaticFiles(directory=static_dir), name="static")
+
 # Include routers
 # app.include_router(api_router)
-app.include_router(csv_workflow_router, prefix="/api/csv_workflow")
+# app.include_router(csv_workflow_router, prefix="/api/csv_workflow")
 # app.include_router(templates_router, prefix="/api/templates")
-router.include_router(templates_router, prefix="/api/v1/template", tags=["Templates"])
+# router.include_router(templates_router, prefix="/api/v1/template", tags=["Templates"])
+app.include_router(frontend_router, prefix="/frontend", tags=["Frontend"])
 
 # Setup CORS
 app.add_middleware(

@@ -1,7 +1,7 @@
 import warnings
 import pytest
 import os
-from src.itv_asset_tree.managers.tree_modifier import TreeModifier
+from src.itv_asset_tree.core.tree_modifier import TreeModifier
 
 # Helper function to check if running on GitHub Actions
 def is_github_actions():

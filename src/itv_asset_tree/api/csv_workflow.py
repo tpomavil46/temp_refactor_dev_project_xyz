@@ -17,7 +17,7 @@ project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))  # Adjust 
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
     
-from itv_asset_tree.utilities.duplicate_resolution import (
+from itv_asset_tree.utils.duplicate_resolution import (
     DuplicateResolver,
     KeepFirstStrategy,
     KeepLastStrategy,
@@ -25,9 +25,9 @@ from itv_asset_tree.utilities.duplicate_resolution import (
     UserSpecificStrategy,
 )
 
-from itv_asset_tree.utilities.csv_parser import CSVHandler
-from itv_asset_tree.utilities.lookup_builder import LookupTableBuilder
-from itv_asset_tree.managers.tree_modifier import TreeModifier
+from itv_asset_tree.utils.csv_parser import CSVHandler
+from itv_asset_tree.utils.lookup_builder import LookupTableBuilder
+from itv_asset_tree.core.tree_modifier import TreeModifier
 
 UPLOAD_DIR = "./output" # Directory to store uploaded files
 
