@@ -20,8 +20,8 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict
 
 # from itv_asset_tree.router import router
-# from itv_asset_tree.api.csv_workflow import router as csv_workflow_router
-# from itv_asset_tree.api.templates import router as templates_router
+from itv_asset_tree.api.csv_lookup_generator import router as csv_lookup_router
+from itv_asset_tree.api.templates import router as templates_router
 from itv_asset_tree.web.frontend_router import router as frontend_router
 from itv_asset_tree.core.tree_builder import TreeBuilder
 from itv_asset_tree.core.tree_modifier import TreeModifier
@@ -36,20 +36,20 @@ HOST = os.getenv("SERVER_HOST")
 router = APIRouter(tags=["Asset Tree"])
 app = FastAPI()
 
-# Define frontend paths
-frontend_dir = os.path.dirname(__file__)
-templates_dir = os.path.join(frontend_dir, "templates")
-static_dir = os.path.join(frontend_dir, "static")
+# Define frontend paths FIRST
+frontend_dir = str(pathlib.Path(__file__).resolve().parent.parent / "web")
+templates_dir = os.path.join(frontend_dir, "templates")  # ✅ Ensures template path is set
+static_dir = os.path.join(frontend_dir, "static")  # ✅ Ensures static path is set
 
-# Serve static files (CSS, JS)
-if os.path.exists(static_dir):
-    router.mount("/static", StaticFiles(directory=static_dir), name="static")
+# Mount static files directory AFTER defining static_dir
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 # Include routers
 # app.include_router(api_router)
-# app.include_router(csv_workflow_router, prefix="/api/csv_workflow")
+# app.include_router(csv_lookup_generator_router, prefix="/api/csv_lookup_generator", tags=["CSV Lookup"])
 # app.include_router(templates_router, prefix="/api/templates")
-# router.include_router(templates_router, prefix="/api/v1/template", tags=["Templates"])
+app.include_router(csv_lookup_router, prefix="/api/csv_lookup", tags=["CSV Lookup"])
+router.include_router(templates_router, prefix="/api/v1/template", tags=["Templates"])
 app.include_router(frontend_router, prefix="/frontend", tags=["Frontend"])
 
 # Setup CORS
@@ -71,7 +71,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Define frontend directory
 # Ensure we correctly resolve the frontend directory path
-frontend_dir = str(pathlib.Path(__file__).parent.parent / "frontend")
+frontend_dir = str(pathlib.Path(__file__).parent.parent / "web")  # ✅ Updated to "web"
 
 if not os.path.exists(frontend_dir):
     raise RuntimeError(f"❌ Frontend directory not found: {frontend_dir}")
@@ -85,9 +85,16 @@ app.mount("/static", StaticFiles(directory=frontend_dir), name="static")
 @app.get("/", tags=["Frontend"])
 async def serve_frontend():
     """Serve the frontend index.html"""
-    index_html_path = os.path.join(frontend_dir, "index.html")
+    index_html_path = os.path.join(frontend_dir, "templates", "index.html")
+
+    # Debugging output
+    print(f"🔍 [DEBUG] Expected path for index.html: {index_html_path}")
+
     if not os.path.exists(index_html_path):
-        raise RuntimeError(f"❌ File not found: {index_html_path}")
+        print(f"❌ [ERROR] File not found at: {index_html_path}")
+        raise HTTPException(status_code=500, detail=f"❌ File not found: {index_html_path}")
+
+    print(f"✅ [DEBUG] index.html found, serving...")
     return FileResponse(index_html_path)
 
 # FastAPI Startup Event for Seeq Login

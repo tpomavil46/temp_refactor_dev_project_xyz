@@ -132,7 +132,7 @@ document.getElementById("submit-selected-rows").addEventListener("click", async 
 
     try {
         console.log("📡 Sending request to resolve duplicates...");
-        const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/resolve_duplicates/", {
+        const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/resolve_duplicates/", {
             method: "POST",
             body: formData,
         });
@@ -159,7 +159,7 @@ document.getElementById("submit-selected-rows").addEventListener("click", async 
 async function displayParentPathInputs() {
     try {
         console.log("📡 Fetching lookup string names for Parent Paths...");
-        const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/names/");
+        const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/names/");
 
         if (!response.ok) {
             throw new Error(`❌ Failed to fetch lookup string names. Status: ${response.status}`);
@@ -463,7 +463,7 @@ function attachGenerateLookupListener() {
         try {
             loadingSpinner.style.display = "block";
             console.log("📡 Sending request to generate lookup table...");
-            const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/generate_lookup/", {
+            const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/generate_lookup/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ output_file_name: outputFileName }),
@@ -823,7 +823,7 @@ function attachUploadRawCsvListener() {
 
         try {
             console.log("📡 Sending CSV file to backend...");
-            const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/upload_raw_csv/", {
+            const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/upload_raw_csv/", {
                 method: "POST",
                 body: formData,
             });
@@ -929,7 +929,7 @@ function attachResolveDuplicatesListener() {
 
         try {
             console.log("📡 Sending request to resolve duplicates...");
-            const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/get_duplicates/", {
+            const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/get_duplicates/", {
                 method: "POST",
                 body: formData,
             });
@@ -989,7 +989,7 @@ function attachSubmitSelectedRowsListener() {
 
         try {
             console.log("📡 Sending request to resolve duplicates...");
-            const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/resolve_duplicates/", {
+            const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/resolve_duplicates/", {
                 method: "POST",
                 body: formData,
             });
@@ -1063,7 +1063,7 @@ function attachSetParentPathsListener() {
 
             console.log("📡 Sending request to set Parent Paths:", JSON.stringify(payload));
 
-            const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/set_parent_paths/", {
+            const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/set_parent_paths/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),
@@ -1113,7 +1113,7 @@ document.getElementById("push-lookup-btn").addEventListener("click", async () =>
         loadingSpinner.style.display = "block";
         console.log(`📡 Sending lookup push request for Tree: ${treeName}, Workbook: ${workbookName}`);
 
-        const response = await fetch("http://127.0.0.1:8000/api/csv_workflow/push_lookup/", {
+        const response = await fetch("http://127.0.0.1:8000/api/csv_lookup_generator/push_lookup/", {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: new URLSearchParams({ tree_name: treeName, workbook_name: workbookName }),
