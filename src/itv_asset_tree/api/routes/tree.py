@@ -1,12 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from itv_asset_tree.api.dependencies import get_db
+from pydantic import BaseModel
 from itv_asset_tree.core.tree_builder import TreeBuilder
 from itv_asset_tree.core.tree_modifier import TreeModifier
-# from itv_asset_tree.schemas.tree import TreeCreateRequest
+from itv_asset_tree.schemas.tree import TreeCreateRequest
 from itv_asset_tree.utils.logger import log_info
 
 router = APIRouter()
+
+class CreateTreeRequest(BaseModel):
+    workbook_name: str
+    tree_name: str
 
 @router.post("/build-tree")
 def build_tree(request: TreeCreateRequest, db: Session = Depends(get_db)):
