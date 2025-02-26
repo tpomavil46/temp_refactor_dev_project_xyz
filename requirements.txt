@@ -14,7 +14,9 @@ httpcore==1.0.7
 httpx==0.28.1
 idna==3.10
 iniconfig==2.0.0
--e git+https://github.com/tpomavil46/temp_refactor_dev_project_xyz.git@861b04d0aa2dd3d5c09dbea2be18052f24e1ff60#egg=itv_asset_tree
+-e git+https://github.com/tpomavil46/temp_refactor_dev_project_xyz.git@c1b41f1d1dc2358368d32671f1c8af48d06422ef#egg=itv_asset_tree
+Jinja2==3.1.5
+MarkupSafe==3.0.2
 numpy==2.2.2
 packaging==24.2
 pandas==2.2.3
