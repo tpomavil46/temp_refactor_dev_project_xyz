@@ -44,11 +44,16 @@ class TreeModifier(PushManager):
         try:
             # Strip any unnecessary hierarchy from the Name
             item_definition['Name'] = item_definition['Name'].split('.')[-1]  
+            
             print("📌 [DEBUG] Tree Structure After Insert (Before Push):")
-            print(self.tree.visualize())  # This will show if the scalar exists before pushing
+            print(self.tree.visualize())  # Check tree state before pushing
+            
             # Insert into the tree
             self.tree.insert(children=[item_definition], parent=parent_name)
-            print(self.tree.visualize())
+            
+            print("📌 [DEBUG] Tree Structure After Insert (Before Push):")
+            print(self.tree.visualize())  # Check tree state before pushing
+            
             print(f"✅ Successfully inserted '{item_definition['Name']}' under '{parent_name}'.")
 
             # Push the tree update to Seeq

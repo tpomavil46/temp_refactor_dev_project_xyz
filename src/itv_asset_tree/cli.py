@@ -514,30 +514,19 @@ def modify_tree(workbook_name, tree_name):
             print("\nTree Visualization:")
             print(tree_modifier.visualize_tree())
             
-        elif choice == "2":  # Insert new item
+        elif choice == "2":
             parent = input("✔️ Enter the parent path: ").strip()
             name = input("✔️ Enter the name of the new item: ").strip()
             element_type = input("✔️ Enter the type of the element (Signal/Condition/Asset/Scalar): ").strip()
             formula = input("✔️ Enter the formula (or leave blank): ").strip() or None
 
-            # ✅ Construct item definition properly
             item_definition = {"Name": name, "Type": element_type}
             if element_type in ["Signal", "Condition", "Scalar"]:
                 item_definition["Formula"] = formula
 
             try:
                 tree_modifier.insert_item(parent_name=parent, item_definition=item_definition)
-            except Exception as e:
-                print(f"❌ Error adding item: {e}")
                 print(f"✅ Successfully added '{name}' under '{parent}'.")
-
-                # ✅ **Use a FRESH tree object before pushing**
-                fresh_tree = Tree(workbook=tree_modifier.tree.workbook, data=tree_modifier.tree.name)
-                
-                print(f"🚀 Pushing tree '{fresh_tree.name}' after insert...")
-                fresh_tree.push()
-                print(f"✅ Tree '{fresh_tree.name}' successfully pushed.")
-
             except Exception as e:
                 print(f"❌ Error adding item: {e}")
                 
