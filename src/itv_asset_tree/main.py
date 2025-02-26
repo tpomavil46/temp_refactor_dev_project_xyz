@@ -11,12 +11,11 @@ from itv_asset_tree.utils.logger import log_info
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     log_info("🔌 Starting application and logging into Seeq...")
-    connect_to_seeq()
+    connect_to_seeq()  # ✅ Ensure Seeq login happens here!
     yield
     log_info("Shutting down application...")
 
 app = FastAPI(lifespan=lifespan)
-
 app.include_router(api_router)
 
 if __name__ == "__main__":

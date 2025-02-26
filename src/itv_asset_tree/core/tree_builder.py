@@ -1,214 +1,53 @@
-# # src/managers/tree_builder.py
-
-# import pandas as pd
-# import io
-# import contextlib
-# from seeq.spy.assets import Tree
-# from .push_manager import PushManager
-# from typing import Optional
-
-# class TreeBuilder:
-#     """
-#     Class to manage tree creation.
-#     """
-
-#     def __init__(self, workbook: str, csv_file: Optional[str] = None):
-#         self.workbook = workbook
-#         self.csv_file = csv_file
-#         self.metadata = None
-#         self.tree = None
-
-#     def parse_csv(self):
-#         """Parse the CSV file and load metadata."""
-#         if not self.csv_file:
-#             raise ValueError("CSV file not provided.")
-#         self.metadata = pd.read_csv(self.csv_file)
-#         print(f"✅ CSV parsed successfully: {self.csv_file}")
-
-#     def build_empty_tree(self, friendly_name: str, description: str):
-#         """
-#         Build an empty tree with only the root node.
-#         """
-#         root_data = pd.DataFrame([{
-#             'Path': '',
-#             'Name': friendly_name,
-#             'Type': 'Asset',
-#             'Formula': None,
-#             'Formula Parameters': None,
-#             'Datasource ID': None,
-#             'Datasource Class': None,
-#             'Description': description,
-#         }])
-#         self.tree = Tree(
-#             data=root_data,
-#             workbook=self.workbook,
-#             friendly_name=friendly_name,
-#             description=description,
-#         )
-#         print(f"🌳 Empty tree '{friendly_name}' created successfully.")
-#         return self.tree
-    
-#     def build_tree_from_csv(self, friendly_name: str, description: str):
-#         """
-#         Build and push a tree using the CSV file.
-
-#         Parameters:
-#         ----------
-#         friendly_name : str
-#             The friendly name of the tree.
-#         description : str
-#             A description for the tree.
-#         """
-#         if not self.csv_file:
-#             raise ValueError("CSV file not provided.")
-
-#         try:
-#             # Build the tree using Seeq API
-#             self.tree = Tree(
-#                 data=self.csv_file,  # Pass the CSV file path directly
-#                 workbook=self.workbook,
-#                 friendly_name=friendly_name,
-#                 description=description,
-#             )
-#             print(f"🌳 Tree '{friendly_name}' created successfully.")
-#         except Exception as e:
-#             raise RuntimeError(f"Error creating tree: {e}")
-
-#     def visualize_tree(self):
-#         """
-#         Visualize the tree structure in a comprehensible format.
-#         """
-#         if not self.tree:
-#             raise ValueError("Tree not built yet.")
-        
-#         try:
-#             # Attempt to summarize the tree
-#             structure = self.tree.summarize()
-#             if not structure:
-#                 raise ValueError("𐂷 Tree.summarize() returned an empty structure.")
-#             return structure
-#         except Exception as e:
-#             print(f"❌ Tree.summarize() failed: {e}")
-#             # Use the fallback method
-#             return self._convert_tree_to_json()
-
-#     def _convert_tree_to_json(self):
-#         """
-#         Convert the tree into a JSON-like nested dictionary for visualization.
-#         """
-#         if not self.tree:
-#             return {"error": "Tree not built yet."}
-
-#         from io import StringIO
-#         import contextlib
-
-#         # Capture the tree visualization as a string
-#         with StringIO() as buf, contextlib.redirect_stdout(buf):
-#             self.tree.visualize()
-#             visualization = buf.getvalue()
-
-#         # Build a JSON-like structure from the tree visualization
-#         tree_json = {}
-#         current_level = [tree_json]
-#         lines = visualization.splitlines()
-#         for line in lines:
-#             # Calculate the indentation level
-#             level = (len(line) - len(line.lstrip("| "))) // 2
-#             node_name = line.strip("| ").strip()
-
-#             # Navigate to the correct level
-#             while len(current_level) > level + 1:
-#                 current_level.pop()
-
-#             # Add node to the current level
-#             current_node = current_level[-1]
-#             if node_name:
-#                 current_node[node_name] = {}
-#                 current_level.append(current_node[node_name])
-
-#         return tree_json
-
-#     def get_push_manager(self):
-#         """Get a PushManager for the current tree."""
-#         if not self.tree:
-#             raise ValueError("❌ Tree is not built. Call 'build_empty_tree()' first.")
-#         return PushManager(self.tree)
-
-# src/itv_asset_tree/core/tree_builder.py
+# src/managers/tree_builder.py
 
 import pandas as pd
 import io
 import contextlib
 from seeq.spy.assets import Tree
-from itv_asset_tree.utils.logger import log_info, log_error
-from itv_asset_tree.utils.csv_parser import CSVHandler
+from .push_manager import PushManager
+from typing import Optional
 
 class TreeBuilder:
-    """Handles the creation of asset trees in Seeq."""
+    """
+    Class to manage tree creation.
+    """
 
-    def __init__(self, workbook: str, csv_file: str = None):
+    def __init__(self, workbook: str, csv_file: Optional[str] = None):
         self.workbook = workbook
         self.csv_file = csv_file
+        self.metadata = None
         self.tree = None
-        self.metadata = None  # ✅ This was lost—restoring it!
-        
+
     def parse_csv(self):
         """Parse the CSV file and load metadata."""
         if not self.csv_file:
             raise ValueError("CSV file not provided.")
+        self.metadata = pd.read_csv(self.csv_file)
+        print(f"✅ CSV parsed successfully: {self.csv_file}")
 
-        try:
-            log_info("📄 Loading CSV file...")
-            self.metadata = CSVHandler.parse_csv(self.csv_file)  # ✅ FIXED
-            log_info(f"✅ CSV parsed successfully: {self.csv_file}")
-        except Exception as e:
-            log_error(f"❌ Error while loading CSV: {e}")
-            raise
-
-    def load_csv(self):
-        """Loads the CSV file using CSVParser."""
-        try:
-            log_info("📄 Loading CSV file...")
-            self.metadata = CSVParser.parse_csv(self.csv_file)
-        except Exception as e:
-            log_error(f"❌ Error while loading CSV: {e}")
-            
-    def build_tree(self):
-        """Builds the tree structure using loaded metadata."""
-        try:
-            log_info(f"🌳 Building tree for workbook: {self.workbook}")
-            if self.metadata is None:
-                raise RuntimeError("CSV file must be loaded before building the tree.")
-            log_info(f"✅ Tree successfully built for workbook: {self.workbook}")
-        except Exception as e:
-            log_error(f"❌ Error while building tree: {e}")
-
-    def build_empty_tree(self, tree_name: str, description: str = "Empty asset tree."):
+    def build_empty_tree(self, friendly_name: str, description: str):
         """
-        Creates an empty tree with just a root node.
+        Build an empty tree with only the root node.
         """
-        try:
-            log_info(f"🌳 Creating empty tree '{tree_name}' in workbook '{self.workbook}'...")
-
-            # ✅ Convert to DataFrame (this was causing a bug)
-            root_data = pd.DataFrame([{
-                "Path": "",
-                "Name": tree_name,
-                "Type": "Asset",
-                "Formula": None,
-                "Formula Parameters": None,
-                "Datasource ID": None,
-                "Datasource Class": None,
-                "Description": description,
-            }])
-
-            self.tree = Tree(data=root_data, workbook=self.workbook, friendly_name=tree_name, description=description)
-            log_info(f"✅ Empty tree '{tree_name}' created successfully.")
-            return self.tree
-        except Exception as e:
-            log_error(f"❌ Error while creating empty tree '{tree_name}': {e}")
-            raise RuntimeError(f"Failed to create empty tree '{tree_name}'.")
-
+        root_data = pd.DataFrame([{
+            'Path': '',
+            'Name': friendly_name,
+            'Type': 'Asset',
+            'Formula': None,
+            'Formula Parameters': None,
+            'Datasource ID': None,
+            'Datasource Class': None,
+            'Description': description,
+        }])
+        self.tree = Tree(
+            data=root_data,
+            workbook=self.workbook,
+            friendly_name=friendly_name,
+            description=description,
+        )
+        print(f"🌳 Empty tree '{friendly_name}' created successfully.")
+        return self.tree
+    
     def build_tree_from_csv(self, friendly_name: str, description: str):
         """
         Build and push a tree using the CSV file.
@@ -224,55 +63,64 @@ class TreeBuilder:
             raise ValueError("CSV file not provided.")
 
         try:
-            log_info(f"🌳 Building tree '{friendly_name}' from CSV...")
+            # Build the tree using Seeq API
             self.tree = Tree(
-                data=self.csv_file,
+                data=self.csv_file,  # Pass the CSV file path directly
                 workbook=self.workbook,
                 friendly_name=friendly_name,
                 description=description,
             )
-            log_info(f"✅ Tree '{friendly_name}' created successfully.")
+            print(f"🌳 Tree '{friendly_name}' created successfully.")
         except Exception as e:
-            log_error(f"❌ Error creating tree: {e}")
             raise RuntimeError(f"Error creating tree: {e}")
 
     def visualize_tree(self):
-        """Visualize the tree structure in a comprehensible format."""
+        """
+        Visualize the tree structure in a comprehensible format.
+        """
         if not self.tree:
             raise ValueError("Tree not built yet.")
         
         try:
-            # ✅ Attempt to summarize the tree
-            structure = self.tree.summarize()
+            # Attempt to summarize the tree
+            structure = self.tree.visualize()
             if not structure:
-                raise ValueError("📌 Tree.summarize() returned an empty structure.")
+                raise ValueError("𐂷 Tree.summarize() returned an empty structure.")
             return structure
         except Exception as e:
-            log_error(f"❌ Tree.summarize() failed: {e}")
+            print(f"❌ Tree.summarize() failed: {e}")
+            # Use the fallback method
             return self._convert_tree_to_json()
 
     def _convert_tree_to_json(self):
-        """Convert the tree into a JSON-like nested dictionary for visualization."""
+        """
+        Convert the tree into a JSON-like nested dictionary for visualization.
+        """
         if not self.tree:
             return {"error": "Tree not built yet."}
 
         from io import StringIO
         import contextlib
 
+        # Capture the tree visualization as a string
         with StringIO() as buf, contextlib.redirect_stdout(buf):
             self.tree.visualize()
             visualization = buf.getvalue()
 
+        # Build a JSON-like structure from the tree visualization
         tree_json = {}
         current_level = [tree_json]
         lines = visualization.splitlines()
         for line in lines:
+            # Calculate the indentation level
             level = (len(line) - len(line.lstrip("| "))) // 2
             node_name = line.strip("| ").strip()
 
+            # Navigate to the correct level
             while len(current_level) > level + 1:
                 current_level.pop()
 
+            # Add node to the current level
             current_node = current_level[-1]
             if node_name:
                 current_node[node_name] = {}
@@ -285,4 +133,3 @@ class TreeBuilder:
         if not self.tree:
             raise ValueError("❌ Tree is not built. Call 'build_empty_tree()' first.")
         return PushManager(self.tree)
-        

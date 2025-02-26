@@ -319,197 +319,252 @@
 #     except Exception as e:
 #         print(f"Error: {e}")
 
+# src/itv_asset_tree/cli.py
+
+import sys
+import os
 import click
+from dotenv import load_dotenv
+from seeq import spy
+from seeq.spy.assets import Tree
 from itv_asset_tree.core.tree_builder import TreeBuilder
-# from itv_asset_tree.core.tree_modifier import TreeModifier
-from itv_asset_tree.utils.logger import log_info
+from itv_asset_tree.core.tree_modifier import TreeModifier
+from itv_asset_tree.utils.logger import log_info, log_error
+
+# ✅ Load environment variables
+load_dotenv()
+
+# ✅ Retrieve Seeq credentials
+USERNAME = os.getenv("SERVER_USERNAME")
+PASSWORD = os.getenv("SERVER_PASSWORD")
+HOST = os.getenv("SERVER_HOST")
+
+# ✅ Ensure login before any action
+def ensure_seeq_login():
+    """Logs into Seeq if not already authenticated."""
+    try:
+        if not spy.user:
+            log_info(f"🔑 Logging into Seeq at {HOST} as {USERNAME}...")
+            spy.login(url=HOST, username=USERNAME, password=PASSWORD)
+            log_info("✅ Successfully logged into Seeq.")
+    except Exception as e:
+        log_error(f"❌ Seeq login failed: {e}")
+        sys.exit(1)
 
 @click.group()
 def cli():
-    """CLI tool for managing asset trees."""
-    pass
+    """CLI tool for interacting with Seeq Asset Trees."""
+    ensure_seeq_login()  # ✅ Ensures login before executing commands
 
 @click.command()
 @click.argument("workbook_name")
 @click.argument("csv_file_path")
 def build_tree(workbook_name, csv_file_path):
-    """Command to build an asset tree from CSV."""
-    log_info(f"CLI: Building tree for {workbook_name}")
+    """CLI command to build a tree from a CSV.
+    
+    The tree name (root node) is extracted from the CSV automatically.
+    """
+    ensure_seeq_login()  # ✅ Ensure we're logged into Seeq
+
+    log_info(f"CLI: Building tree in workbook '{workbook_name}' from CSV '{csv_file_path}'")
+
     tree_builder = TreeBuilder(workbook_name, csv_file_path)
-    tree_builder.load_csv()
-    tree_builder.build_tree()
-    click.echo(f"✅ Tree '{workbook_name}' built successfully")
-
-@click.command()
-@click.argument("workbook_name")
-@click.argument("tree_name")
-@click.argument("operation")
-def modify_tree(workbook_name, tree_name, operation):
-    """Command to modify an existing tree."""
-    log_info(f"CLI: Modifying tree '{tree_name}' in workbook '{workbook_name}' with operation '{operation}'")
-    
-    tree_modifier = TreeModifier(workbook_name, tree_name)  # Ensure both arguments are passed
-
-    if operation == "insert":
-        tree_modifier.insert("ParentPath", {"Name": "New Node"})
-    elif operation == "delete":
-        tree_modifier.delete("PathToDelete")
-
-    click.echo(f"✅ Tree '{tree_name}' modified successfully")
-
-@click.command()
-@click.argument("workbook_name")
-@click.argument("tree_name")
-def create_empty_tree_cli(workbook_name, tree_name):
-    """CLI command to create an empty tree."""
-    log_info(f"CLI: Creating empty tree '{tree_name}' in workbook '{workbook_name}'")
-    
-    # No CSV file needed for an empty tree
-    builder = TreeBuilder(workbook_name)
-    builder.build_empty_tree(tree_name)
-    
-    click.echo(f"✅ Empty tree '{tree_name}' created successfully.")
-    
-@cli.command("visualize-tree")
-def visualize_tree_cli(workbook_name: str, tree_name: str):
-    """CLI Command to visualize an asset tree."""
-    log_info(f"CLI: Visualizing tree '{tree_name}' in workbook '{workbook_name}'")
-    
-    try:
-        modifier = TreeModifier(workbook_name, tree_name)
-        visualization = modifier.visualize_tree()
-        log_info(f"\nTree Structure:\n{visualization}")
-    except Exception as e:
-        log_error(f"❌ Error visualizing tree: {e}")
-        
-@cli.command("push-tree")
-def push_tree_cli(workbook_name: str, tree_name: str):
-    """CLI Command to push a tree to Seeq."""
-    log_info(f"CLI: Pushing tree '{tree_name}' in workbook '{workbook_name}' to Seeq...")
-    
-    try:
-        modifier = TreeModifier(workbook_name, tree_name)
-        modifier.push_tree()
-        log_info(f"✅ Tree '{tree_name}' pushed successfully.")
-    except Exception as e:
-        log_error(f"❌ Error pushing tree: {e}")
-        
-@cli.command("resolve-duplicates")
-def resolve_duplicates_cli(csv_file: str):
-    """CLI Command to resolve duplicates in a CSV."""
-    log_info(f"CLI: Resolving duplicates in '{csv_file}'")
-    
-    try:
-        resolver = DuplicateResolver(strategy=KeepFirstStrategy())  # Default strategy
-        resolved_data = resolver.resolve_csv(csv_file)
-        resolved_data.to_csv("resolved_data.csv", index=False)
-        log_info(f"✅ Resolved data saved to 'resolved_data.csv'.")
-    except Exception as e:
-        log_error(f"❌ Error resolving duplicates: {e}")
-        
-@cli.command("generate-lookup")
-def generate_lookup_cli(csv_file: str):
-    """CLI Command to generate lookup tables from a CSV."""
-    log_info(f"CLI: Generating lookup tables from '{csv_file}'")
-    
-    try:
-        lookup_builder = LookupTableBuilder(csv_file)
-        lookup_builder.create_lookup()
-        log_info(f"✅ Lookup tables generated successfully.")
-    except Exception as e:
-        log_error(f"❌ Error generating lookup tables: {e}")
-        
-@cli.command("add-items-from-csv")
-def add_items_from_csv_cli(workbook_name: str, tree_name: str, csv_file: str):
-    """CLI Command to add items to an existing tree from a CSV."""
-    log_info(f"CLI: Adding items from '{csv_file}' to tree '{tree_name}' in workbook '{workbook_name}'")
-    
-    try:
-        modifier = TreeModifier(workbook_name, tree_name)
-        modifier.add_items_from_csv(csv_file)
-        log_info(f"✅ Items added successfully.")
-    except Exception as e:
-        log_error(f"❌ Error adding items from CSV: {e}")
-        
-@cli.command("build-tree")
-def build_tree_cli(workbook_name: str, csv_file: str = None):
-    """CLI Command to build an asset tree from CSV or create an empty tree."""
-    log_info(f"CLI: Building tree in workbook '{workbook_name}'")
+    tree_builder.parse_csv()
 
     try:
-        builder = TreeBuilder(workbook_name, csv_file)
+        # ✅ Extract the root node name dynamically from the CSV
+        root_candidates = tree_builder.metadata["Level 1"].dropna().unique()
+        if len(root_candidates) > 1:
+            raise ValueError(f"❌ Multiple root nodes detected: {root_candidates}")
+        elif len(root_candidates) == 0:
+            raise ValueError("❌ No valid root node found in CSV.")
         
-        if csv_file:
-            builder.parse_csv()
-            friendly_name = input("Enter a friendly name for the tree: ").strip()
-            description = input("Enter a description for the tree: ").strip()
-            builder.build_tree_from_csv(friendly_name, description)
-        else:
-            tree_name = input("Enter tree name: ").strip()
-            description = input("Enter tree description: ").strip()
-            builder.build_empty_tree(tree_name, description)
+        tree_name = root_candidates[0]  # ✅ Use the first Level 1 value as the root node
+        log_info(f"🌳 Using '{tree_name}' as the root node.")
 
-        log_info(f"✅ Tree built successfully in workbook '{workbook_name}'.")
+        # ✅ Build the tree with the extracted root node
+        tree_builder.build_tree_from_csv(friendly_name=tree_name, description="Generated from CSV")
+        log_info(f"✅ Tree '{tree_name}' created successfully in workbook '{workbook_name}'.")
+
+        # ✅ Visualize the tree structure
+        log_info("📊 Tree Structure:")
+        tree_builder.tree.visualize()
+
+        # ✅ Ask before pushing
+        should_push = input("🚀 Do you want to push this tree to Seeq? (y/N): ").strip().lower()
+        if should_push == "y":
+            tree_builder.tree.push()
+            log_info(f"✅ Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'.")
+
     except Exception as e:
         log_error(f"❌ Error building tree: {e}")
         
-def interactive_menu():
-    """Interactive CLI menu for managing Seeq asset trees."""
-    while True:
-        print("\nSelect an option:")
-        print("1. Create an empty tree")
-        print("2. Build tree from CSV")
-        print("3. Visualize tree")
-        print("4. Push tree to Seeq")
-        print("5. Modify tree (Insert/Delete)")
-        print("6. Resolve duplicates in CSV")
-        print("7. Generate lookup tables")
-        print("8. Add items from CSV")
-        print("9. Exit")
+@click.command()
+@click.argument("workbook_name")
+@click.option("--csv-file", "-c", type=str, default=None, help="Optional CSV file to determine the root node name")
+@click.option("--description", "-d", type=str, default="Empty asset tree.", help="Description for the tree")
+def create_empty_tree(workbook_name, csv_file, description):
+    """CLI command to create an empty tree.
 
-        choice = input("Enter your choice (1-9): ").strip()
+    - If a **CSV is provided**, the root node name is extracted from **Level 1**.
+    - If **no CSV is provided**, the user is prompted for a tree name.
+    - After creation, the user is asked if they want to visualize & push the tree.
+    """
+    ensure_seeq_login()  # ✅ Ensure we're logged into Seeq
+
+    log_info(f"CLI: Creating an empty tree in workbook '{workbook_name}'")
+
+    # ✅ Extract the root node name dynamically from the CSV (if provided)
+    if csv_file:
+        log_info(f"📄 Extracting tree name from CSV: {csv_file}")
+        try:
+            metadata = pd.read_csv(csv_file)
+            root_candidates = metadata["Level 1"].dropna().unique()
+            if len(root_candidates) > 1:
+                raise ValueError(f"❌ Multiple root nodes detected: {root_candidates}")
+            elif len(root_candidates) == 0:
+                raise ValueError("❌ No valid root node found in CSV.")
+            
+            tree_name = root_candidates[0]  # ✅ Use the first Level 1 value as the root node
+            log_info(f"🌳 Using '{tree_name}' as the root node.")
+
+        except Exception as e:
+            log_error(f"❌ Error extracting tree name from CSV: {e}")
+            return
+    else:
+        tree_name = input("🌳 Enter the name of the empty tree: ").strip()
+
+    # ✅ Proceed with tree creation
+    tree_builder = TreeBuilder(workbook_name)
+
+    try:
+        tree_builder.build_empty_tree(tree_name, description)  # ✅ Pass both `tree_name` and `description`
+        log_info(f"✅ Empty tree '{tree_name}' created successfully in workbook '{workbook_name}'.")
+        
+        # ✅ Ask user if they want to visualize the tree
+        visualize_choice = input("👀 Do you want to visualize the tree? (Y/N): ").strip().upper()
+        if visualize_choice == "Y":
+            log_info(f"📊 Tree Visualization for '{tree_name}':")
+            print(tree_builder.tree.visualize())  # ✅ Print the tree structure
+
+        # ✅ Ask user if they want to push the tree
+        push_choice = input("⬆️ Do you want to push the tree to Seeq? (Y/N): ").strip().upper()
+        if push_choice == "Y":
+            tree_builder.tree.push()
+            log_info(f"✅ Tree '{tree_name}' pushed successfully to workbook '{workbook_name}'.")
+    
+    except Exception as e:
+        log_error(f"❌ Error creating empty tree: {e}")
+        
+@click.command()
+@click.argument("workbook_name")
+@click.argument("tree_name")
+def visualize_tree(workbook_name, tree_name):
+    ensure_seeq_login() 
+    """CLI command to visualize an existing tree."""
+    log_info(f"CLI: Visualizing tree '{tree_name}' in workbook '{workbook_name}'")
+
+    tree_modifier = TreeModifier(workbook_name, tree_name)
+
+    try:
+        structure = tree_modifier.visualize_tree()
+        log_info(f"\nTree Structure:\n{structure}")
+    except Exception as e:
+        log_error(f"❌ Error visualizing tree: {e}")
+
+@click.command()
+@click.argument("workbook_name")
+@click.argument("tree_name")
+def push_tree(workbook_name, tree_name):
+    ensure_seeq_login() 
+    """CLI command to push changes to an existing tree."""
+    log_info(f"CLI: Pushing tree '{tree_name}' in workbook '{workbook_name}'")
+
+    tree_modifier = TreeModifier(workbook_name, tree_name)
+
+    try:
+        tree_modifier.push_tree()
+        log_info(f"✅ Tree '{tree_name}' pushed successfully.")
+    except Exception as e:
+        log_error(f"❌ Error pushing tree: {e}")
+
+@click.command()
+@click.argument("workbook_name")
+@click.argument("tree_name")
+def modify_tree(workbook_name, tree_name):
+    ensure_seeq_login() 
+    """CLI command to modify an existing tree."""
+    log_info(f"CLI: Modifying tree '{tree_name}' in workbook '{workbook_name}'")
+
+    tree_modifier = TreeModifier(workbook_name, tree_name)
+
+    while True:
+        print("\nWhat would you like to do next?")
+        print("1. Visualize the tree")
+        print("2. Insert a new item")
+        print("3. Move an item")
+        print("4. Remove an item")
+        print("5. Push the tree")
+        print("6. Exit")
+
+        choice = input("Enter your choice (1-6): ").strip()
+        
         if choice == "1":
-            workbook = input("Enter workbook name: ").strip()
-            tree_name = input("Enter tree name: ").strip()
-            create_empty_tree_cli(workbook, tree_name)
+            print("\nTree Visualization:")
+            print(tree_modifier.visualize_tree())
         elif choice == "2":
-            workbook = input("Enter workbook name: ").strip()
-            csv_file = input("Enter CSV file path: ").strip()
-            build_tree_cli(workbook, csv_file)
+            parent = input("Enter the parent path: ").strip()
+            name = input("Enter the name of the new item: ").strip()
+            formula = input("Enter a formula (or leave blank): ").strip() or None
+            item_data = {"Name": name, "Formula": formula}
+
+            try:
+                tree_modifier.insert(parent, item_data)
+                print(f"✅ Inserted '{name}' under '{parent}'.")
+            except Exception as e:
+                print(f"❌ Error inserting item: {e}")
         elif choice == "3":
-            workbook = input("Enter workbook name: ").strip()
-            tree_name = input("Enter tree name: ").strip()
-            visualize_tree_cli(workbook, tree_name)
+            source = input("Enter the source path: ").strip()
+            destination = input("Enter the destination path: ").strip()
+
+            try:
+                tree_modifier.move(source, destination)
+                print(f"✅ Moved item from '{source}' to '{destination}'.")
+            except Exception as e:
+                print(f"❌ Error moving item: {e}")
         elif choice == "4":
-            workbook = input("Enter workbook name: ").strip()
-            tree_name = input("Enter tree name: ").strip()
-            push_tree_cli(workbook, tree_name)
+            item_path = input("Enter the item path to remove: ").strip()
+
+            try:
+                tree_modifier.remove(item_path)
+                print(f"✅ Removed item at '{item_path}'.")
+            except Exception as e:
+                print(f"❌ Error removing item: {e}")
         elif choice == "5":
-            print("Modify tree not implemented yet.")
+            try:
+                tree_modifier.push_tree()
+                print("✅ Tree pushed successfully.")
+            except Exception as e:
+                print(f"❌ Error pushing tree: {e}")
         elif choice == "6":
-            csv_file = input("Enter CSV file path: ").strip()
-            resolve_duplicates_cli(csv_file)
-        elif choice == "7":
-            csv_file = input("Enter CSV file path: ").strip()
-            generate_lookup_cli(csv_file)
-        elif choice == "8":
-            workbook = input("Enter workbook name: ").strip()
-            tree_name = input("Enter tree name: ").strip()
-            csv_file = input("Enter CSV file path: ").strip()
-            add_items_from_csv_cli(workbook, tree_name, csv_file)
-        elif choice == "9":
-            print("Exiting CLI.")
+            print("👋 Exiting interactive mode.")
             break
         else:
-            print("Invalid choice, try again.")
+            print("❌ Invalid choice. Please select a valid option.")
 
-cli.add_command(create_empty_tree_cli, name="create-empty-tree")
+@click.group()
+def cli():
+    pass
+
 cli.add_command(build_tree)
+cli.add_command(create_empty_tree)
+cli.add_command(visualize_tree)  
+cli.add_command(push_tree)       
 cli.add_command(modify_tree)
 
 if __name__ == "__main__":
     cli()
-
+    
 # Example usage:
 
 # python src/itv_asset_tree/cli.py build-tree "TestWorkbook" "/path/to/csv.csv"
