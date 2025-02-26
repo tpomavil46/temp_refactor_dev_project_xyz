@@ -329,6 +329,7 @@ from seeq import spy
 from seeq.spy.assets import Tree
 from itv_asset_tree.core.tree_builder import TreeBuilder
 from itv_asset_tree.core.tree_modifier import TreeModifier
+from itv_asset_tree.core.push_manager import PushManager
 from itv_asset_tree.utils.logger import log_info, log_error
 
 # ✅ Load environment variables
@@ -512,40 +513,68 @@ def modify_tree(workbook_name, tree_name):
         if choice == "1":
             print("\nTree Visualization:")
             print(tree_modifier.visualize_tree())
-        elif choice == "2":
-            parent = input("Enter the parent path: ").strip()
-            name = input("Enter the name of the new item: ").strip()
-            formula = input("Enter a formula (or leave blank): ").strip() or None
-            item_data = {"Name": name, "Formula": formula}
+            
+        elif choice == "2":  # Insert new item
+            parent = input("✔️ Enter the parent path: ").strip()
+            name = input("✔️ Enter the name of the new item: ").strip()
+            element_type = input("✔️ Enter the type of the element (Signal/Condition/Asset/Scalar): ").strip()
+            formula = input("✔️ Enter the formula (or leave blank): ").strip() or None
+
+            # ✅ Construct item definition properly
+            item_definition = {"Name": name, "Type": element_type}
+            if element_type in ["Signal", "Condition", "Scalar"]:
+                item_definition["Formula"] = formula
 
             try:
-                tree_modifier.insert(parent, item_data)
-                print(f"✅ Inserted '{name}' under '{parent}'.")
+                tree_modifier.insert_item(parent_name=parent, item_definition=item_definition)
             except Exception as e:
-                print(f"❌ Error inserting item: {e}")
+                print(f"❌ Error adding item: {e}")
+                print(f"✅ Successfully added '{name}' under '{parent}'.")
+
+                # ✅ **Use a FRESH tree object before pushing**
+                fresh_tree = Tree(workbook=tree_modifier.tree.workbook, data=tree_modifier.tree.name)
+                
+                print(f"🚀 Pushing tree '{fresh_tree.name}' after insert...")
+                fresh_tree.push()
+                print(f"✅ Tree '{fresh_tree.name}' successfully pushed.")
+
+            except Exception as e:
+                print(f"❌ Error adding item: {e}")
+                
         elif choice == "3":
             source = input("Enter the source path: ").strip()
             destination = input("Enter the destination path: ").strip()
 
             try:
-                tree_modifier.move(source, destination)
+                tree_modifier.move_item(source, destination)
                 print(f"✅ Moved item from '{source}' to '{destination}'.")
             except Exception as e:
                 print(f"❌ Error moving item: {e}")
+                
         elif choice == "4":
             item_path = input("Enter the item path to remove: ").strip()
 
             try:
-                tree_modifier.remove(item_path)
+                tree_modifier.remove_item(item_path)
                 print(f"✅ Removed item at '{item_path}'.")
             except Exception as e:
                 print(f"❌ Error removing item: {e}")
-        elif choice == "5":
+                
+        elif choice == "5":  # Push Tree
             try:
-                tree_modifier.push_tree()
+                log_info("🚀 Attempting to push tree...")
+
+                # ✅ Use PushManager instead of directly pushing
+                push_manager = PushManager(tree_modifier.tree)
+
+                # ✅ Allow pushing with metadata_state_file for larger trees
+                push_manager.push(metadata_state_file="tree_metadata_state.pickle.zip")
+
                 print("✅ Tree pushed successfully.")
+        
             except Exception as e:
-                print(f"❌ Error pushing tree: {e}")
+                log_error(f"❌ Error pushing tree: {e}")
+                
         elif choice == "6":
             print("👋 Exiting interactive mode.")
             break
@@ -567,5 +596,20 @@ if __name__ == "__main__":
     
 # Example usage:
 
+# build-tree:
 # python src/itv_asset_tree/cli.py build-tree "TestWorkbook" "/path/to/csv.csv"
+
+# create-empty-tree:
+# python src/itv_asset_tree/cli.py create-empty-tree "Workbook1"
+
+# visualize-tree:
+# python src/itv_asset_tree/cli.py visualize-tree "Workbook1" "Test Tree"
+
+# push-tree:
+# python src/itv_asset_tree/cli.py push-tree "Workbook1" "Test Tree"
+
+# modify-tree:
+# python src/itv_asset_tree/cli.py modify-tree "Workbook1" "Test Tree"  # Interactive mode
+# python src/itv_asset_tree/cli.py modify-tree "Workbook1" "Test Tree"  # Interactive mode
+# python src/itv_asset_tree/cli.py modify-tree "Workbook1" "Test Tree"  # Interactive mode
 # python src/itv_asset_tree/cli.py modify-tree "Template Test" "My HVAC Units" "insert"

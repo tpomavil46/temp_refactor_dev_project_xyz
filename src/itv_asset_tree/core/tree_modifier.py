@@ -44,10 +44,11 @@ class TreeModifier(PushManager):
         try:
             # Strip any unnecessary hierarchy from the Name
             item_definition['Name'] = item_definition['Name'].split('.')[-1]  
-
+            print("📌 [DEBUG] Tree Structure After Insert (Before Push):")
+            print(self.tree.visualize())  # This will show if the scalar exists before pushing
             # Insert into the tree
             self.tree.insert(children=[item_definition], parent=parent_name)
-
+            print(self.tree.visualize())
             print(f"✅ Successfully inserted '{item_definition['Name']}' under '{parent_name}'.")
 
             # Push the tree update to Seeq
@@ -56,6 +57,7 @@ class TreeModifier(PushManager):
         except Exception as e:
             print(f"❌ [ERROR] Failed to insert item: {e}")
             raise ValueError(f"Error inserting item: {e}")
+
 
     def move_item(self, source: str, destination: str):
         """Move an item to a new parent in the tree."""
