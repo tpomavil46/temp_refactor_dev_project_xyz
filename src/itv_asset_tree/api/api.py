@@ -117,7 +117,7 @@ async def startup_event():
         print(f"❌ Seeq login failed: {e}")
 
 # Upload CSV File
-@router.post("/upload_csv/", tags=["Asset Tree"])
+@router.post("/api/v1/asset_tree/upload_csv/", tags=["Asset Tree"])
 async def upload_csv(file: UploadFile):
     file_location = os.path.join(UPLOAD_DIR, file.filename)
     try:
@@ -129,7 +129,7 @@ async def upload_csv(file: UploadFile):
         raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
 
 # Process CSV and Build Tree
-@router.post("/process_csv/", tags=["Asset Tree"])
+@router.post("/api/v1/asset_tree/process_csv/", tags=["Asset Tree"])
 async def process_csv(workbook_name: str = Body(...), tree_name: str = Body(...)):
     global current_tree, current_workbook_name, current_tree_name
     
@@ -174,7 +174,7 @@ async def process_csv(workbook_name: str = Body(...), tree_name: str = Body(...)
         return {"message": f"❌ Failed to process and push CSV: {e}"}
 
 # Create Empty Tree
-@router.post("/create_empty_tree/", tags=["Asset Tree"])
+@router.post("/api/v1/asset_tree/create_empty_tree/", tags=["Asset Tree"])
 async def create_empty_tree(request: Request):
     global current_tree, current_workbook_name, current_tree_name
 
@@ -199,7 +199,7 @@ async def create_empty_tree(request: Request):
         return {"detail": f"❌ Failed to create and push empty tree: {e}"}
     
 # Search and Visualize Tree
-@router.get("/search_tree/", tags=["Asset Tree"])
+@router.get("/api/v1/asset_tree/search_tree/", tags=["Asset Tree"])
 async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(...)):
     try:
         # Initialize TreeModifier and load the tree
@@ -219,7 +219,7 @@ async def search_tree(tree_name: str = Query(...), workbook_name: str = Query(..
         raise HTTPException(status_code=500, detail=f"❌ Failed to search and visualize tree: {e}")
 
 # Push Tree
-@router.post("/push_tree/", tags=["Asset Tree"])
+@router.post("/api/v1/asset_tree/push_tree/", tags=["Asset Tree"])
 async def push_tree(tree_name: str, workbook_name: str):
     global current_tree, current_tree_name
 
@@ -237,7 +237,7 @@ async def push_tree(tree_name: str, workbook_name: str):
 # Assuming `current_tree` holds the updated tree in memory
 current_tree = None  # Ensure it's defined at the top level
 
-@router.get("/visualize_tree/")
+@router.get("/api/v1/asset_tree/visualize_tree/", tags=["Asset Tree"])
 async def visualize_tree(tree_name: str, workbook_name: str):
     """Fetch the latest in-memory tree instead of an old cached version."""
     global current_tree
@@ -283,7 +283,7 @@ async def visualize_tree(tree_name: str, workbook_name: str):
         print(f"❌ [ERROR] Failed to visualize tree: {e}")
         return {"error": f"❌ Failed to visualize tree: {e}"}
     
-@router.post("/modify_tree/", tags=["Asset Tree"])
+@router.post("/api/v1/asset_tree/modify_tree/", tags=["Asset Tree"])
 async def modify_tree(
     file: UploadFile,
     tree_name: str = Form(...),
@@ -356,7 +356,7 @@ class RemoveRequest(BaseModel):
     workbook_name: str
     item_path: str  # Ensure full path is provided
 
-@app.post("/insert_item/", tags=["Asset Tree"])
+@app.post("/api/v1/asset_tree/insert_item/", tags=["Asset Tree"])
 async def insert_item(request: InsertItemRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)
@@ -376,7 +376,7 @@ async def insert_item(request: InsertItemRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"❌ Insert failed: {str(e)}")
 
-@app.post("/move_item/", tags=["Asset Tree"])
+@app.post("/api/v1/asset_tree/move_item/", tags=["Asset Tree"])
 def move_item(request: MoveRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)
@@ -390,7 +390,7 @@ def move_item(request: MoveRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.post("/remove_item/", tags=["Asset Tree"])
+@app.post("/api/v1/asset_tree/remove_item/", tags=["Asset Tree"])
 async def remove_item(request: RemoveRequest):
     try:
         modifier = TreeModifier(request.workbook_name, request.tree_name)
